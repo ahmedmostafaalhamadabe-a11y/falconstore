@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>اشتراك Google Gemini AI | Falcon Store - بأفضل الأسعار</title>
+    <meta name="description" content="اشتراك Google Gemini AI فوري بأرخص الأسعار في مصر. دعم 24 ساعة، ضمان كامل، شحن فوري خلال دقائق.">
+    
+    <link rel="stylesheet" type="text/css" href="//www.fontstatic.com/f=geeza-pro">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        body, button, input, .payment-method, .price-option, .order-btn {
+            font-family: 'Geeza Pro', 'Tajawal', 'Cairo', sans-serif;
+        }
+        .product-header { text-align: center; margin-bottom: 1.5rem; }
+        .product-badge { display: inline-block; background: linear-gradient(135deg, #FFD966, #FFA000); color: #8B0000; padding: 5px 15px; border-radius: 50px; font-size: 0.8rem; font-weight: bold; margin-bottom: 1rem; }
+        .price-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.8rem; margin: 1.5rem 0; }
+        .price-option { background: var(--bg-body); border: 2px solid var(--border-color); padding: 12px 15px; border-radius: 60px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.3s ease; font-weight: 600; }
+        .price-option:hover { transform: translateX(-5px); border-color: var(--btn-bg); }
+        .price-option.selected { background: var(--btn-bg); color: white; border-color: var(--btn-bg); box-shadow: 0 5px 15px rgba(211, 47, 47, 0.3); }
+        .input-group { margin: 1.5rem 0; }
+        .input-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary); }
+        .input-group input { width: 100%; padding: 14px 20px; border-radius: 60px; border: 2px solid var(--border-color); background: var(--bg-card); color: var(--text-secondary); font-size: 1rem; transition: 0.3s; }
+        .input-group input:focus { outline: none; border-color: var(--btn-bg); }
+        .input-group small { display: block; margin-top: 0.5rem; color: var(--text-muted); font-size: 0.75rem; }
+        .payment-section { margin: 2rem 0 1.5rem 0; padding: 0.5rem 0; }
+        .payment-title { font-weight: 600; margin-bottom: 1rem; color: var(--text-primary); font-size: 1.1rem; }
+        .payment-methods { display: flex; flex-wrap: wrap; gap: 15px; }
+        .payment-method { background: var(--bg-card); border: 2px solid var(--border-color); padding: 12px 20px; border-radius: 60px; cursor: pointer; transition: all 0.3s ease; font-size: 1rem; font-weight: 600; display: inline-flex; align-items: center; gap: 10px; }
+        .payment-method i { font-size: 1.2rem; width: 24px; text-align: center; }
+        .payment-method:hover { transform: translateY(-3px); border-color: var(--btn-bg); }
+        .payment-method.selected { background: linear-gradient(135deg, var(--btn-bg), var(--btn-hover)); color: white; border-color: var(--btn-bg); }
+        .order-summary { background: rgba(211, 47, 47, 0.08); border-radius: 1rem; padding: 1rem; margin: 1.5rem 0; text-align: center; }
+        .order-summary .total-price { font-size: 1.5rem; font-weight: 800; color: var(--btn-bg); }
+        .order-btn { width: 100%; background: linear-gradient(135deg, var(--btn-bg), var(--btn-hover)); color: white; border: none; padding: 16px; border-radius: 60px; font-size: 1.2rem; font-weight: 800; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .order-btn:hover { transform: scale(1.02); }
+        .game-features { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin: 1.5rem 0; padding: 1rem; background: rgba(0,0,0,0.03); border-radius: 1rem; }
+        .game-features span { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--text-muted); }
+        .game-features i { color: var(--btn-bg); }
+        .custom-error-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.2s ease; }
+        .custom-error-modal .modal-box { background: var(--bg-card); max-width: 350px; width: 85%; border-radius: 1.5rem; padding: 1.8rem; text-align: center; border-top: 5px solid var(--btn-bg); box-shadow: 0 20px 35px rgba(0,0,0,0.3); }
+        .custom-error-modal .modal-box i { font-size: 3rem; color: #FF9800; margin-bottom: 0.8rem; }
+        .custom-error-modal .modal-box p { font-size: 1rem; margin: 0.8rem 0; color: var(--text-secondary); line-height: 1.5; }
+        .custom-error-modal .modal-box button { background: var(--btn-bg); color: white; border: none; padding: 8px 25px; border-radius: 2rem; font-size: 0.9rem; cursor: pointer; margin-top: 0.8rem; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @media (max-width: 550px) {
+            .price-list { grid-template-columns: 1fr; }
+            .payment-methods { gap: 8px; }
+            .payment-method { padding: 8px 12px; font-size: 0.75rem; }
+            .payment-method i { font-size: 0.9rem; width: 18px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo">
+        <img src="photos/logo.png" alt="شعار المتجر" style="height: 50px;">
+    </div>
+    <div class="controls">
+        <button class="theme-btn" id="themeToggle"><i class="fas fa-moon"></i></button>
+        <a href="index.html" style="background:rgba(255,255,255,0.2); padding:8px 15px; border-radius:30px; color:white; text-decoration:none; margin-right:10px;"><i class="fas fa-home"></i></a>
+    </div>
+</div>
+
+<div class="product-page">
+    <div class="product-header">
+        <div class="product-badge"><i class="fas fa-bolt"></i> شحن فوري - دعم 24 ساعة</div>
+    </div>
+    
+    <img src="photos/gemini.jpg" alt="Google Gemini AI" style="max-height: 150px;" onerror="this.src='https://placehold.co/300x200/4285F4/white?text=Gemini'">
+    <h1>اشتراك Google Gemini AI</h1>
+    
+    <div class="game-features">
+        <span><i class="fas fa-bolt"></i> شحن فوري</span>
+        <span><i class="fas fa-shield-alt"></i> ضمان كامل</span>
+        <span><i class="fas fa-headset"></i> دعم 24 ساعة</span>
+        <span><i class="fas fa-tags"></i> أرخص الأسعار</span>
+    </div>
+
+    <!-- الأسعار -->
+    <div class="price-list" id="priceList"></div>
+
+    <!-- إيميل Google -->
+    <div class="input-group">
+        <label><i class="fas fa-envelope"></i> إيميل حساب Google (Gmail)</label>
+        <input type="email" id="userEmail" placeholder="example@gmail.com">
+        <small>📧 سيتم إضافة الاشتراك إلى هذا الإيميل</small>
+    </div>
+
+    <div class="payment-section">
+        <div class="payment-title"><i class="fas fa-wallet"></i> اختر طريقة الدفع</div>
+        <div class="payment-methods" id="paymentMethods"></div>
+    </div>
+
+    <div class="order-summary" id="orderSummary">
+        <p>📦 المنتج: <strong id="selectedProductText">لم يتم الاختيار</strong></p>
+        <p>💰 السعر الإجمالي: <span class="total-price" id="totalPrice">0</span> ج.م</p>
+    </div>
+
+    <button class="order-btn" id="orderBtn">
+        <i class="fab fa-whatsapp"></i> تأكيد الطلب عبر واتساب
+    </button>
+</div>
+
+<div class="cart-icon" id="cartIcon">
+    <i class="fas fa-shopping-cart"></i>
+    <span class="cart-count" id="cartCount">0</span>
+</div>
+
+<script>
+    function playErrorSound() {
+        const audio = new Audio('error.mp3');
+        audio.volume = 0.5;
+        audio.play().catch(e => console.log("الصوت يحتاج أول تفاعل"));
+    }
+
+    function playClickSound() {
+        const audio = new Audio('click.mp3');
+        audio.volume = 0.4;
+        audio.play().catch(e => console.log("الصوت يحتاج أول تفاعل"));
+    }
+
+    function playClick2Sound() {
+        const audio = new Audio('click2.mp3');
+        audio.volume = 0.4;
+        audio.play().catch(e => console.log("الصوت يحتاج أول تفاعل"));
+    }
+
+    function showErrorModal(message) {
+        playErrorSound();
+        const existingModal = document.querySelector('.custom-error-modal');
+        if (existingModal) existingModal.remove();
+        const modalDiv = document.createElement('div');
+        modalDiv.className = 'custom-error-modal';
+        modalDiv.innerHTML = `<div class="modal-box"><i class="fas fa-circle-exclamation"></i><p>${message}</p><button onclick="this.closest('.custom-error-modal').remove()">موافق</button></div>`;
+        document.body.appendChild(modalDiv);
+    }
+
+    const priceOptions = [
+        { name: "Gemini Advanced (شهر)", price: 250 },
+        { name: "Gemini Advanced (3 شهور)", price: 700 },
+        { name: "Gemini Advanced (سنة)", price: 2500 }
+    ];
+
+    const paymentMethodsList = ["فودافون كاش", "اورانج كاش", "انستا باي", "اتصالات كاش", "وي باي", "بايننس", "باي بت"];
+    
+    let selectedOption = null;
+    let selectedPayment = "فودافون كاش";
+
+    function renderPriceOptions() {
+        const container = document.getElementById("priceList");
+        if (!container) return;
+        container.innerHTML = "";
+        priceOptions.forEach(opt => {
+            const div = document.createElement("div");
+            div.className = "price-option";
+            div.setAttribute("data-price", opt.price);
+            div.setAttribute("data-name", opt.name);
+            div.innerHTML = `<span class="option-name">${opt.name}</span><span class="option-price">${opt.price} ج.م</span>`;
+            div.onclick = () => {
+                playClick2Sound();
+                document.querySelectorAll(".price-option").forEach(b => b.classList.remove("selected"));
+                div.classList.add("selected");
+                selectedOption = { name: opt.name, price: opt.price };
+                updateSummary();
+            };
+            container.appendChild(div);
+        });
+    }
+
+    function renderPaymentMethods() {
+        const paymentIcons = {
+            "فودافون كاش": "fas fa-mobile-alt",
+            "اورانج كاش": "fas fa-mobile-alt",
+            "انستا باي": "fas fa-credit-card",
+            "اتصالات كاش": "fas fa-wifi",
+            "وي باي": "fas fa-wallet",
+            "بايننس": "fab fa-bitcoin",
+            "باي بت": "fas fa-university"
+        };
+        
+        const container = document.getElementById("paymentMethods");
+        if (!container) return;
+        container.innerHTML = "";
+        paymentMethodsList.forEach(m => {
+            const div = document.createElement("div");
+            div.className = `payment-method ${selectedPayment === m ? 'selected' : ''}`;
+            div.setAttribute("data-method", m);
+            div.innerHTML = `<i class="${paymentIcons[m]}"></i><span>${m}</span>`;
+            div.onclick = () => {
+                playClick2Sound();
+                document.querySelectorAll(".payment-method").forEach(b => b.classList.remove("selected"));
+                div.classList.add("selected");
+                selectedPayment = m;
+            };
+            container.appendChild(div);
+        });
+    }
+
+    function updateSummary() {
+        const selectedProductText = document.getElementById("selectedProductText");
+        const totalPriceSpan = document.getElementById("totalPrice");
+        
+        if (selectedOption) {
+            selectedProductText.innerText = selectedOption.name;
+            totalPriceSpan.innerText = selectedOption.price;
+        } else {
+            selectedProductText.innerText = "لم يتم الاختيار";
+            totalPriceSpan.innerText = "0";
+        }
+    }
+
+    function submitOrder() {
+        const userEmail = document.getElementById("userEmail").value.trim();
+        
+        if (!userEmail) {
+            showErrorModal("❌ يرجى إدخال إيميل حساب Google");
+            return;
+        }
+        if (!selectedOption) {
+            showErrorModal("❌ يرجى اختيار مدة الاشتراك");
+            return;
+        }
+        
+        const msg = `🛒 طلب اشتراك Google Gemini AI
+📧 الإيميل: ${userEmail}
+📦 المنتج: ${selectedOption.name}
+💰 السعر: ${selectedOption.price} ج.م
+💳 طريقة الدفع: ${selectedPayment}
+
+📌 يرجى إرسال سكرين شوت بعد التحويل`;
+        
+        window.open(`https://wa.me/201121816129?text=${encodeURIComponent(msg)}`, "_blank");
+    }
+
+    document.getElementById("orderBtn").addEventListener("click", () => { playClickSound(); submitOrder(); });
+
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    function updateCartCount() {
+        const countSpan = document.getElementById("cartCount");
+        if (countSpan) countSpan.innerText = cart.length;
+    }
+    updateCartCount();
+    
+    document.getElementById("cartIcon").addEventListener("click", () => {
+        playClickSound();
+        if (cart.length === 0) {
+            showErrorModal("🛒 السلة فارغة! أضف منتجات أولاً.");
+            return;
+        }
+        let msg = "🛒 طلب جديد من Falcon Store\n";
+        let total = 0;
+        cart.forEach(item => {
+            msg += `- ${item.name}: ${item.price} ج.م\n`;
+            total += item.price;
+        });
+        msg += `💰 الإجمالي: ${total} ج.م\n📞 يرجى إرسال سكرين شوت`;
+        window.open(`https://wa.me/20121816129?text=${encodeURIComponent(msg)}`, "_blank");
+    });
+
+    if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
+    document.getElementById("themeToggle").addEventListener("click", () => {
+        playClickSound();
+        document.body.classList.toggle('dark');
+        localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    });
+
+    renderPriceOptions();
+    renderPaymentMethods();
+    updateSummary();
+</script>
+</body>
+</html>

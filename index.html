@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Falcon Store | متجر الشحن والاشتراكات</title>
+    
+    <!-- خط Geeza Pro -->
+    <link rel="stylesheet" type="text/css" href="//www.fontstatic.com/f=geeza-pro">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        body, button, input, .payment-method, .price-option, .order-btn, .shop-btn, .product-card h3, .section-title {
+            font-family: 'Geeza Pro', 'Tajawal', 'Cairo', sans-serif;
+        }
+        
+        /* نافذة التنبيه المخصصة للأخطاء */
+        .custom-error-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+        .custom-error-modal .modal-box {
+            background: var(--bg-card);
+            max-width: 350px;
+            width: 85%;
+            border-radius: 1.5rem;
+            padding: 1.8rem;
+            text-align: center;
+            border-top: 5px solid var(--btn-bg);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.3);
+        }
+        .custom-error-modal .modal-box i {
+            font-size: 3rem;
+            color: #FF9800;
+            margin-bottom: 0.8rem;
+        }
+        .custom-error-modal .modal-box p {
+            font-size: 1rem;
+            margin: 0.8rem 0;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .custom-error-modal .modal-box button {
+            background: var(--btn-bg);
+            color: white;
+            border: none;
+            padding: 8px 25px;
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-top: 0.8rem;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo">
+        <img src="photos/logo.png" alt="شعار المتجر" style="height: 50px;">
+    </div>
+    <div class="controls">
+        <button class="theme-btn" id="themeToggle"><i class="fas fa-moon"></i></button>
+    </div>
+</div>
+
+<!-- سلايدر العروض (نسخة مبسطة وعملية) -->
+<div class="slider-container">
+    <div class="slider" id="slider">
+        <div class="slide">
+            <img src="photos/offer1.jpg" alt="عرض 1">
+            <div class="slide-caption">🎉 خصم يصل إلى 30% على أول شحنة 🎉</div>
+        </div>
+        <div class="slide">
+            <img src="photos/offer2.jpg" alt="عرض 2">
+            <div class="slide-caption">💎 عروض الجواهر بأسعار خرافية 💎</div>
+        </div>
+        <div class="slide">
+            <img src="photos/offer3.jpg" alt="عرض 3">
+            <div class="slide-caption">📺 اشتراكات بأسعار مميزة 📺</div>
+        </div>
+    </div>
+    <button class="slider-btn prev" id="prevBtn">❮</button>
+    <button class="slider-btn next" id="nextBtn">❯</button>
+    <div class="dots" id="dots"></div>
+</div>
+
+<!-- الألعاب -->
+<div class="games-grid">
+    <div class="section-title"><i class="fas fa-gamepad"></i> 🎮 الألعاب</div>
+    <div class="products-grid" id="gamesGrid"></div>
+</div>
+
+<!-- الاشتراكات -->
+<div class="games-grid">
+    <div class="section-title"><i class="fas fa-tv"></i> 📺 الاشتراكات والتطبيقات</div>
+    <div class="products-grid" id="subscriptionsGrid"></div>
+</div>
+
+<div class="footer"><p>© 2025 Falcon Store - جميع الحقوق محفوظة</p></div>
+
+<div class="cart-icon" id="cartIcon">
+    <i class="fas fa-shopping-cart"></i>
+    <span class="cart-count" id="cartCount">0</span>
+</div>
+
+<script>
+    // ========== دالة عرض الخطأ مع صوت error.mp3 ==========
+    function showErrorModal(message) {
+        const errorAudio = new Audio('error.mp3');
+        errorAudio.volume = 0.6;
+        errorAudio.play().catch(e => console.log("الصوت محتاج تفاعل أول"));
+        
+        const existingModal = document.querySelector('.custom-error-modal');
+        if (existingModal) existingModal.remove();
+        
+        const modalDiv = document.createElement('div');
+        modalDiv.className = 'custom-error-modal';
+        modalDiv.innerHTML = `
+            <div class="modal-box">
+                <i class="fas fa-circle-exclamation"></i>
+                <p>${message}</p>
+                <button onclick="this.closest('.custom-error-modal').remove()">موافق</button>
+            </div>
+        `;
+        document.body.appendChild(modalDiv);
+    }
+
+    // ========== صوت الضغط العام click.mp3 ==========
+    function playClickSound() {
+        const audio = new Audio('click.mp3');
+        audio.volume = 0.4;
+        audio.play().catch(e => console.log("الصوت يحتاج أول تفاعل"));
+    }
+
+    // ========== بيانات الألعاب (8 ألعاب) ==========
+    const games = [
+        { name: "Free Fire", page: "freefire.html", img: "photos/freefire.jpg" },
+        { name: "PUBG", page: "pubg.html", img: "photos/pubg.jpg" },
+        { name: "Call of Duty", page: "cod.html", img: "photos/cod.jpg" },
+        { name: "eFootball (PES)", page: "pes.html", img: "photos/pes.jpg" },
+        { name: "FIFA", page: "fifa.html", img: "photos/fifa.jpg" },
+        { name: "Roblox", page: "roblox.html", img: "photos/roblox.jpg" },
+        { name: "Minecraft", page: "minecraft.html", img: "photos/minecraft.jpg" },
+        { name: "TikTok Coins", page: "tiktok.html", img: "photos/tiktok.jpg" }
+    ];
+
+    // ========== بيانات الاشتراكات ==========
+    const subscriptions = [
+        { name: "ChatGPT Plus", page: "chatgpt.html", img: "photos/chatgpt.jpg" },
+        { name: "Netflix", page: "netflix.html", img: "photos/netflix.jpg" },
+        { name: "Xbox Game Pass", page: "xbox.html", img: "photos/xbox.jpg" },
+        { name: "Spotify", page: "spotify.html", img: "photos/spotify.jpg" },
+        { name: "Disney+", page: "disney.html", img: "photos/disney.jpg" },
+        { name: "Canva Pro", page: "canva.html", img: "photos/canva.jpg" },
+        { name: "Adobe Cloud", page: "adobe.html", img: "photos/adobe.jpg" },
+        { name: "Gemini AI", page: "gemini.html", img: "photos/gemini.jpg" }
+    ];
+
+    // ========== عرض الألعاب مع صوت الضغط ==========
+    const gamesGrid = document.getElementById("gamesGrid");
+    if (gamesGrid) {
+        gamesGrid.innerHTML = games.map(game => `
+            <div class="product-card" onclick="playClickSound(); location.href='${game.page}'">
+                <img src="${game.img}" alt="${game.name}" onerror="this.src='https://placehold.co/200x150/FF0000/white?text=${game.name}'">
+                <h3>${game.name}</h3>
+                <button class="shop-btn">🛒 شحن الآن</button>
+            </div>
+        `).join("");
+    }
+
+    // ========== عرض الاشتراكات مع صوت الضغط ==========
+    const subsGrid = document.getElementById("subscriptionsGrid");
+    if (subsGrid) {
+        subsGrid.innerHTML = subscriptions.map(sub => `
+            <div class="product-card" onclick="playClickSound(); location.href='${sub.page}'">
+                <img src="${sub.img}" alt="${sub.name}" onerror="this.src='https://placehold.co/200x150/10a37f/white?text=${sub.name}'">
+                <h3>${sub.name}</h3>
+                <button class="shop-btn">🛒 اشترك الآن</button>
+            </div>
+        `).join("");
+    }
+
+    // ========== سلة المشتريات ==========
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    function updateCartCount() {
+        const countSpan = document.getElementById("cartCount");
+        if (countSpan) countSpan.innerText = cart.length;
+    }
+    updateCartCount();
+    
+    document.getElementById("cartIcon").addEventListener("click", () => {
+        playClickSound();
+        if (cart.length === 0) {
+            showErrorModal("🛒 السلة فارغة! أضف منتجات أولاً.");
+            return;
+        }
+        let msg = "🛒 طلب جديد من Falcon Store\n";
+        let total = 0;
+        cart.forEach(item => {
+            msg += `- ${item.name}: ${item.price} ج.م\n`;
+            total += item.price;
+        });
+        msg += `💰 الإجمالي: ${total} ج.م\n📞 يرجى إرسال سكرين شوت`;
+        window.open(`https://wa.me/20121816129?text=${encodeURIComponent(msg)}`, "_blank");
+    });
+
+    // ========== الثيم الداكن ==========
+    if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
+    document.getElementById("themeToggle").addEventListener("click", () => {
+        playClickSound();
+        document.body.classList.toggle('dark');
+        localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    });
+
+    // ========== السلايدر ==========
+    let slideIndex = 0;
+    const slider = document.getElementById("slider");
+    const slides = document.querySelectorAll(".slide");
+    const dotsContainer = document.getElementById("dots");
+    let autoInterval;
+    function updateSlider() { slider.style.transform = `translateX(-${slideIndex * 100}%)`; document.querySelectorAll(".dot").forEach((dot, i) => dot.classList.toggle("active", i === slideIndex)); }
+    function nextSlide() { slideIndex = (slideIndex + 1) % slides.length; updateSlider(); }
+    function prevSlide() { slideIndex = (slideIndex - 1 + slides.length) % slides.length; updateSlider(); }
+    function startAuto() { autoInterval = setInterval(nextSlide, 5000); }
+    slides.forEach((_, i) => { const dot = document.createElement("div"); dot.classList.add("dot"); dot.onclick = () => { playClickSound(); slideIndex = i; updateSlider(); clearInterval(autoInterval); startAuto(); }; dotsContainer.appendChild(dot); });
+    updateSlider(); startAuto();
+    document.getElementById("prevBtn").addEventListener("click", () => { playClickSound(); prevSlide(); clearInterval(autoInterval); startAuto(); });
+    document.getElementById("nextBtn").addEventListener("click", () => { playClickSound(); nextSlide(); clearInterval(autoInterval); startAuto(); });
+    slider.addEventListener("mouseenter", () => clearInterval(autoInterval));
+    slider.addEventListener("mouseleave", startAuto);
+</script>
+</body>
+</html>
