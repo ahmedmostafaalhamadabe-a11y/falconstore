@@ -6,44 +6,37 @@
     <title>تسجيل الدخول | Falcon Store</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
     <style>
-        .login-container {
-            min-height: 100vh;
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: #FFF8F8;
             display: flex;
-            align-items: center;
             justify-content: center;
-            background: var(--bg-body);
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
             padding: 1rem;
         }
         .login-card {
-            background: var(--bg-card);
+            background: white;
             border-radius: 2rem;
             padding: 2rem;
             max-width: 400px;
             width: 100%;
             text-align: center;
-            border: 1px solid var(--border-color);
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid #EF9A9A;
         }
-        .login-card h1 {
-            color: var(--text-primary);
-            margin-bottom: 1.5rem;
-        }
-        .input-group {
-            margin-bottom: 1rem;
-            text-align: right;
-        }
-        .input-group input {
+        h1 { color: #B71C1C; margin-bottom: 1.5rem; }
+        input {
             width: 100%;
-            padding: 12px 15px;
+            padding: 12px;
+            margin: 10px 0;
             border-radius: 60px;
-            border: 1px solid var(--border-color);
-            background: var(--bg-body);
-            color: var(--text-secondary);
+            border: 1px solid #EF9A9A;
             font-family: 'Cairo', sans-serif;
         }
-        .login-btn {
+        button {
             width: 100%;
             background: #D32F2F;
             color: white;
@@ -55,207 +48,63 @@
             cursor: pointer;
             margin-top: 1rem;
         }
-        .social-buttons {
-            display: flex;
-            gap: 1rem;
-            margin: 1rem 0;
-        }
-        .social-btn {
-            flex: 1;
-            padding: 10px;
-            border-radius: 50px;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .google-btn { background: #DB4437; color: white; }
-        .facebook-btn { background: #4267B2; color: white; }
-        .toggle-text {
+        .error-msg {
+            color: red;
             margin-top: 1rem;
-            color: var(--text-muted);
-        }
-        .toggle-text a {
-            color: #D32F2F;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .back-home {
-            display: inline-block;
-            margin-top: 1rem;
-            color: #D32F2F;
-            text-decoration: none;
+            font-size: 0.8rem;
         }
     </style>
 </head>
 <body>
 
-<div class="login-container">
-    <div class="login-card">
-        <h1><i class="fas fa-falcon"></i> Falcon Store</h1>
-        
-        <div id="loginForm">
-            <div class="input-group">
-                <input type="email" id="email" placeholder="البريد الإلكتروني">
-            </div>
-            <div class="input-group">
-                <input type="password" id="password" placeholder="كلمة المرور">
-            </div>
-            <button class="login-btn" id="loginBtn">تسجيل الدخول</button>
-            
-            <div class="social-buttons">
-                <button class="social-btn google-btn" id="googleBtn"><i class="fab fa-google"></i> Google</button>
-                <button class="social-btn facebook-btn" id="facebookBtn"><i class="fab fa-facebook-f"></i> Facebook</button>
-            </div>
-            
-            <div class="toggle-text">
-                ليس لديك حساب؟ <a id="showSignup">إنشاء حساب جديد</a>
-            </div>
-        </div>
-        
-        <div id="signupForm" style="display: none;">
-            <div class="input-group">
-                <input type="email" id="signupEmail" placeholder="البريد الإلكتروني">
-            </div>
-            <div class="input-group">
-                <input type="password" id="signupPassword" placeholder="كلمة المرور">
-            </div>
-            <div class="input-group">
-                <input type="password" id="confirmPassword" placeholder="تأكيد كلمة المرور">
-            </div>
-            <button class="login-btn" id="signupBtn">إنشاء حساب</button>
-            
-            <div class="social-buttons">
-                <button class="social-btn google-btn" id="googleBtn2"><i class="fab fa-google"></i> Google</button>
-                <button class="social-btn facebook-btn" id="facebookBtn2"><i class="fab fa-facebook-f"></i> Facebook</button>
-            </div>
-            
-            <div class="toggle-text">
-                لديك حساب بالفعل؟ <a id="showLogin">تسجيل الدخول</a>
-            </div>
-        </div>
-        
-        <div><a href="index.html" class="back-home"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a></div>
+<div class="login-card">
+    <h1><i class="fas fa-falcon"></i> Falcon Store</h1>
+    
+    <div id="loginForm">
+        <input type="email" id="email" placeholder="البريد الإلكتروني">
+        <input type="password" id="password" placeholder="كلمة المرور">
+        <button id="loginBtn">تسجيل الدخول</button>
+        <div id="errorMsg" class="error-msg"></div>
+    </div>
+    
+    <div style="margin-top: 1rem;">
+        <a href="index.html" style="color: #D32F2F;">← العودة للرئيسية</a>
     </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js"></script>
 <script>
-    const loginForm = document.getElementById('loginForm');
-    const signupForm = document.getElementById('signupForm');
-    const showSignup = document.getElementById('showSignup');
-    const showLogin = document.getElementById('showLogin');
-    
-    showSignup.addEventListener('click', () => {
-        loginForm.style.display = 'none';
-        signupForm.style.display = 'block';
-    });
-    
-    showLogin.addEventListener('click', () => {
-        signupForm.style.display = 'none';
-        loginForm.style.display = 'block';
-    });
-    
-    // Check URL for signup mode
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('mode') === 'signup') {
-        loginForm.style.display = 'none';
-        signupForm.style.display = 'block';
-    }
-    
-    // Login
+    // إعدادات Firebase (من Firebase Console)
+    const firebaseConfig = {
+        apiKey: "AIzaSyDCnsGh-iJfmOXIHdN5_-b5KEJQPZJSInU",
+        authDomain: "falcon-store-1ab4e.firebaseapp.com",
+        projectId: "falcon-store-1ab4e",
+        storageBucket: "falcon-store-1ab4e.firebasestorage.app",
+        messagingSenderId: "650854731670",
+        appId: "1:650854731670:web:fc25b7897dd530e244d7b7"
+    };
+
+    // تهيئة Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // تسجيل الدخول
     document.getElementById('loginBtn').addEventListener('click', async () => {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
-        try {
-            await loginWithEmail(email, password);
-            window.location.href = 'index.html';
-        } catch (error) {
-            alert('خطأ: ' + error.message);
-        }
-    });
-    
-    // Signup
-    document.getElementById('signupBtn').addEventListener('click', async () => {
-        const email = document.getElementById('signupEmail').value;
-        const password = document.getElementById('signupPassword').value;
-        const confirm = document.getElementById('confirmPassword').value;
+        const errorDiv = document.getElementById('errorMsg');
         
-        if (password !== confirm) {
-            alert('كلمة المرور غير متطابقة');
+        if (!email || !password) {
+            errorDiv.innerText = '❌ يرجى إدخال البريد الإلكتروني وكلمة المرور';
             return;
         }
         
         try {
-            const userCredential = await signUpWithEmail(email, password);
-            const user = userCredential.user;
-            await db.collection('users').doc(user.uid).set({
-                email: email,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                loyaltyPoints: 0,
-                gameIds: {}
-            });
-            window.location.href = 'profile.html';
-        } catch (error) {
-            alert('خطأ: ' + error.message);
-        }
-    });
-    
-    // Google
-    document.getElementById('googleBtn').addEventListener('click', async () => {
-        try {
-            const result = await loginWithGoogle();
-            const user = result.user;
-            const doc = await db.collection('users').doc(user.uid).get();
-            if (!doc.exists) {
-                await db.collection('users').doc(user.uid).set({
-                    email: user.email,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    loyaltyPoints: 0,
-                    gameIds: {}
-                });
-            }
+            await auth.signInWithEmailAndPassword(email, password);
             window.location.href = 'index.html';
         } catch (error) {
-            alert('خطأ: ' + error.message);
-        }
-    });
-    document.getElementById('googleBtn2').addEventListener('click', async () => {
-        try {
-            const result = await loginWithGoogle();
-            const user = result.user;
-            const doc = await db.collection('users').doc(user.uid).get();
-            if (!doc.exists) {
-                await db.collection('users').doc(user.uid).set({
-                    email: user.email,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    loyaltyPoints: 0,
-                    gameIds: {}
-                });
-            }
-            window.location.href = 'index.html';
-        } catch (error) {
-            alert('خطأ: ' + error.message);
-        }
-    });
-    
-    // Facebook (commented until fully configured)
-    document.getElementById('facebookBtn').addEventListener('click', async () => {
-        alert('❌ تسجيل الدخول بفيسبوك قيد الإعداد حالياً، استخدم البريد الإلكتروني أو Google');
-    });
-    document.getElementById('facebookBtn2').addEventListener('click', async () => {
-        alert('❌ تسجيل الدخول بفيسبوك قيد الإعداد حالياً، استخدم البريد الإلكتروني أو Google');
-    });
-    
-    onAuthStateChanged((user) => {
-        if (user && window.location.pathname.includes('login.html')) {
-            window.location.href = 'index.html';
+            errorDiv.innerText = '❌ ' + error.message;
         }
     });
 </script>
