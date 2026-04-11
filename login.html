@@ -48,10 +48,37 @@
             cursor: pointer;
             margin-top: 1rem;
         }
+        .google-btn {
+            background: #DB4437;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .toggle-text {
+            margin-top: 1rem;
+            color: #757575;
+        }
+        .toggle-text a {
+            color: #D32F2F;
+            cursor: pointer;
+            text-decoration: none;
+        }
         .error-msg {
             color: red;
             margin-top: 1rem;
             font-size: 0.8rem;
+        }
+        .success-msg {
+            color: green;
+            margin-top: 1rem;
+            font-size: 0.8rem;
+        }
+        .back-home {
+            display: inline-block;
+            margin-top: 1rem;
+            color: #D32F2F;
+            text-decoration: none;
         }
     </style>
 </head>
@@ -60,22 +87,41 @@
 <div class="login-card">
     <h1><i class="fas fa-falcon"></i> Falcon Store</h1>
     
+    <!-- نموذج تسجيل الدخول -->
     <div id="loginForm">
-        <input type="email" id="email" placeholder="البريد الإلكتروني">
-        <input type="password" id="password" placeholder="كلمة المرور">
+        <input type="email" id="loginEmail" placeholder="البريد الإلكتروني">
+        <input type="password" id="loginPassword" placeholder="كلمة المرور">
         <button id="loginBtn">تسجيل الدخول</button>
-        <div id="errorMsg" class="error-msg"></div>
+        <button id="googleLoginBtn" class="google-btn"><i class="fab fa-google"></i> تسجيل الدخول بـ Google</button>
+        <div id="loginError" class="error-msg"></div>
+        <div class="toggle-text">
+            ليس لديك حساب؟ <a id="showSignup">إنشاء حساب جديد</a>
+        </div>
     </div>
     
-    <div style="margin-top: 1rem;">
-        <a href="index.html" style="color: #D32F2F;">← العودة للرئيسية</a>
+    <!-- نموذج إنشاء حساب جديد -->
+    <div id="signupForm" style="display: none;">
+        <input type="email" id="signupEmail" placeholder="البريد الإلكتروني">
+        <input type="password" id="signupPassword" placeholder="كلمة المرور">
+        <input type="password" id="confirmPassword" placeholder="تأكيد كلمة المرور">
+        <button id="signupBtn">إنشاء حساب</button>
+        <button id="googleSignupBtn" class="google-btn"><i class="fab fa-google"></i> إنشاء حساب بـ Google</button>
+        <div id="signupError" class="error-msg"></div>
+        <div id="signupSuccess" class="success-msg"></div>
+        <div class="toggle-text">
+            لديك حساب بالفعل؟ <a id="showLogin">تسجيل الدخول</a>
+        </div>
+    </div>
+    
+    <div>
+        <a href="index.html" class="back-home">← العودة للرئيسية</a>
     </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script>
-    // إعدادات Firebase (من Firebase Console)
+    // إعدادات Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyDCnsGh-iJfmOXIHdN5_-b5KEJQPZJSInU",
         authDomain: "falcon-store-1ab4e.firebaseapp.com",
@@ -89,11 +135,27 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
+    // عناصر DOM
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    const showSignup = document.getElementById('showSignup');
+    const showLogin = document.getElementById('showLogin');
+
+    showSignup.addEventListener('click', () => {
+        loginForm.style.display = 'none';
+        signupForm.style.display = 'block';
+    });
+
+    showLogin.addEventListener('click', () => {
+        signupForm.style.display = 'none';
+        loginForm.style.display = 'block';
+    });
+
     // تسجيل الدخول
     document.getElementById('loginBtn').addEventListener('click', async () => {
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const errorDiv = document.getElementById('errorMsg');
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        const errorDiv = document.getElementById('loginError');
         
         if (!email || !password) {
             errorDiv.innerText = '❌ يرجى إدخال البريد الإلكتروني وكلمة المرور';
@@ -104,9 +166,66 @@
             await auth.signInWithEmailAndPassword(email, password);
             window.location.href = 'index.html';
         } catch (error) {
+            if (error.code === 'auth/user-not-found') {
+                errorDiv.innerText = '❌ هذا الحساب غير موجود. يرجى إنشاء حساب جديد أولاً';
+            } else if (error.code === 'auth/wrong-password') {
+                errorDiv.innerText = '❌ كلمة المرور غير صحيحة';
+            } else {
+                errorDiv.innerText = '❌ ' + error.message;
+            }
+        }
+    });
+
+    // إنشاء حساب جديد
+    document.getElementById('signupBtn').addEventListener('click', async () => {
+        const email = document.getElementById('signupEmail').value;
+        const password = document.getElementById('signupPassword').value;
+        const confirm = document.getElementById('confirmPassword').value;
+        const errorDiv = document.getElementById('signupError');
+        const successDiv = document.getElementById('signupSuccess');
+        
+        errorDiv.innerText = '';
+        successDiv.innerText = '';
+        
+        if (!email || !password) {
+            errorDiv.innerText = '❌ يرجى إدخال البريد الإلكتروني وكلمة المرور';
+            return;
+        }
+        
+        if (password !== confirm) {
+            errorDiv.innerText = '❌ كلمة المرور غير متطابقة';
+            return;
+        }
+        
+        if (password.length < 6) {
+            errorDiv.innerText = '❌ كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+            return;
+        }
+        
+        try {
+            await auth.createUserWithEmailAndPassword(email, password);
+            successDiv.innerText = '✅ تم إنشاء الحساب بنجاح! جاري التحويل...';
+            setTimeout(() => {
+                window.location.href = 'profile.html';
+            }, 2000);
+        } catch (error) {
             errorDiv.innerText = '❌ ' + error.message;
         }
     });
+
+    // تسجيل الدخول بـ Google
+    async function googleLogin() {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        try {
+            const result = await auth.signInWithPopup(provider);
+            window.location.href = 'index.html';
+        } catch (error) {
+            alert('خطأ: ' + error.message);
+        }
+    }
+
+    document.getElementById('googleLoginBtn').addEventListener('click', googleLogin);
+    document.getElementById('googleSignupBtn').addEventListener('click', googleLogin);
 </script>
 </body>
 </html>
