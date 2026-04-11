@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Falcon Store | متجر الشحن والاشتراكات</title>
+    
+    <link rel="stylesheet" type="text/css" href="//www.fontstatic.com/f=geeza-pro">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        body, button, input {
+            font-family: 'Geeza Pro', 'Tajawal', 'Cairo', sans-serif;
+        }
+        
+        /* Header */
+        .header {
+            background: var(--bg-header);
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .logo img { height: 50px; width: auto; }
+        .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .theme-btn { background: rgba(255,255,255,0.2); border: none; padding: 8px 15px; border-radius: 30px; color: white; cursor: pointer; }
+        .search-box { display: flex; background: white; border-radius: 30px; overflow: hidden; }
+        .search-box input { padding: 8px 15px; border: none; outline: none; width: 200px; }
+        .search-box button { background: #D32F2F; border: none; padding: 8px 15px; color: white; cursor: pointer; }
+        
+        /* Auth Status Bar */
+        .auth-status {
+            background: var(--bg-card);
+            padding: 8px 15px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            font-size: 0.85rem;
+        }
+        .auth-status a {
+            color: #D32F2F;
+            text-decoration: none;
+        }
+        .auth-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .auth-btn.signup {
+            background: #2196F3;
+        }
+        .auth-btn.logout {
+            background: #D32F2F;
+        }
+        
+        /* Slider */
+        .slider-container { position: relative; max-width: 1200px; margin: 1rem auto; overflow: hidden; border-radius: 1.5rem; }
+        .slider { display: flex; transition: transform 0.5s ease; }
+        .slide { min-width: 100%; position: relative; }
+        .slide img { width: 100%; height: 300px; object-fit: cover; }
+        .slide-caption { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.8)); color: white; padding: 1rem; text-align: center; }
+        .slider-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 50%; }
+        .slider-btn.prev { left: 10px; }
+        .slider-btn.next { right: 10px; }
+        .dots { text-align: center; padding: 10px; }
+        .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #757575; margin: 0 5px; cursor: pointer; }
+        .dot.active { background: #D32F2F; width: 20px; border-radius: 10px; }
+        
+        /* Sections */
+        .section { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .section-title { font-size: 1.5rem; font-weight: 800; color: var(--text-primary); border-right: 4px solid #D32F2F; padding-right: 1rem; }
+        .section-link { color: #D32F2F; text-decoration: none; font-weight: 500; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem; }
+        .product-card { background: var(--bg-card); border-radius: 1rem; padding: 1rem; text-align: center; border: 1px solid var(--border-color); transition: 0.3s; cursor: pointer; }
+        .product-card:hover { transform: translateY(-5px); border-color: #D32F2F; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .product-card img { width: 100%; height: 120px; object-fit: contain; }
+        .product-card h3 { margin: 0.5rem 0; font-size: 1rem; color: var(--text-primary); }
+        .product-price { font-size: 1.2rem; font-weight: 800; color: #D32F2F; margin: 0.5rem 0; }
+        .shop-btn { background: #D32F2F; color: white; border: none; padding: 8px 12px; border-radius: 50px; cursor: pointer; width: 100%; font-weight: bold; }
+        .badge { position: absolute; top: 10px; right: 10px; background: #FF9800; color: white; padding: 3px 8px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; }
+        .product-card { position: relative; }
+        
+        /* Footer */
+        .footer { text-align: center; padding: 1.5rem; margin-top: 2rem; border-top: 1px solid #EF9A9A; color: #757575; }
+        .cart-icon { position: fixed; bottom: 25px; right: 25px; background: #D32F2F; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 99; box-shadow: 0 0 15px rgba(199,40,40,0.5); }
+        .cart-count { position: absolute; top: -5px; right: -5px; background: #FF9800; color: white; border-radius: 50%; width: 22px; height: 22px; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        
+        @media (max-width: 550px) {
+            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+            .slide img { height: 150px; }
+            .section-title { font-size: 1.2rem; }
+            .search-box input { width: 120px; }
+            .auth-status { font-size: 0.7rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo"><img src="photos/logo.png" alt="شعار المتجر"></div>
+    <div class="controls">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="🔍 بحث...">
+            <button id="searchBtn"><i class="fas fa-search"></i></button>
+        </div>
+        <button class="theme-btn" id="themeToggle"><i class="fas fa-moon"></i></button>
+    </div>
+</div>
+
+<!-- حالة تسجيل الدخول -->
+<div class="section">
+    <div class="auth-status" id="authStatus">
+        <span id="userNameDisplay">⚠️ يرجى تسجيل الدخول</span>
+        <button id="loginBtnNav" class="auth-btn">تسجيل الدخول</button>
+        <button id="signupBtnNav" class="auth-btn signup">إنشاء حساب</button>
+        <button id="logoutBtn" class="auth-btn logout" style="display:none;">تسجيل خروج</button>
+    </div>
+</div>
+
+<!-- سلايدر العروض -->
+<div class="slider-container">
+    <div class="slider" id="slider">
+        <div class="slide"><img src="photos/offer1.jpg" alt="عرض 1"><div class="slide-caption">🎉 خصم يصل إلى 30% على أول شحنة 🎉</div></div>
+        <div class="slide"><img src="photos/offer2.jpg" alt="عرض 2"><div class="slide-caption">💎 عروض الجواهر بأسعار خرافية 💎</div></div>
+        <div class="slide"><img src="photos/offer3.jpg" alt="عرض 3"><div class="slide-caption">📺 اشتراكات بأسعار مميزة 📺</div></div>
+    </div>
+    <button class="slider-btn prev" id="prevBtn">❮</button>
+    <button class="slider-btn next" id="nextBtn">❯</button>
+    <div class="dots" id="dots"></div>
+</div>
+
+<!-- 🔥 الأكثر شهرة -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-title"><i class="fas fa-fire"></i> الأكثر شهرة</div>
+        <a href="#" class="section-link">عرض المزيد <i class="fas fa-arrow-left"></i></a>
+    </div>
+    <div class="products-grid" id="popularGrid"></div>
+</div>
+
+<!-- 🎖️ الأكثر مبيعاً -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-title"><i class="fas fa-trophy"></i> الأكثر مبيعاً</div>
+        <a href="#" class="section-link">عرض المزيد <i class="fas fa-arrow-left"></i></a>
+    </div>
+    <div class="products-grid" id="bestsellerGrid"></div>
+</div>
+
+<!-- ⚡ عروض خاصة -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-title"><i class="fas fa-tags"></i> عروض خاصة</div>
+        <a href="#" class="section-link">عرض المزيد <i class="fas fa-arrow-left"></i></a>
+    </div>
+    <div class="products-grid" id="offersGrid"></div>
+</div>
+
+<!-- 🆕 جديد -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-title"><i class="fas fa-newspaper"></i> جديد</div>
+        <a href="#" class="section-link">عرض المزيد <i class="fas fa-arrow-left"></i></a>
+    </div>
+    <div class="products-grid" id="newGrid"></div>
+</div>
+
+<div class="footer">
+    <p>© 2025 Falcon Store - جميع الحقوق محفوظة</p>
+</div>
+
+<div class="cart-icon" id="cartIcon">
+    <i class="fas fa-shopping-cart"></i>
+    <span class="cart-count" id="cartCount">0</span>
+</div>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="cart.js"></script>
+<script>
+    // بيانات المنتجات
+    const allProducts = {
+        "Free Fire": { img: "photos/freefire.jpg", price: 55, page: "freefire.html", sales: 1234, popular: 95 },
+        "PUBG": { img: "photos/pubg.jpg", price: 100, page: "pubg.html", sales: 987, popular: 88 },
+        "Call of Duty": { img: "photos/cod.jpg", price: 100, page: "cod.html", sales: 765, popular: 82 },
+        "eFootball": { img: "photos/pes.jpg", price: 60, page: "pes.html", sales: 543, popular: 70 },
+        "FIFA": { img: "photos/fifa.jpg", price: 60, page: "fifa.html", sales: 876, popular: 85 },
+        "Roblox": { img: "photos/roblox.jpg", price: 100, page: "roblox.html", sales: 654, popular: 78 },
+        "Minecraft": { img: "photos/minecraft.jpg", price: 60, page: "minecraft.html", sales: 432, popular: 65 },
+        "TikTok": { img: "photos/tiktok.jpg", price: 60, page: "tiktok.html", sales: 321, popular: 60 },
+        "ChatGPT Plus": { img: "photos/chatgpt.jpg", price: 350, page: "chatgpt.html", sales: 210, popular: 55 },
+        "Netflix": { img: "photos/netflix.jpg", price: 250, page: "netflix.html", sales: 189, popular: 52 },
+        "Xbox": { img: "photos/xbox.jpg", price: 300, page: "xbox.html", sales: 167, popular: 48 },
+        "Spotify": { img: "photos/spotify.jpg", price: 100, page: "spotify.html", sales: 145, popular: 45 },
+        "Disney+": { img: "photos/disney.jpg", price: 150, page: "disney.html", sales: 123, popular: 42 },
+        "Canva": { img: "photos/canva.jpg", price: 120, page: "canva.html", sales: 98, popular: 38 },
+        "Adobe": { img: "photos/adobe.jpg", price: 500, page: "adobe.html", sales: 76, popular: 35 },
+        "Gemini AI": { img: "photos/gemini.jpg", price: 250, page: "gemini.html", sales: 54, popular: 30 }
+    };
+    
+    const popularProducts = Object.entries(allProducts).sort((a, b) => b[1].popular - a[1].popular).slice(0, 8);
+    const bestsellerProducts = Object.entries(allProducts).sort((a, b) => b[1].sales - a[1].sales).slice(0, 8);
+    const offersProducts = [["Free Fire", 55, 45], ["PUBG", 100, 85], ["Call of Duty", 100, 85], ["Roblox", 100, 85]];
+    const newProducts = Object.entries(allProducts).slice(-4);
+    
+    function renderProductGrid(containerId, products, isOffer = false) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = products.map(p => {
+            const name = p[0], data = p[1];
+            const price = isOffer ? p[2] : data.price;
+            const originalPrice = isOffer ? data.price : null;
+            return `
+                <div class="product-card" onclick="location.href='${data.page}'">
+                    ${isOffer ? '<div class="badge">خصم</div>' : ''}
+                    <img src="${data.img}" alt="${name}" onerror="this.src='https://placehold.co/200x150/D32F2F/white?text=${name}'">
+                    <h3>${name}</h3>
+                    <div class="product-price">${price} ج.م</div>
+                    ${originalPrice ? `<div style="text-decoration:line-through; font-size:0.7rem; color:#999">${originalPrice} ج.م</div>` : ''}
+                    <button class="shop-btn">🛒 شحن الآن</button>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    renderProductGrid('popularGrid', popularProducts);
+    renderProductGrid('bestsellerGrid', bestsellerProducts);
+    renderProductGrid('offersGrid', offersProducts, true);
+    renderProductGrid('newGrid', newProducts);
+    
+    // البحث
+    document.getElementById("searchBtn").addEventListener("click", () => {
+        const term = document.getElementById("searchInput").value.toLowerCase();
+        const found = Object.keys(allProducts).find(name => name.toLowerCase().includes(term));
+        if (found) location.href = allProducts[found].page;
+        else alert("❌ لا توجد نتائج");
+    });
+    document.getElementById("searchInput").addEventListener("keypress", (e) => {
+        if (e.key === "Enter") document.getElementById("searchBtn").click();
+    });
+    
+    // السلايدر
+    let slideIndex = 0;
+    const slider = document.getElementById("slider");
+    const slides = document.querySelectorAll(".slide");
+    const dotsContainer = document.getElementById("dots");
+    let autoInterval;
+    function updateSlider() { slider.style.transform = `translateX(-${slideIndex * 100}%)`; document.querySelectorAll(".dot").forEach((dot, i) => dot.classList.toggle("active", i === slideIndex)); }
+    function nextSlide() { slideIndex = (slideIndex + 1) % slides.length; updateSlider(); }
+    function prevSlide() { slideIndex = (slideIndex - 1 + slides.length) % slides.length; updateSlider(); }
+    function startAuto() { autoInterval = setInterval(nextSlide, 5000); }
+    slides.forEach((_, i) => { const dot = document.createElement("div"); dot.classList.add("dot"); dot.onclick = () => { slideIndex = i; updateSlider(); clearInterval(autoInterval); startAuto(); }; dotsContainer.appendChild(dot); });
+    updateSlider(); startAuto();
+    document.getElementById("prevBtn").addEventListener("click", () => { prevSlide(); clearInterval(autoInterval); startAuto(); });
+    document.getElementById("nextBtn").addEventListener("click", () => { nextSlide(); clearInterval(autoInterval); startAuto(); });
+    slider.addEventListener("mouseenter", () => clearInterval(autoInterval));
+    slider.addEventListener("mouseleave", startAuto);
+    
+    // الثيم الداكن
+    if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
+    document.getElementById("themeToggle").addEventListener("click", () => {
+        document.body.classList.toggle('dark');
+        localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    });
+    
+    // ========== Firebase Auth UI ==========
+    onAuthStateChanged(async (user) => {
+        const loginBtn = document.getElementById('loginBtnNav');
+        const signupBtn = document.getElementById('signupBtnNav');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const userNameSpan = document.getElementById('userNameDisplay');
+        
+        if (user) {
+            loginBtn.style.display = 'none';
+            signupBtn.style.display = 'none';
+            logoutBtn.style.display = 'inline-block';
+            let points = await getLoyaltyPoints();
+            userNameSpan.innerHTML = `👋 مرحباً, ${user.email} | <a href="profile.html">📝 ملفي الشخصي</a> | <a href="orders.html">📦 طلباتي</a> | 🏆 ${points} نقطة`;
+        } else {
+            loginBtn.style.display = 'inline-block';
+            signupBtn.style.display = 'inline-block';
+            logoutBtn.style.display = 'none';
+            userNameSpan.innerHTML = '⚠️ يرجى تسجيل الدخول لاستخدام المتجر';
+        }
+    });
+    
+    document.getElementById('loginBtnNav').addEventListener('click', () => { window.location.href = 'login.html'; });
+    document.getElementById('signupBtnNav').addEventListener('click', () => { window.location.href = 'login.html?mode=signup'; });
+    document.getElementById('logoutBtn').addEventListener('click', async () => { await logout(); window.location.reload(); });
+</script>
+</body>
+</html>

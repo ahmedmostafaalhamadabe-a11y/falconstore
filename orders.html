@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سجل الطلبات | Falcon Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .orders-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+        .orders-card {
+            background: var(--bg-card);
+            border-radius: 2rem;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+        }
+        .orders-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .orders-header i {
+            font-size: 3rem;
+            color: #D32F2F;
+        }
+        .order-item {
+            background: var(--bg-body);
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .order-date {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        .order-status {
+            background: #FF9800;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+        }
+        .order-status.completed {
+            background: #4CAF50;
+        }
+        .order-details {
+            font-size: 0.9rem;
+        }
+        .order-details p {
+            margin: 0.3rem 0;
+        }
+        .no-orders {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+        .back-home {
+            display: inline-block;
+            margin-top: 1rem;
+            color: #D32F2F;
+            text-decoration: none;
+        }
+        .logout-btn {
+            background: transparent;
+            border: 1px solid #D32F2F;
+            color: #D32F2F;
+            padding: 8px 16px;
+            border-radius: 60px;
+            cursor: pointer;
+            margin-top: 1rem;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="orders-container">
+    <div class="orders-card">
+        <div class="orders-header">
+            <i class="fas fa-history"></i>
+            <h2>سجل الطلبات</h2>
+        </div>
+        
+        <div id="ordersList" class="orders-list">
+            <div class="no-orders">🔄 جاري التحميل...</div>
+        </div>
+        
+        <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
+        <div style="text-align: center; margin-top: 1rem;">
+            <a href="index.html" class="back-home"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
+        </div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+    async function loadOrders() {
+        const user = getCurrentUser();
+        if (!user) {
+            window.location.href = 'login.html';
+            return;
+        }
+        
+        const orders = await getOrders();
+        const container = document.getElementById('ordersList');
+        
+        if (orders.length === 0) {
+            container.innerHTML = '<div class="no-orders">📭 لا توجد طلبات سابقة</div>';
+            return;
+        }
+        
+        container.innerHTML = orders.map(order => `
+            <div class="order-item">
+                <div class="order-header">
+                    <span class="order-date">📅 ${order.date ? new Date(order.date.toDate()).toLocaleDateString('ar-EG') : 'تاريخ غير محدد'}</span>
+                    <span class="order-status ${order.status === 'completed' ? 'completed' : ''}">${order.status === 'completed' ? '✅ مكتمل' : '⏳ قيد التنفيذ'}</span>
+                </div>
+                <div class="order-details">
+                    <p><strong>🎮 اللعبة/الخدمة:</strong> ${order.gameName}</p>
+                    <p><strong>🆔 الـ ID:</strong> ${order.gameId || 'غير محدد'}</p>
+                    <p><strong>📦 المنتج:</strong> ${order.amount}</p>
+                    <p><strong>💰 السعر:</strong> ${order.price} ج.م</p>
+                    <p><strong>💳 طريقة الدفع:</strong> ${order.paymentMethod}</p>
+                    <p><strong>⭐ نقاط الولاء:</strong> +${order.points} نقطة</p>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+        await logout();
+        window.location.href = 'login.html';
+    });
+    
+    onAuthStateChanged((user) => {
+        if (!user) {
+            window.location.href = 'login.html';
+        } else {
+            loadOrders();
+        }
+    });
+</script>
+</body>
+</html>
