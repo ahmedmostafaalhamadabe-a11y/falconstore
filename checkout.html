@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>إتمام الدفع | Falcon Store</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#D32F2F">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Falcon Store">
+    <link rel="apple-touch-icon" href="/photos/logo-192.png">
+    
+    <style>
+        .checkout-container { max-width: 650px; margin: 2rem auto; padding: 1rem; }
+        
+        .checkout-card {
+            background: var(--bg-surface);
+            border-radius: 32px;
+            padding: 2rem;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .checkout-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .checkout-header h2 {
+            color: var(--text-primary);
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .checkout-header h2 i {
+            color: var(--primary);
+        }
+        
+        .order-summary {
+            background: linear-gradient(135deg, var(--bg-body), var(--bg-elevated));
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .order-summary-title {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-light);
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        
+        .total-row {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary);
+            border-top: 2px dashed var(--border-light);
+            padding-top: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        
+        .payment-number {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            border-radius: 24px;
+            padding: 1.5rem;
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .payment-number::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: paymentGlow 6s ease-in-out infinite;
+        }
+        
+        @keyframes paymentGlow {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-5%, -5%); }
+        }
+        
+        .payment-number .label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .payment-number .number {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .copy-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 60px;
+            margin-top: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .copy-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.02);
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 60px;
+            border: 1.5px solid var(--border-light);
+            background: var(--bg-body);
+            color: var(--text-primary);
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(211,47,47,0.1);
+        }
+        
+        .file-upload {
+            border: 2px dashed var(--border-light);
+            border-radius: 24px;
+            padding: 2rem;
+            text-align: center;
+            margin: 1rem 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--bg-body);
+        }
+        
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: rgba(211,47,47,0.05);
+        }
+        
+        .file-upload i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .preview-image {
+            max-width: 150px;
+            max-height: 150px;
+            margin-top: 1rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 1rem;
+            border: none;
+            border-radius: 60px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .confirm-btn {
+            background: linear-gradient(135deg, var(--success), #2E7D32);
+            color: white;
+        }
+        
+        .later-btn {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .cancel-btn {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .countdown {
+            text-align: center;
+            margin-top: 1rem;
+            padding: 0.8rem;
+            background: var(--bg-body);
+            border-radius: 60px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .facebook-guarantee {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-light);
+            font-size: 0.85rem;
+        }
+        
+        .facebook-guarantee a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 550px) {
+            .checkout-card { padding: 1.25rem; }
+            .payment-number .number { font-size: 1.3rem; letter-spacing: 2px; }
+            .action-buttons { gap: 0.5rem; }
+            .action-btn { padding: 0.75rem; font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body class="light">
+
+<div id="falconLoader">
+    <div class="loader-content">
+        <div class="loader-dots-premium">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="loader-text-premium">جارِ التحميل...</div>
+    </div>
+</div>
+
+<header class="main-header">
+    <div class="header-container">
+        <div class="logo-wrapper">
+            <img src="photos/logo.png" alt="شعار المتجر" style="width:45px;height:45px;border-radius:16px;object-fit:cover;" onerror="this.src='https://placehold.co/45x45/D32F2F/white?text=F'">
+            <span class="logo-text">Falcon Store</span>
+        </div>
+        <a href="index.html" style="color: white; text-decoration: none;"><i class="fas fa-home"></i> الرئيسية</a>
+    </div>
+</header>
+
+<div class="checkout-container">
+    <div class="checkout-card">
+        <div class="checkout-header">
+            <h2><i class="fas fa-shopping-cart"></i> إتمام الدفع</h2>
+            <p style="color: var(--text-secondary);">أكمل بياناتك لتأكيد الطلب</p>
+        </div>
+        
+        <div class="order-summary" id="orderSummary"></div>
+        
+        <div id="egyptPaymentSection">
+            <div class="payment-number">
+                <div class="label">📱 رقم التحويل (كاش)</div>
+                <div class="number" id="paymentNumber">0112 1816 129</div>
+                <button class="copy-btn" onclick="copyPaymentNumber()"><i class="far fa-copy"></i> نسخ الرقم</button>
+                <p style="font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.8;">فودافون كاش | اتصالات كاش | اورنج كاش | انستا باي</p>
+            </div>
+        </div>
+        
+        <div id="internationalPaymentSection" style="display: none;">
+            <div class="payment-number" style="background: linear-gradient(135deg, #1a1a2e, #16213e);">
+                <div class="label">💵 للتحويل بالدولار</div>
+                <div class="number" id="usdAmount">$0.00</div>
+                <button class="copy-btn" onclick="copyUSDAmount()"><i class="far fa-copy"></i> نسخ المبلغ</button>
+                <p style="font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.8;">سيتم التواصل معك عبر الواتساب لإتمام الدفع</p>
+            </div>
+        </div>
+        
+        <input type="text" id="senderNumber" class="input-field" placeholder="📱 الرقم المحول منه *" required>
+        <input type="tel" id="whatsappNumber" class="input-field" placeholder="💬 رقم الواتساب للتواصل *" value="01" required>
+        
+        <div class="file-upload" onclick="document.getElementById('receiptImage').click()">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>📸 اضغط لرفع صورة التحويل *</p>
+            <input type="file" id="receiptImage" accept="image/*" onchange="previewImage(event)" required style="display:none;">
+        </div>
+        <img id="imagePreview" class="preview-image" style="display: none;">
+        
+        <div class="action-buttons">
+            <button class="action-btn cancel-btn" onclick="cancelOrder()"><i class="fas fa-times"></i> إلغاء</button>
+            <button class="action-btn later-btn" onclick="payLater()"><i class="fas fa-clock"></i> سأحول لاحقاً</button>
+            <button class="action-btn confirm-btn" id="confirmBtn" onclick="confirmPayment()"><i class="fas fa-check"></i> تم التحويل</button>
+        </div>
+        
+        <div class="countdown" id="countdown"></div>
+        
+        <div class="facebook-guarantee">
+            <i class="fab fa-facebook" style="color: #1877F2;"></i>
+            <a href="https://www.facebook.com/share/p/1D5sK63Ryi/" target="_blank">شاهد آراء عملائنا على فيسبوك</a>
+            <span style="color: var(--text-muted);"> - ضمان حقك كامل 🔒</span>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="confirmPopup">
+    <div class="modal-card">
+        <i class="fas fa-check-circle" style="font-size: 3rem; color: var(--success);"></i>
+        <h3>تأكيد التحويل</h3>
+        <p>هل أنت متأكد أنك قمت بالتحويل؟</p>
+        <p style="color: var(--danger); font-size: 0.8rem;">⚠️ التحويلات تنعكس أحياناً، تأكد من نجاح العملية</p>
+        <div class="modal-actions">
+            <button class="btn btn-primary" id="finalConfirmBtn" onclick="finalConfirm()">نعم، تم التحويل</button>
+            <button class="btn btn-outline" onclick="closePopup()">لم أحول بعد</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+
+<script>
+    window.addEventListener('load', ()=>{
+        const l=document.getElementById('falconLoader');
+        if(l){ l.classList.add('fade-out'); setTimeout(()=>l.style.display='none',1000); }
+    });
+    setTimeout(()=>{
+        const l=document.getElementById('falconLoader');
+        if(l&&l.style.display!=='none'){ l.classList.add('fade-out'); setTimeout(()=>l.style.display='none',1000); }
+    },3000);
+
+    const orderData = JSON.parse(sessionStorage.getItem('currentOrder'));
+    let selectedImage = null;
+    let countdownInterval;
+    let secondsLeft = 10;
+    let userCurrency = 'EGP';
+    let userCountry = 'EG';
+    let totalPriceEGP = 0;
+    let totalPriceUSD = 0;
+    
+    onAuthStateChanged(async (user) => {
+        if (!user) { showLoginRequiredModal(); return; }
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        const data = userDoc.data() || {};
+        userCurrency = data.currency || 'EGP';
+        userCountry = data.country || 'EG';
+        
+        totalPriceEGP = orderData.totalPrice;
+        totalPriceUSD = (totalPriceEGP / 55).toFixed(2);
+        
+        if (userCountry !== 'EG') {
+            document.getElementById('egyptPaymentSection').style.display = 'none';
+            document.getElementById('internationalPaymentSection').style.display = 'block';
+            document.getElementById('usdAmount').textContent = `$${totalPriceUSD}`;
+        }
+    });
+    
+    if (!orderData) { window.location.href = 'index.html'; }
+    
+    const summary = document.getElementById('orderSummary');
+    summary.innerHTML = `
+        <div class="order-summary-title"><i class="fas fa-receipt"></i> ملخص الطلب</div>
+        <div class="summary-row"><span>🎮 اللعبة:</span><span>${orderData.game}</span></div>
+        <div class="summary-row"><span>📦 النوع:</span><span>${orderData.type === 'id' ? 'شحن بالـ ID' : 'شحن بالأكونت'}</span></div>
+        <div class="summary-row"><span>🛒 المنتج:</span><span>${orderData.item.name}</span></div>
+        <div class="summary-row"><span>🔢 الكمية:</span><span>${orderData.quantity}</span></div>
+        ${orderData.playerId ? `<div class="summary-row"><span>🆔 ID اللاعب:</span><span>${orderData.playerId}</span></div>` : ''}
+        ${orderData.accountData ? `<div class="summary-row"><span>📱 المنصة:</span><span>${orderData.accountData.platform}</span></div>` : ''}
+        ${orderData.orderNote ? `<div class="summary-row"><span>📝 ملاحظة:</span><span>${orderData.orderNote}</span></div>` : ''}
+        <div class="summary-row total-row"><span>💰 الإجمالي:</span><span id="displayTotal">${totalPriceEGP} ج.م</span></div>
+    `;
+    
+    function copyPaymentNumber() { 
+        navigator.clipboard.writeText('01121816129'); 
+        showToast('✅ تم نسخ الرقم', 'success'); 
+        if (typeof playClickSound === 'function') playClickSound(); 
+        else new Audio('sounds/click.mp3').play().catch(()=>{});
+    }
+    
+    function copyUSDAmount() { 
+        navigator.clipboard.writeText(totalPriceUSD); 
+        showToast('✅ تم نسخ المبلغ', 'success'); 
+        if (typeof playClickSound === 'function') playClickSound(); 
+        else new Audio('sounds/click.mp3').play().catch(()=>{});
+    }
+    
+    function previewImage(e) { 
+        const f = e.target.files[0]; 
+        if (f) { 
+            selectedImage = f; 
+            const r = new FileReader(); 
+            r.onload = ev => { 
+                const p = document.getElementById('imagePreview'); 
+                p.src = ev.target.result; 
+                p.style.display = 'block'; 
+            }; 
+            r.readAsDataURL(f); 
+        } 
+    }
+    
+    function startCountdown() { 
+        const c = document.getElementById('countdown'), b = document.getElementById('confirmBtn'); 
+        b.disabled = true; 
+        secondsLeft = 10; 
+        countdownInterval = setInterval(() => { 
+            secondsLeft--; 
+            c.textContent = `⏳ يمكنك التأكيد بعد ${secondsLeft} ثانية`; 
+            if (secondsLeft <= 0) { 
+                clearInterval(countdownInterval); 
+                c.textContent = '✅ يمكنك التأكيد الآن'; 
+                b.disabled = false; 
+            } 
+        }, 1000); 
+    }
+    startCountdown();
+    
+    function confirmPayment() {
+        const u = getCurrentUser(); 
+        if (!u) { showLoginRequiredModal(); return; }
+        const s = document.getElementById('senderNumber').value.trim(), w = document.getElementById('whatsappNumber').value.trim();
+        if (!s) { showToast('❌ يرجى إدخال الرقم المحول منه', 'error'); return; }
+        if (!w) { showToast('❌ يرجى إدخال رقم الواتساب', 'error'); return; }
+        if (!selectedImage) { showToast('❌ يرجى رفع صورة التحويل', 'error'); return; }
+        if (typeof playClickSound === 'function') playClickSound();
+        else new Audio('sounds/click.mp3').play().catch(()=>{});
+        document.getElementById('confirmPopup').classList.add('show');
+    }
+    
+    function closePopup() { document.getElementById('confirmPopup').classList.remove('show'); }
+    
+    async function finalConfirm() {
+        closePopup(); 
+        const u = getCurrentUser(); 
+        if (!u) { showLoginRequiredModal(); return; }
+        if (typeof playPaymentSound === 'function') playPaymentSound();
+        else new Audio('sounds/payment.mp3').play().catch(()=>{});
+        const s = document.getElementById('senderNumber').value.trim(), w = document.getElementById('whatsappNumber').value.trim();
+        const b = document.getElementById('confirmBtn'); 
+        b.disabled = true; 
+        b.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحفظ...';
+        try {
+            const r = new FileReader();
+            r.onload = async function(e) {
+                const oid = 'ORD-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+                const full = { ...orderData, orderId: oid, userId: u.uid, userEmail: u.email, senderNumber: s, whatsappNumber: w, receiptImage: e.target.result, status: 'pending', createdAt: firebase.firestore.FieldValue.serverTimestamp() };
+                await db.collection('orders').doc(oid).set(full);
+                await db.collection('users').doc(u.uid).collection('user_orders').doc(oid).set(full);
+                sessionStorage.setItem('currentOrderId', oid);
+                window.location.href = 'payment-pending.html';
+            };
+            r.onerror = () => { showToast('❌ خطأ في قراءة الصورة', 'error'); b.disabled = false; b.innerHTML = '<i class="fas fa-check"></i> تم التحويل'; };
+            r.readAsDataURL(selectedImage);
+        } catch (e) { showToast('❌ حدث خطأ: ' + e.message, 'error'); b.disabled = false; b.innerHTML = '<i class="fas fa-check"></i> تم التحويل'; }
+    }
+    
+    function payLater() { 
+        showToast('✅ تم حفظ الطلب. يمكنك إكماله لاحقاً', 'success'); 
+        setTimeout(() => window.location.href = 'index.html', 1500); 
+    }
+    
+    function cancelOrder() { 
+        showConfirmModal('هل أنت متأكد من إلغاء الطلب؟', () => { 
+            sessionStorage.removeItem('currentOrder'); 
+            window.location.href = 'index.html'; 
+        }); 
+    }
+    
+    function showLoginRequiredModal() { 
+        const o = document.createElement('div'); 
+        o.className = 'modal-overlay'; 
+        o.style.display = 'flex'; 
+        o.style.zIndex = '10000'; 
+        o.innerHTML = `<div class="modal-card"><div class="modal-icon">🔐</div><h2>تسجيل الدخول مطلوب</h2><p>يجب تسجيل الدخول لإتمام الدفع</p><div class="modal-actions"><button class="btn btn-primary" onclick="window.location.href='login.html'">تسجيل الدخول</button><button class="btn btn-outline" onclick="window.location.href='signup.html'">إنشاء حساب</button></div></div>`; 
+        document.body.appendChild(o); 
+        o.addEventListener('click', ev => { if (ev.target === o) o.remove(); }); 
+        if (typeof playTingSound === 'function') playTingSound();
+        else new Audio('sounds/ting.mp3').play().catch(()=>{});
+    }
+    
+    function showToast(m, t) { 
+        const to = document.createElement('div'); 
+        to.style.cssText = `position:fixed;bottom:120px;left:50%;transform:translateX(-50%);background:${t==='success'?'var(--success)':'var(--danger)'};color:white;padding:12px 24px;border-radius:60px;z-index:10000;font-weight:500;`; 
+        to.textContent = m; 
+        document.body.appendChild(to); 
+        setTimeout(() => to.remove(), 3000); 
+        if (t==='success') { 
+            if (typeof playTingSound === 'function') playTingSound(); 
+            else new Audio('sounds/ting.mp3').play().catch(()=>{});
+        } else { 
+            if (typeof playErrorSound === 'function') playErrorSound(); 
+            else new Audio('sounds/error.mp3').play().catch(()=>{});
+        }
+    }
+    
+    function showConfirmModal(m, onConfirm) { 
+        const o = document.createElement('div'); 
+        o.className = 'modal-overlay'; 
+        o.style.display = 'flex'; 
+        o.style.zIndex = '10000'; 
+        o.innerHTML = `<div class="modal-card"><i class="fas fa-question-circle" style="font-size:3rem;color:var(--warning);"></i><h3>تأكيد</h3><p>${m}</p><div class="modal-actions"><button class="btn btn-primary" id="confirmYes">نعم</button><button class="btn btn-outline" id="confirmNo">لا</button></div></div>`; 
+        document.body.appendChild(o); 
+        document.getElementById('confirmYes').addEventListener('click', () => { 
+            o.remove(); 
+            onConfirm(); 
+            if (typeof playTingSound === 'function') playTingSound();
+            else new Audio('sounds/ting.mp3').play().catch(()=>{});
+        }); 
+        document.getElementById('confirmNo').addEventListener('click', () => { 
+            o.remove(); 
+            if (typeof playClickSound === 'function') playClickSound();
+            else new Audio('sounds/click.mp3').play().catch(()=>{});
+        }); 
+        o.addEventListener('click', ev => { if (ev.target === o) o.remove(); }); 
+    }
+    
+    window.copyPaymentNumber = copyPaymentNumber;
+    window.copyUSDAmount = copyUSDAmount;
+    window.previewImage = previewImage;
+    window.confirmPayment = confirmPayment;
+    window.closePopup = closePopup;
+    window.finalConfirm = finalConfirm;
+    window.payLater = payLater;
+    window.cancelOrder = cancelOrder;
+</script>
+</body>
+</html>

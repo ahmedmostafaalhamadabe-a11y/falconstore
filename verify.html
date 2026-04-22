@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>تأكيد الرمز | Falcon Store</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            padding: 1rem;
+        }
+        .verify-card {
+            background: var(--bg-surface);
+            border-radius: var(--radius-xl);
+            padding: 2.5rem;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+        }
+        .verify-card h2 { color: var(--text-primary); margin-bottom: 0.5rem; }
+        .verify-card p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem; }
+        .input-wrapper { position: relative; margin: 1.5rem 0; }
+        .otp-input {
+            width: 100%;
+            padding: 15px 50px 15px 15px;
+            font-size: 1.2rem;
+            text-align: center;
+            letter-spacing: 8px;
+            border-radius: var(--radius-full);
+            border: 2px solid var(--border-light);
+            background: var(--bg-body);
+            font-family: monospace;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+        .otp-input:focus { outline: none; border-color: var(--primary); }
+        .paste-btn {
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: var(--radius-full);
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+        .resend-btn { background: var(--text-muted); margin-top: 0.5rem; }
+        .back-home { display: inline-block; margin-top: 1.5rem; color: var(--text-muted); text-decoration: none; font-size: 0.9rem; }
+        .error-msg { color: var(--danger); font-size: 0.85rem; margin-top: 0.5rem; min-height: 24px; }
+        .info-box { background: #FFF3CD; border-radius: var(--radius-md); padding: 12px; margin-bottom: 1.5rem; color: #856404; font-size: 0.85rem; }
+        body.dark .info-box { background: #3E2723; color: #FFB74D; }
+        .info-text { color: var(--text-muted); font-size: 0.8rem; margin-top: 0.5rem; }
+    </style>
+</head>
+<body>
+
+<div id="falconLoader">
+    <div class="loader-content">
+        <div class="loader-dots-premium">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="loader-text-premium">جارِ التحميل...</div>
+    </div>
+</div>
+
+<div class="verify-card">
+    <h2>🔐 تأكيد رمز التحقق</h2>
+    <p>تم إرسال رمز التحقق إلى بريدك الإلكتروني</p>
+    
+    <div class="info-box">
+        <i class="fas fa-copy"></i>
+        <span>💡 يمكنك نسخ الرمز ولصقه مباشرة</span>
+    </div>
+    
+    <p class="info-text" id="emailDisplay"></p>
+    
+    <div class="input-wrapper">
+        <input type="text" id="otpCode" class="otp-input" placeholder="000000" maxlength="6" inputmode="numeric">
+        <button class="paste-btn" id="pasteBtn" title="لصق الرمز"><i class="fas fa-paste"></i></button>
+    </div>
+    
+    <div id="errorMsg" class="error-msg"></div>
+    
+    <button class="login-btn" id="verifyBtn">✅ تأكيد الرمز</button>
+    <button class="login-btn resend-btn" id="resendBtn">🔄 إعادة إرسال الرمز</button>
+    
+    <a href="login.html" class="back-home">← تغيير البريد الإلكتروني</a>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+
+<script>
+    window.addEventListener('load', ()=>{
+        const l=document.getElementById('falconLoader');
+        if(l){ l.classList.add('fade-out'); setTimeout(()=>l.style.display='none',1000); }
+    });
+    setTimeout(()=>{
+        const l=document.getElementById('falconLoader');
+        if(l&&l.style.display!=='none'){ l.classList.add('fade-out'); setTimeout(()=>l.style.display='none',1000); }
+    },5000);
+
+    const email = sessionStorage.getItem('pendingEmail');
+    const emailDisplay = document.getElementById('emailDisplay');
+    if (emailDisplay) emailDisplay.innerHTML = email ? `📧 البريد: ${email}` : '⚠️ لم يتم العثور على بريد';
+    
+    let savedOtp = sessionStorage.getItem('pendingOTP');
+    const otpInput = document.getElementById('otpCode');
+    const errorMsg = document.getElementById('errorMsg');
+
+    async function pasteFromClipboard() {
+        try {
+            const text = await navigator.clipboard.readText();
+            const numbers = text.match(/\d/g);
+            if (numbers) {
+                otpInput.value = numbers.join('').slice(0, 6);
+                if (typeof showSuccessModal === 'function') showSuccessModal('تم لصق الرمز');
+                else alert('تم لصق الرمز');
+            } else {
+                if (typeof showErrorModal === 'function') showErrorModal('لم يتم العثور على أرقام');
+                else alert('لم يتم العثور على أرقام');
+            }
+        } catch (e) {
+            if (typeof showErrorModal === 'function') showErrorModal('فشل اللصق');
+            else alert('فشل اللصق');
+        }
+    }
+
+    document.getElementById('pasteBtn')?.addEventListener('click', pasteFromClipboard);
+    
+    otpInput?.addEventListener('input', e => { e.target.value = e.target.value.replace(/[^0-9]/g, '').slice(0, 6); });
+    otpInput?.addEventListener('keypress', e => { if (e.key === 'Enter') completeLogin(); });
+
+    function completeLogin() {
+        const code = otpInput.value.trim();
+        if (code.length !== 6) { errorMsg.innerText = '❌ يرجى إدخال 6 أرقام'; return; }
+        if (code !== savedOtp) { errorMsg.innerText = '❌ رمز التحقق غير صحيح'; if (typeof playErrorSound === 'function') playErrorSound(); else new Audio('sounds/error.mp3').play().catch(()=>{}); return; }
+        
+        const pendingEmail = sessionStorage.getItem('pendingEmail');
+        sessionStorage.setItem('verifiedEmail', pendingEmail);
+        sessionStorage.setItem('emailVerified', 'true');
+        if (typeof playTingSound === 'function') playTingSound(); else new Audio('sounds/ting.mp3').play().catch(()=>{});
+        window.location.href = 'complete-profile.html';
+    }
+
+    async function resendCode() {
+        const pendingEmail = sessionStorage.getItem('pendingEmail');
+        if (!pendingEmail) { window.location.href = 'login.html'; return; }
+        const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
+        sessionStorage.setItem('pendingOTP', newOtp);
+        savedOtp = newOtp;
+        const sent = await sendEmailOTP(pendingEmail, newOtp);
+        if (sent) {
+            if (typeof showSuccessModal === 'function') showSuccessModal(`تم إعادة إرسال الرمز إلى ${pendingEmail}`);
+            else alert(`تم إعادة إرسال الرمز إلى ${pendingEmail}`);
+        } else {
+            errorMsg.innerText = '❌ فشل إعادة الإرسال';
+        }
+    }
+
+    document.getElementById('verifyBtn')?.addEventListener('click', completeLogin);
+    document.getElementById('resendBtn')?.addEventListener('click', resendCode);
+</script>
+</body>
+</html>

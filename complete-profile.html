@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>استكمال البيانات | Falcon Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .complete-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg-body); padding: 1rem; }
+        .complete-card { background: var(--bg-surface); border-radius: var(--radius-xl); padding: 2rem; max-width: 450px; width: 100%; border: 1px solid var(--border-light); text-align: center; box-shadow: var(--shadow-md); }
+        .complete-card h2 { color: var(--text-primary); margin-bottom: 1.5rem; }
+        .input-group { margin-bottom: 1.5rem; text-align: right; }
+        .input-group label { display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-weight: 600; }
+        .input-group select, .input-group input { width: 100%; padding: 12px 15px; border-radius: var(--radius-full); border: 1px solid var(--border-light); background: var(--bg-body); font-family: 'Cairo', sans-serif; font-size: 1rem; color: var(--text-primary); }
+        .phone-wrapper { display: flex; gap: 10px; align-items: center; }
+        .country-code { background: var(--bg-body); padding: 12px 15px; border-radius: var(--radius-full); border: 1px solid var(--border-light); font-weight: bold; color: var(--text-primary); }
+        .phone-wrapper input { flex: 1; }
+        .warning-note { background: #FFF3CD; border-radius: var(--radius-md); padding: 10px; margin: 20px 0; color: #856404; font-size: 0.8rem; display: flex; align-items: center; gap: 10px; }
+        body.dark .warning-note { background: #3E2723; color: #FFB74D; }
+        .warning-note i { font-size: 1.5rem; }
+        .save-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 14px; border-radius: var(--radius-full); font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .save-btn:hover { background: var(--primary-dark); }
+        .save-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+<div id="falconLoader">
+    <div class="loader-content">
+        <div class="loader-dots-premium">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="loader-text-premium">جارِ التحميل...</div>
+    </div>
+</div>
+
+<div class="complete-container">
+    <div class="complete-card">
+        <h2><i class="fas fa-user-check"></i> أكمل بياناتك</h2>
+        <p style="margin-bottom: 1.5rem; color: var(--text-muted);">هذه البيانات ضرورية لتحديد العملة وطرق الدفع</p>
+        
+        <div class="input-group">
+            <label><i class="fas fa-flag"></i> الدولة</label>
+            <select id="countrySelect"><option value="">اختر الدولة...</option></select>
+        </div>
+        
+        <div class="input-group">
+            <label><i class="fas fa-phone"></i> رقم الهاتف (للواتساب)</label>
+            <div class="phone-wrapper"><span class="country-code" id="dialCode">+20</span><input type="tel" id="phoneNumber" placeholder="مثال: 1223456789" inputmode="numeric"></div>
+        </div>
+        
+        <div class="input-group">
+            <label><i class="fas fa-coins"></i> العملة</label>
+            <select id="currencySelect">
+                <option value="EGP">جنيه مصري (ج.م)</option>
+                <option value="USD">دولار أمريكي ($)</option>
+                <option value="SAR">ريال سعودي (ر.س)</option>
+            </select>
+        </div>
+        
+        <div class="input-group">
+            <label><i class="fas fa-users"></i> كود الوكيل (اختياري)</label>
+            <input type="text" id="agentCode" placeholder="أدخل كود الإحالة إن وجد">
+        </div>
+        
+        <div class="warning-note"><i class="fas fa-exclamation-triangle"></i><span>⚠️ لا يمكن تغيير الدولة أو العملة لاحقاً. تأكد من صحة البيانات.</span></div>
+        
+        <button class="save-btn" id="saveProfileBtn">✅ حفظ واستكمال التسجيل</button>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+
+<script>
+    window.addEventListener('load', ()=>{
+        const l=document.getElementById('falconLoader');
+        if(l){ l.classList.add('fade-out'); setTimeout(()=>l.style.display='none',1000); }
+    });
+    setTimeout(()=>{
+        const l=document.getElementById('falconLoader');
+        if(l&&l.style.display!=='none'){ l.classList.add('fade-out'); setTimeout(()=>l.style.display='none',1000); }
+    },5000);
+
+    const countries = [
+        { name: "مصر", code: "EG", dial: "+20", currency: "EGP" }, { name: "السعودية", code: "SA", dial: "+966", currency: "SAR" },
+        { name: "الإمارات", code: "AE", dial: "+971", currency: "AED" }, { name: "الكويت", code: "KW", dial: "+965", currency: "KWD" },
+        { name: "قطر", code: "QA", dial: "+974", currency: "QAR" }, { name: "البحرين", code: "BH", dial: "+973", currency: "BHD" },
+        { name: "عمان", code: "OM", dial: "+968", currency: "OMR" }, { name: "الأردن", code: "JO", dial: "+962", currency: "JOD" },
+        { name: "العراق", code: "IQ", dial: "+964", currency: "IQD" }, { name: "لبنان", code: "LB", dial: "+961", currency: "LBP" },
+        { name: "المغرب", code: "MA", dial: "+212", currency: "MAD" }, { name: "الجزائر", code: "DZ", dial: "+213", currency: "DZD" },
+        { name: "تونس", code: "TN", dial: "+216", currency: "TND" }, { name: "الولايات المتحدة", code: "US", dial: "+1", currency: "USD" },
+        { name: "بريطانيا", code: "GB", dial: "+44", currency: "GBP" }
+    ];
+    const countrySelect = document.getElementById('countrySelect'), dialCodeSpan = document.getElementById('dialCode'), currencySelect = document.getElementById('currencySelect'), saveBtn = document.getElementById('saveProfileBtn');
+    countries.forEach(c => { const o = document.createElement('option'); o.value = c.code; o.setAttribute('data-dial', c.dial); o.setAttribute('data-currency', c.currency); o.textContent = c.name; countrySelect.appendChild(o); });
+    countrySelect.addEventListener('change', function() { const s = this.options[this.selectedIndex]; dialCodeSpan.textContent = s.getAttribute('data-dial') || '+20'; currencySelect.value = s.getAttribute('data-currency') || 'EGP'; });
+    saveBtn.addEventListener('click', async () => {
+        const verifiedEmail = sessionStorage.getItem('verifiedEmail');
+        if (!verifiedEmail) { if (typeof showErrorModal === 'function') showErrorModal('انتهت الجلسة'); else alert('انتهت الجلسة'); window.location.href='login.html'; return; }
+        const country = countrySelect.value, dialCode = dialCodeSpan.textContent, phone = document.getElementById('phoneNumber').value.trim(), currency = currencySelect.value, agentCode = document.getElementById('agentCode').value.trim();
+        if (!country || !phone || phone.length < 7) { if (typeof showErrorModal === 'function') showErrorModal('أكمل الحقول المطلوبة'); else alert('أكمل الحقول المطلوبة'); return; }
+        saveBtn.disabled = true; saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري إنشاء الحساب...';
+        try {
+            const tempPassword = Math.random().toString(36).slice(-8) + "Aa1@";
+            const userCredential = await signUpWithEmail(verifiedEmail, tempPassword);
+            const user = userCredential.user;
+            const accountNumber = await generateAccountNumber();
+            await db.collection('users').doc(user.uid).set({
+                email: verifiedEmail, displayName: verifiedEmail.split('@')[0], country, dialCode, phoneNumber: phone,
+                currency, agentCode: agentCode || null, accountNumber, loyaltyPoints: 50, profileCompleted: true,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            await sendEmailOTP(verifiedEmail, `كلمة المرور المؤقتة: ${tempPassword}\nيمكنك تغييرها من إعدادات الحساب`);
+            if (typeof playAccountCreatedSound === 'function') playAccountCreatedSound(); else new Audio('sounds/Account_created_successfully.mp3').play().catch(()=>{});
+            sessionStorage.removeItem('verifiedEmail'); sessionStorage.removeItem('pendingOTP'); sessionStorage.removeItem('pendingEmail');
+            sessionStorage.setItem('welcomeMessage', `✅ تم إنشاء حسابك بنجاح! رقم حسابك: #${accountNumber}. هدية 50 نجمة في انتظارك!`);
+            window.location.href = 'index.html';
+        } catch(e) { if (typeof showErrorModal === 'function') showErrorModal(e.message); else alert(e.message); saveBtn.disabled = false; saveBtn.innerHTML = '✅ حفظ واستكمال التسجيل'; }
+    });
+    onAuthStateChanged((u) => { if (!sessionStorage.getItem('verifiedEmail')) window.location.href = 'login.html'; });
+</script>
+</body>
+</html>

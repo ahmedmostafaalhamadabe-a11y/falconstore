@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>الملف الشخصي | Falcon Store</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#D32F2F">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Falcon Store">
+    <link rel="apple-touch-icon" href="/photos/logo-192.png">
+    
+    <style>
+        .profile-container { 
+            max-width: 800px; 
+            margin: 2rem auto; 
+            padding: 1rem;
+            max-height: calc(100vh - 80px);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            padding-bottom: 120px;
+        }
+        
+        .profile-container::-webkit-scrollbar { width: 5px; }
+        .profile-container::-webkit-scrollbar-track { background: var(--bg-body); border-radius: 10px; }
+        .profile-container::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+        
+        /* بطاقة العضوية التفاعلية (Flip Card) */
+        .membership-card-container {
+            perspective: 1000px;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .membership-card {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            border-radius: 24px;
+        }
+        
+        .membership-card-container.flipped .membership-card {
+            transform: rotateY(180deg);
+        }
+        
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 24px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .card-front {
+            background: linear-gradient(135deg, var(--primary), #000000);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid rgba(255,215,0,0.3);
+        }
+        
+        .card-front .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-front .card-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .card-front .card-chip {
+            font-size: 2rem;
+        }
+        
+        .card-front .card-number {
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            font-family: monospace;
+            background: rgba(255,255,255,0.15);
+            padding: 0.5rem;
+            border-radius: 12px;
+            display: inline-block;
+        }
+        
+        .card-front .card-name {
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+        
+        .card-back {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .card-back .card-strip {
+            background: #000;
+            height: 40px;
+            margin-top: 1rem;
+        }
+        
+        .card-back .card-cvv {
+            background: white;
+            color: black;
+            padding: 0.5rem;
+            border-radius: 8px;
+            text-align: right;
+            font-family: monospace;
+            margin-top: 0.5rem;
+        }
+        
+        .card-back .card-footer {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 1rem;
+        }
+        
+        .flip-hint {
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+        
+        /* شريط تقدم ذهبي (Shimmer Effect) */
+        .gold-progress {
+            background: linear-gradient(90deg, #FFD700, #FFA500, #FFD700);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+            border-radius: 60px;
+            margin: 1rem 0;
+            padding: 0.3rem;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        .gold-progress .progress-bar-inner {
+            background: var(--bg-surface);
+            border-radius: 60px;
+            height: 8px;
+            overflow: hidden;
+        }
+        
+        .gold-progress .progress-fill-gold {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 60px;
+            transition: width 0.5s ease;
+        }
+        
+        /* QR Code الإحالة */
+        .referral-section {
+            background: var(--bg-surface);
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-light);
+            text-align: center;
+        }
+        
+        .qr-container {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+        
+        .qr-code {
+            width: 150px;
+            height: 150px;
+            background: white;
+            border-radius: 16px;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .qr-code canvas {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .referral-link {
+            background: var(--bg-body);
+            padding: 0.75rem;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .referral-link code {
+            font-size: 0.8rem;
+            color: var(--primary);
+            word-break: break-all;
+        }
+        
+        .copy-referral-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 60px;
+            cursor: pointer;
+        }
+        
+        /* زر الخصوصية */
+        .privacy-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-body);
+            padding: 1rem;
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .privacy-toggle .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .privacy-toggle .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .privacy-toggle .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.3s;
+            border-radius: 34px;
+        }
+        
+        .privacy-toggle .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+        
+        .privacy-toggle input:checked + .slider {
+            background-color: var(--primary);
+        }
+        
+        .privacy-toggle input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        .profile-header {
+            background: linear-gradient(135deg, var(--bg-surface), var(--bg-elevated));
+            border-radius: 32px;
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            margin-bottom: 1.5rem;
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 60px;
+            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            color: white;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .avatar-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            font-size: 0.7rem;
+            padding: 6px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .profile-avatar:hover .avatar-overlay {
+            opacity: 1;
+        }
+        
+        .profile-name-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 0.25rem;
+            flex-wrap: wrap;
+        }
+        
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .edit-username-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            padding: 0.25rem;
+        }
+        
+        .edit-username-btn:hover {
+            color: var(--primary);
+            transform: scale(1.1);
+        }
+        
+        .username-display {
+            direction: ltr;
+            display: inline-block;
+            background: var(--bg-body);
+            padding: 0.2rem 0.8rem;
+            border-radius: 60px;
+            font-size: 0.85rem;
+            color: var(--primary);
+        }
+        
+        .verified-badge { color: #2196F3; font-size: 1.2rem; }
+        .profile-email { color: var(--text-muted); margin-bottom: 0.5rem; }
+        
+        .profile-meta {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .profile-meta span {
+            background: var(--bg-body);
+            padding: 0.3rem 1rem;
+            border-radius: 60px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .profile-rank {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 0.3rem 1.2rem;
+            border-radius: 60px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .stars-section {
+            background: linear-gradient(135deg, var(--secondary), #FFA000);
+            border-radius: 24px;
+            padding: 1.5rem;
+            color: #8B0000;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stars-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .stars-count {
+            font-size: 3rem;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .level-progress {
+            margin-top: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 60px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #8B0000;
+            width: 0%;
+            border-radius: 60px;
+            transition: width 0.5s ease;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .info-card {
+            background: var(--bg-surface);
+            border-radius: 24px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-light);
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .info-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+        }
+        
+        .info-card i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .info-card .number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+        
+        .achievements-section {
+            background: var(--bg-surface);
+            border-radius: 24px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-light);
+            margin-bottom: 1.5rem;
+        }
+        
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .achievement-item {
+            text-align: center;
+            padding: 0.75rem;
+            background: var(--bg-body);
+            border-radius: 16px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .achievement-item.locked { opacity: 0.4; }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 0.8rem;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .avatar-selector {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.75rem;
+            margin: 1rem 0;
+        }
+        
+        .avatar-option {
+            width: 70px;
+            height: 70px;
+            border-radius: 35px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        
+        .avatar-option.active { border-color: var(--primary); }
+        .avatar-option img { width: 100%; height: 100%; object-fit: cover; }
+        
+        @media (max-width: 600px) {
+            .info-grid { grid-template-columns: 1fr; }
+            .achievements-grid { grid-template-columns: repeat(2, 1fr); }
+            .avatar-selector { grid-template-columns: repeat(3, 1fr); }
+            .action-buttons { flex-direction: column; }
+            .membership-card { height: 200px; }
+        }
+    </style>
+</head>
+<body class="dark">
+
+<div id="falconLoader">
+    <div class="loader-content">
+        <div class="loader-dots-premium"><span></span><span></span><span></span></div>
+        <div class="loader-text-premium">جارِ التحميل...</div>
+    </div>
+</div>
+
+<header class="main-header">
+    <div class="header-container">
+        <div class="logo-wrapper"><img src="photos/logo.png" alt="شعار المتجر" style="width:45px;height:45px;border-radius:16px;object-fit:cover;" onerror="this.src='https://placehold.co/45x45/D32F2F/white?text=F'"><span class="logo-text">Falcon Store</span></div>
+        <a href="index.html" style="color: white; text-decoration: none;"><i class="fas fa-home"></i> الرئيسية</a>
+    </div>
+</header>
+
+<div class="profile-container">
+    <!-- بطاقة العضوية التفاعلية (Flip Card) -->
+    <div class="membership-card-container" id="membershipCard" onclick="this.classList.toggle('flipped')">
+        <div class="membership-card">
+            <div class="card-front">
+                <div class="card-header">
+                    <span class="card-logo">🦅 FALCON</span>
+                    <span class="card-chip">💳</span>
+                </div>
+                <div>
+                    <div class="card-number" id="cardNumber">**** **** **** 0000</div>
+                    <div class="card-name" id="cardName">Falcon Member</div>
+                </div>
+                <div class="card-footer-front">عضو منذ <span id="memberSinceShort">2025</span></div>
+            </div>
+            <div class="card-back">
+                <div class="card-strip"></div>
+                <div>
+                    <div class="card-cvv" id="cardLevel">✨ المستوى: برونزي</div>
+                </div>
+                <div class="card-footer">🛡️ ضمان Falcon - استرداد كامل</div>
+            </div>
+        </div>
+        <div class="flip-hint"><i class="fas fa-hand-pointer"></i> اضغط للقلب</div>
+    </div>
+
+    <!-- شريط تقدم ذهبي -->
+    <div class="gold-progress">
+        <div class="progress-bar-inner">
+            <div class="progress-fill-gold" id="goldProgressFill" style="width: 0%;"></div>
+        </div>
+    </div>
+
+    <!-- قسم الإحالة مع QR Code -->
+    <div class="referral-section">
+        <h4 style="color: var(--text-primary);"><i class="fas fa-share-alt"></i> كود الإحالة الخاص بك</h4>
+        <p style="font-size: 0.8rem; color: var(--text-muted);">كل من يسجل باستخدام كودك تحصل أنت وهو على 50 نجمة!</p>
+        <div class="qr-container">
+            <div class="qr-code" id="qrCode"></div>
+        </div>
+        <div class="referral-link">
+            <code id="referralCodeText">جاري التحميل...</code>
+            <button class="copy-referral-btn" onclick="copyReferralCode()"><i class="fas fa-copy"></i> نسخ</button>
+        </div>
+    </div>
+
+    <!-- زر الخصوصية (إخفاء/إظهار الحساب في الشحنات المباشرة) -->
+    <div class="privacy-toggle">
+        <span><i class="fas fa-user-secret"></i> إخفاء حسابي في الشحنات المباشرة</span>
+        <label class="toggle-switch">
+            <input type="checkbox" id="privacyToggle" onchange="togglePrivacyMode(this.checked)">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <div class="profile-header">
+        <div class="profile-avatar" id="profileAvatar" onclick="openAvatarSelector()">
+            <i class="fas fa-user-circle"></i>
+            <div class="avatar-overlay"><i class="fas fa-camera"></i> تغيير الصورة</div>
+        </div>
+        
+        <div class="profile-name-section">
+            <div class="profile-name">
+                <span id="profileName">جاري التحميل...</span>
+                <i class="fas fa-check-circle verified-badge" id="verifiedBadge" style="display: none;" title="حساب موثق"></i>
+            </div>
+            <button class="edit-username-btn" onclick="openUsernameModal()" title="تغيير اسم المستخدم">
+                <i class="fas fa-pen"></i>
+            </button>
+        </div>
+        <div class="username-display" id="usernameDisplay">@...</div>
+        <p class="profile-email" id="profileEmail"></p>
+        <div class="profile-meta">
+            <span><i class="fas fa-flag"></i> <span id="countryValue">-</span></span>
+            <span><i class="fas fa-coins"></i> <span id="currencyValue">-</span></span>
+        </div>
+        <span class="profile-rank" id="profileRank">#00000</span>
+    </div>
+    
+    <div class="stars-section">
+        <div class="stars-header">
+            <span><i class="fas fa-star"></i> رصيد النجوم</span>
+            <span id="userLevel" style="font-weight: bold;">برونزي 🥉</span>
+        </div>
+        <div class="stars-count" id="starsCount">0</div>
+        <div class="level-progress">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem; font-size: 0.8rem;">
+                <span>المستوى التالي: <span id="nextLevel">فضي ⚪</span></span>
+                <span id="progressText">0 / 100</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="levelProgressFill" style="width: 0%;"></div></div>
+        </div>
+        <div class="total-stars-info">
+            <i class="fas fa-chart-line"></i> إجمالي النجوم التي جمعتها: <span id="totalStarsEarned">0</span>
+        </div>
+    </div>
+    
+    <div class="info-grid">
+        <div class="info-card"><i class="fas fa-shopping-cart"></i><div class="number" id="totalOrders">0</div><div class="label">إجمالي الطلبات</div></div>
+        <div class="info-card"><i class="fas fa-money-bill"></i><div class="number" id="totalSpent">0</div><div class="label">إجمالي الإنفاق (ج.م)</div></div>
+        <div class="info-card"><i class="fas fa-calendar"></i><div class="number" id="memberSince">-</div><div class="label">عضو منذ</div></div>
+        <div class="info-card"><i class="fas fa-gift"></i><div class="number" id="rewardsClaimed">0</div><div class="label">مكافآت مستلمة</div></div>
+    </div>
+    
+    <div class="achievements-section">
+        <h3 style="color: var(--text-primary); margin-bottom: 0.5rem;"><i class="fas fa-trophy" style="color: var(--warning);"></i> الإنجازات</h3>
+        <p style="font-size:0.7rem; color:var(--text-muted); margin-bottom:0.5rem;">✨ اضغط على أي إنجاز لمعرفة كيفية الحصول عليه</p>
+        <div class="achievements-grid" id="achievementsGrid"></div>
+    </div>
+    
+    <div class="action-buttons">
+        <a href="orders.html" class="action-btn btn-outline"><i class="fas fa-list"></i> سجل الطلبات</a>
+        <a href="rewards.html" class="action-btn btn-outline"><i class="fas fa-gift"></i> متجر المكافآت</a>
+        <button class="action-btn btn-danger" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> تسجيل خروج</button>
+    </div>
+</div>
+
+<!-- ==================== قسم التعليقات والآراء ==================== -->
+<div class="comments-wrapper">
+    <div class="comments-card">
+        <h3><i class="fas fa-comments"></i> آراء واستفسارات العملاء</h3>
+        <div class="comments-subtitle">شاركنا رأيك أو مشكلتك، سيقوم فريق الدعم بالرد عليك خلال 24 ساعة</div>
+        <div id="commentsSection"></div>
+    </div>
+</div>
+
+<!-- نافذة اختيار الصورة -->
+<div class="modal-overlay" id="avatarModal">
+    <div class="modal-card" style="max-width: 550px;">
+        <h3><i class="fas fa-user-edit"></i> اختر صورتك</h3>
+        <div class="avatar-selector" id="avatarSelector"></div>
+        <div class="modal-actions" style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-outline" onclick="useGoogleFacebookAvatar()"><i class="fab fa-google"></i> Google/Facebook</button>
+            <button class="btn btn-text" onclick="closeAvatarModal()">إلغاء</button>
+        </div>
+    </div>
+</div>
+
+<!-- نافذة تعديل اسم المستخدم -->
+<div class="modal-overlay" id="usernameModal">
+    <div class="modal-card" style="max-width: 400px;">
+        <h3><i class="fas fa-user-tag"></i> تغيير اسم المستخدم</h3>
+        <div class="username-input-group">
+            <input type="text" id="usernameInput" placeholder="@username" dir="ltr" class="input-field">
+            <div class="username-hint">⚠️ اسم المستخدم فريد ويجب أن يبدأ بـ @</div>
+        </div>
+        <div id="usernameError" style="text-align:center; color: var(--danger);"></div>
+        <div class="modal-actions" style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-primary" onclick="saveUsername()">حفظ</button>
+            <button class="btn btn-outline" onclick="closeUsernameModal()">إلغاء</button>
+        </div>
+    </div>
+</div>
+
+<!-- نافذة تأكيد تسجيل الخروج -->
+<div class="modal-overlay" id="logoutConfirmModal">
+    <div class="modal-card">
+        <i class="fas fa-sign-out-alt" style="font-size: 3rem; color: var(--warning);"></i>
+        <h3>تأكيد تسجيل الخروج</h3>
+        <p>هل أنت متأكد من تسجيل الخروج من حسابك؟</p>
+        <div class="modal-actions">
+            <button class="btn btn-primary" onclick="confirmLogout()">نعم</button>
+            <button class="btn btn-outline" onclick="closeLogoutModal()">لا</button>
+        </div>
+    </div>
+</div>
+
+<!-- نافذة شرح الإنجاز -->
+<div class="modal-overlay" id="achievementDetailModal">
+    <div class="modal-card">
+        <div class="modal-icon" id="achievementDetailIcon" style="font-size: 3rem;">🏆</div>
+        <h3 id="achievementDetailTitle"></h3>
+        <p id="achievementDetailHow"></p>
+        <p id="achievementDetailReward" style="color: var(--gold);"></p>
+        <button class="btn btn-primary" onclick="closeAchievementDetail()">فهمت</button>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/comments.js"></script>
+
+<script>
+    window.addEventListener('load', function() { const l = document.getElementById('falconLoader'); if(l) { l.classList.add('fade-out'); setTimeout(() => l.style.display = 'none', 1000); } });
+    setTimeout(function() { const l = document.getElementById('falconLoader'); if(l && l.style.display !== 'none') { l.classList.add('fade-out'); setTimeout(() => l.style.display = 'none', 1000); } }, 3000);
+
+    let currentUser = null;
+    let previousLevel = null;
+    const ADMIN_UID = 'tvipwJt6kIYwTNGenxKrLhBKmRh2';
+    
+    const defaultAvatars = Array.from({ length: 20 }, (_, i) => `avatar${i+1}.png`);
+    const adminAvatars = ['admin1.png', 'admin2.png', 'admin3.png', 'admin4.png', 'admin5.png', 'admin6.png'];
+    
+    const achievementsData = [
+        { id: 'first_order', name: 'أول طلب', icon: '🛒', how: 'قم بإتمام أول عملية شراء ناجحة', stars: 10 },
+        { id: 'ten_orders', name: 'عميل مميز', icon: '⭐', how: 'قم بإتمام 10 طلبات ناجحة', stars: 50 },
+        { id: 'stars_100', name: 'جامع النجوم', icon: '🌟', how: 'اجمع 100 نجمة', stars: 20 },
+        { id: 'stars_500', name: 'نجم لامع', icon: '✨', how: 'اجمع 500 نجمة', stars: 100 },
+        { id: 'profile_complete', name: 'مكتمل', icon: '📝', how: 'أكمل ملفك الشخصي', stars: 20 },
+        { id: 'daily_streak_7', name: 'منتظم', icon: '🔥', how: 'ادخل إلى الموقع 7 أيام متتالية', stars: 30 },
+        { id: 'referral_5', name: 'سفير فالكون', icon: '👥', how: 'سجل 5 أشخاص عبر كود الإحالة', stars: 100 },
+        { id: 'vip_month', name: 'سوبر فالكون', icon: '👑', how: 'وصل إلى مستوى VIP', stars: 200 }
+    ];
+
+    function calculateLevelFromTotal(totalStars) {
+        const levels = [
+            { name: 'برونزي 🥉', min: 0, max: 100 },
+            { name: 'فضي ⚪', min: 100, max: 1000 },
+            { name: 'ذهبي 🟡', min: 1000, max: 10000 },
+            { name: 'بنفسجي 💜', min: 10000, max: 35000 },
+            { name: 'ناري 🔥', min: 35000, max: 65000 },
+            { name: 'أسطوري ✨', min: 65000, max: 100000 },
+            { name: 'سوبر فالكون 👑', min: 100000, max: Infinity }
+        ];
+        for (let i = 0; i < levels.length; i++) {
+            if (totalStars >= levels[i].min && totalStars < levels[i].max) return levels[i];
+        }
+        return levels[levels.length - 1];
+    }
+
+    async function loadProfile() {
+        const user = getCurrentUser();
+        if (!user) { window.location.href = 'login.html'; return; }
+        currentUser = user;
+        
+        document.getElementById('profileName').textContent = user.displayName || 'مستخدم Falcon';
+        document.getElementById('profileEmail').textContent = user.email;
+        
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        const data = userDoc.data() || {};
+        
+        const username = data.username || user.uid.substring(0, 8);
+        document.getElementById('usernameDisplay').textContent = `@${username}`;
+        document.getElementById('profileRank').textContent = data.accountNumber ? `#${data.accountNumber}` : '#00000';
+        if (data.country) document.getElementById('countryValue').textContent = data.country;
+        if (data.currency) document.getElementById('currencyValue').textContent = data.currency;
+        if (data.kycVerified) document.getElementById('verifiedBadge').style.display = 'inline-block';
+        
+        if (data.photoURL || user.photoURL) {
+            const avatarUrl = data.photoURL || user.photoURL;
+            document.getElementById('profileAvatar').innerHTML = `<img src="${avatarUrl}" alt="صورة"><div class="avatar-overlay"><i class="fas fa-camera"></i> تغيير الصورة</div>`;
+        }
+        
+        const currentPoints = data.loyaltyPoints || 0;
+        document.getElementById('starsCount').textContent = currentPoints;
+        
+        const totalStarsEarned = data.totalStarsEarned || currentPoints;
+        document.getElementById('totalStarsEarned').textContent = totalStarsEarned;
+        
+        const currentLevelObj = calculateLevelFromTotal(totalStarsEarned);
+        const currentLevelName = currentLevelObj.name;
+        
+        if (previousLevel && previousLevel !== currentLevelName) {
+            const achievementSound = new Audio('sounds/achievement.mp3');
+            achievementSound.play().catch(()=>{});
+            if(typeof showSuccessModal === 'function') showSuccessModal(`🎉 تهانينا! لقد وصلت إلى مستوى ${currentLevelName}!`, 'ترقية المستوى');
+        }
+        previousLevel = currentLevelName;
+        
+        document.getElementById('userLevel').textContent = currentLevelName;
+        document.getElementById('cardLevel').innerHTML = `✨ المستوى: ${currentLevelName}`;
+        document.getElementById('cardNumber').textContent = `**** **** **** ${data.accountNumber || '0000'}`;
+        document.getElementById('cardName').textContent = user.displayName || 'Falcon Member';
+        
+        const createdAt = data.createdAt?.toDate();
+        if(createdAt) {
+            document.getElementById('memberSinceShort').textContent = createdAt.getFullYear();
+        }
+        
+        const nextLevelObj = calculateLevelFromTotal(totalStarsEarned + 1);
+        let nextLevelName = nextLevelObj.name;
+        if (nextLevelName === currentLevelName) {
+            const levels = [
+                { name: 'برونزي 🥉', min: 0, max: 100 },
+                { name: 'فضي ⚪', min: 100, max: 1000 },
+                { name: 'ذهبي 🟡', min: 1000, max: 10000 },
+                { name: 'بنفسجي 💜', min: 10000, max: 35000 },
+                { name: 'ناري 🔥', min: 35000, max: 65000 },
+                { name: 'أسطوري ✨', min: 65000, max: 100000 },
+                { name: 'سوبر فالكون 👑', min: 100000, max: Infinity }
+            ];
+            const currentIndex = levels.findIndex(l => l.name === currentLevelName);
+            if (currentIndex + 1 < levels.length) {
+                nextLevelName = levels[currentIndex + 1].name;
+                const progress = ((totalStarsEarned - levels[currentIndex].min) / (levels[currentIndex].max - levels[currentIndex].min)) * 100;
+                document.getElementById('levelProgressFill').style.width = Math.min(progress, 100) + '%';
+                document.getElementById('progressText').textContent = `${totalStarsEarned - levels[currentIndex].min} / ${levels[currentIndex].max - levels[currentIndex].min}`;
+                const goldProgress = (totalStarsEarned / 1000) * 100;
+                document.getElementById('goldProgressFill').style.width = Math.min(goldProgress, 100) + '%';
+            }
+        } else {
+            const levels = [
+                { name: 'برونزي 🥉', min: 0, max: 100 },
+                { name: 'فضي ⚪', min: 100, max: 1000 }
+            ];
+            const currentIndex = levels.findIndex(l => l.name === currentLevelName);
+            if (currentIndex + 1 < levels.length) {
+                const progress = ((totalStarsEarned - levels[currentIndex].min) / (levels[currentIndex].max - levels[currentIndex].min)) * 100;
+                document.getElementById('levelProgressFill').style.width = Math.min(progress, 100) + '%';
+                document.getElementById('progressText').textContent = `${totalStarsEarned - levels[currentIndex].min} / ${levels[currentIndex].max - levels[currentIndex].min}`;
+            }
+        }
+        document.getElementById('nextLevel').textContent = nextLevelName;
+        
+        const ordersSnapshot = await db.collection('users').doc(user.uid).collection('user_orders').get();
+        document.getElementById('totalOrders').textContent = ordersSnapshot.size;
+        let totalSpent = 0;
+        ordersSnapshot.forEach(doc => { const o = doc.data(); if (o.status === 'completed') totalSpent += o.totalPrice || 0; });
+        document.getElementById('totalSpent').textContent = totalSpent;
+        
+        if (data.createdAt) document.getElementById('memberSince').textContent = data.createdAt.toDate().toLocaleDateString('ar-EG');
+        const redemptionsSnapshot = await db.collection('users').doc(user.uid).collection('redemptions').get();
+        document.getElementById('rewardsClaimed').textContent = redemptionsSnapshot.size;
+        
+        renderAchievements(data.achievements || []);
+        
+        // إعداد QR Code الإحالة
+        const referralCode = data.referralCode || user.uid.substring(0, 8);
+        document.getElementById('referralCodeText').textContent = referralCode;
+        const qrContainer = document.getElementById('qrCode');
+        qrContainer.innerHTML = '';
+        new QRCode(qrContainer, {
+            text: `${window.location.origin}/signup.html?ref=${referralCode}`,
+            width: 130,
+            height: 130,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+        
+        // إعداد زر الخصوصية
+        const privacyMode = localStorage.getItem(`privacyMode_${user.uid}`) === 'true';
+        document.getElementById('privacyToggle').checked = privacyMode;
+    }
+    
+    function renderAchievements(earned) {
+        const grid = document.getElementById('achievementsGrid');
+        grid.innerHTML = achievementsData.map(ach => {
+            const unlocked = earned.includes(ach.id);
+            return `
+                <div class="achievement-item ${unlocked ? '' : 'locked'}" onclick="showAchievementDetail('${ach.id}')">
+                    <div style="font-size:1.5rem;">${ach.icon}</div>
+                    <div style="font-size:0.7rem;">${ach.name}</div>
+                    ${unlocked ? '<i class="fas fa-check-circle" style="color:var(--success);"></i>' : '<i class="fas fa-lock" style="color:var(--text-muted);"></i>'}
+                </div>
+            `;
+        }).join('');
+    }
+    
+    function showAchievementDetail(achievementId) {
+        const ach = achievementsData.find(a => a.id === achievementId);
+        if (!ach) return;
+        document.getElementById('achievementDetailIcon').textContent = ach.icon;
+        document.getElementById('achievementDetailTitle').textContent = ach.name;
+        document.getElementById('achievementDetailHow').textContent = ach.how;
+        document.getElementById('achievementDetailReward').textContent = `🎁 المكافأة: ${ach.stars} نجمة`;
+        document.getElementById('achievementDetailModal').classList.add('show');
+        if(typeof playClickSound === 'function') playClickSound();
+    }
+    
+    function closeAchievementDetail() {
+        document.getElementById('achievementDetailModal').classList.remove('show');
+    }
+
+    function openAvatarSelector() {
+        const container = document.getElementById('avatarSelector');
+        const isAdmin = currentUser && currentUser.uid === ADMIN_UID;
+        const avatars = isAdmin ? [...defaultAvatars, ...adminAvatars] : defaultAvatars;
+        container.innerHTML = avatars.map(av => `<div class="avatar-option" onclick="selectAvatar('photos/avatars/${av}')"><img src="photos/avatars/${av}" alt=""></div>`).join('');
+        document.getElementById('avatarModal').classList.add('show');
+        if(typeof playClickSound === 'function') playClickSound();
+    }
+
+    async function selectAvatar(url) {
+        closeAvatarModal();
+        if (!currentUser) return;
+        try {
+            await currentUser.updateProfile({ photoURL: url });
+            await db.collection('users').doc(currentUser.uid).update({ photoURL: url });
+            document.getElementById('profileAvatar').innerHTML = `<img src="${url}" alt="صورة"><div class="avatar-overlay"><i class="fas fa-camera"></i> تغيير الصورة</div>`;
+            if(typeof showSuccessModal === 'function') showSuccessModal('✅ تم تحديث الصورة بنجاح', 'نجاح');
+            if(typeof playTingSound === 'function') playTingSound();
+        } catch(e) { 
+            if(typeof showErrorModal === 'function') showErrorModal('❌ حدث خطأ أثناء تحديث الصورة', 'خطأ');
+        }
+    }
+
+    async function useGoogleFacebookAvatar() {
+        closeAvatarModal();
+        if (!currentUser) return;
+        if (currentUser.photoURL) {
+            await db.collection('users').doc(currentUser.uid).update({ photoURL: currentUser.photoURL });
+            document.getElementById('profileAvatar').innerHTML = `<img src="${currentUser.photoURL}" alt="صورة"><div class="avatar-overlay"><i class="fas fa-camera"></i> تغيير الصورة</div>`;
+            if(typeof showSuccessModal === 'function') showSuccessModal('✅ تم استعادة صورة حسابك', 'نجاح');
+        } else {
+            if(typeof showErrorModal === 'function') showErrorModal('❌ لا توجد صورة مرتبطة بحسابك', 'خطأ');
+        }
+    }
+
+    function openUsernameModal() {
+        document.getElementById('usernameInput').value = '';
+        document.getElementById('usernameError').textContent = '';
+        document.getElementById('usernameModal').classList.add('show');
+        if(typeof playClickSound === 'function') playClickSound();
+    }
+    
+    function closeUsernameModal() {
+        document.getElementById('usernameModal').classList.remove('show');
+    }
+    
+    async function saveUsername() {
+        let username = document.getElementById('usernameInput').value.trim();
+        const errorEl = document.getElementById('usernameError');
+        
+        if (!username) {
+            errorEl.textContent = '❌ يرجى إدخال اسم مستخدم';
+            return;
+        }
+        if (!username.startsWith('@')) username = '@' + username;
+        const usernameRegex = /^@[a-zA-Z0-9_]{3,20}$/;
+        if (!usernameRegex.test(username)) {
+            errorEl.textContent = '❌ اسم المستخدم يجب أن يبدأ بـ @ ويحتوي على 3-20 حرف';
+            return;
+        }
+        
+        try {
+            const existingUsers = await db.collection('users').where('username', '==', username.substring(1)).get();
+            if (!existingUsers.empty && existingUsers.docs[0].id !== currentUser.uid) {
+                errorEl.textContent = '❌ هذا الاسم مستخدم بالفعل';
+                return;
+            }
+            await db.collection('users').doc(currentUser.uid).update({ username: username.substring(1) });
+            document.getElementById('usernameDisplay').textContent = username;
+            closeUsernameModal();
+            if(typeof showSuccessModal === 'function') showSuccessModal('✅ تم تحديث اسم المستخدم', 'نجاح');
+            if(typeof playTingSound === 'function') playTingSound();
+        } catch (error) {
+            errorEl.textContent = '❌ حدث خطأ، حاول مرة أخرى';
+        }
+    }
+
+    function copyReferralCode() {
+        const code = document.getElementById('referralCodeText').textContent;
+        navigator.clipboard.writeText(code);
+        if(typeof showSuccessModal === 'function') showSuccessModal('✅ تم نسخ كود الإحالة', 'نجاح');
+        if(typeof playTingSound === 'function') playTingSound();
+    }
+
+    function togglePrivacyMode(enabled) {
+        if (currentUser) {
+            localStorage.setItem(`privacyMode_${currentUser.uid}`, enabled);
+            if(typeof showInfoModal === 'function') showInfoModal(enabled ? '🔒 تم إخفاء حسابك في الشحنات المباشرة' : '🔓 تم إظهار حسابك في الشحنات المباشرة', 'الخصوصية');
+        }
+    }
+
+    function closeAvatarModal() { document.getElementById('avatarModal').classList.remove('show'); }
+    function handleLogout() { document.getElementById('logoutConfirmModal').classList.add('show'); if(typeof playClickSound === 'function') playClickSound(); }
+    function closeLogoutModal() { document.getElementById('logoutConfirmModal').classList.remove('show'); }
+    async function confirmLogout() { 
+        closeLogoutModal(); 
+        if(typeof clearCartOnLogout === 'function') clearCartOnLogout(); 
+        if(typeof logout === 'function') await logout(); 
+        else await firebase.auth().signOut();
+        if(typeof playLoggedOutSound === 'function') playLoggedOutSound();
+        window.location.href = 'login.html'; 
+    }
+
+    if (typeof initComments === 'function') { initComments('profile'); }
+
+    onAuthStateChanged((user) => { 
+        if (!user) window.location.href = 'login.html'; 
+        else loadProfile(); 
+    });
+    
+    window.showAchievementDetail = showAchievementDetail;
+    window.closeAchievementDetail = closeAchievementDetail;
+    window.openUsernameModal = openUsernameModal;
+    window.closeUsernameModal = closeUsernameModal;
+    window.saveUsername = saveUsername;
+    window.handleLogout = handleLogout;
+    window.closeLogoutModal = closeLogoutModal;
+    window.confirmLogout = confirmLogout;
+    window.openAvatarSelector = openAvatarSelector;
+    window.selectAvatar = selectAvatar;
+    window.useGoogleFacebookAvatar = useGoogleFacebookAvatar;
+    window.closeAvatarModal = closeAvatarModal;
+    window.copyReferralCode = copyReferralCode;
+    window.togglePrivacyMode = togglePrivacyMode;
+</script>
+</body>
+</html>

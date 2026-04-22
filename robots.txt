@@ -1,0 +1,111 @@
+# ==================== Falcon Store - robots.txt ====================
+# هذا الملف يوجه محركات البحث إلى الصفحات المسموح بفهرستها
+
+User-agent: *
+Allow: /
+Allow: /index.html
+Allow: /product.html
+Allow: /rewards.html
+Allow: /about.html
+Allow: /giftcards.html
+Allow: /agents.html
+Allow: /public-feed.html
+Allow: /privacy.html
+Allow: /terms.html
+Allow: /security.html
+Allow: /wheel.html
+
+# منع فهرسة صفحات المشرف والإدارة
+Disallow: /admin.html
+Disallow: /admin-stats.html
+
+# منع فهرسة صفحات الدفع والحساسة
+Disallow: /checkout.html
+Disallow: /payment-pending.html
+Disallow: /verify.html
+Disallow: /complete-profile.html
+
+# منع فهرسة صفحات الحساب الشخصي
+Disallow: /profile.html
+Disallow: /orders.html
+Disallow: /my-invoices.html
+Disallow: /favorites.html
+Disallow: /kyc.html
+
+# منع فهرسة صفحات تسجيل الدخول والخروج
+Disallow: /login.html
+Disallow: /signup.html
+Disallow: /forgot-password.html
+
+# منع فهرسة المجلدات
+Disallow: /js/
+Disallow: /css/
+Disallow: /sounds/
+Disallow: /photos/avatars/
+
+# السماح بفهرسة الصور العامة فقط
+Allow: /photos/*.jpg
+Allow: /photos/*.png
+Allow: /photos/*.jpeg
+Disallow: /photos/avatars/
+
+# خريطة الموقع
+Sitemap: https://falconstore1.netlify.app/sitemap.xml
+
+# وقت التأخير بين الزيارات (بالثواني)
+Crawl-delay: 5
+
+# ==================== محركات بحث محددة ====================
+
+# Googlebot
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 2
+
+# Bingbot
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 2
+
+# Yahoo
+User-agent: Yahoo
+Allow: /
+Crawl-delay: 3
+
+# Baiduspider (محرك بحث بايدو)
+User-agent: Baiduspider
+Disallow: /
+
+# Yandex
+User-agent: Yandex
+Allow: /
+Disallow: /admin.html
+Disallow: /checkout.html
+Crawl-delay: 3
+
+# AhrefsBot (أداة تحليل SEO)
+User-agent: AhrefsBot
+Disallow: /
+
+# SemrushBot (أداة تحليل SEO)
+User-agent: SemrushBot
+Disallow: /
+
+# ==================== روبوتات البريد العشوائي ====================
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
+
+User-agent: AspiegelBot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: DataForSeoBot
+Disallow: /

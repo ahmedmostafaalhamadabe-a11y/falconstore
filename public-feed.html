@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>سجل الشحنات المباشر | Falcon Store</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#D32F2F">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Falcon Store">
+    <link rel="apple-touch-icon" href="/photos/logo-192.png">
+    
+    <style>
+        .feed-container { max-width: 900px; margin: 2rem auto; padding: 1rem; }
+        
+        /* الهيدر */
+        .feed-header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            border-radius: 32px;
+            padding: 2rem;
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feed-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            animation: feedGlow 8s ease-in-out infinite;
+        }
+        
+        @keyframes feedGlow {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-5%, -5%); }
+        }
+        
+        .feed-header i {
+            font-size: 3rem;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .feed-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .feed-header h1 .live-badge {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 0.25rem 0.8rem;
+            border-radius: 60px;
+            font-size: 0.7rem;
+            margin-right: 0.5rem;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        .feed-header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* الإحصائيات المصغرة */
+        .stats-mini {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            position: relative;
+            z-index: 1;
+            flex-wrap: wrap;
+        }
+        
+        .stat-mini {
+            text-align: center;
+        }
+        
+        .stat-mini .number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+        
+        .stat-mini .label {
+            font-size: 0.7rem;
+            opacity: 0.8;
+        }
+        
+        /* قائمة الشحنات */
+        .feed-list {
+            background: var(--bg-surface);
+            border-radius: 28px;
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+        }
+        
+        .feed-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+            transition: all 0.3s;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .feed-item:last-child {
+            border-bottom: none;
+        }
+        
+        .feed-item:hover {
+            background: var(--bg-body);
+        }
+        
+        .feed-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--bg-body);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .feed-icon i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .feed-content {
+            flex: 2;
+            min-width: 180px;
+        }
+        
+        .feed-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .feed-title i {
+            color: var(--success);
+            font-size: 0.8rem;
+        }
+        
+        .feed-details {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+        }
+        
+        .feed-amount {
+            font-weight: bold;
+            color: var(--primary);
+            text-align: left;
+            min-width: 80px;
+        }
+        
+        .feed-time {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            min-width: 80px;
+            text-align: left;
+        }
+        
+        /* إطار المشاهير (Hall of Fame) */
+        .hall-of-fame {
+            background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,165,0,0.05));
+            border-radius: 28px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--gold);
+        }
+        
+        .hall-title {
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--gold);
+        }
+        
+        .hall-title i {
+            font-size: 1.5rem;
+            margin-left: 0.5rem;
+        }
+        
+        .top-users {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .top-user {
+            text-align: center;
+            padding: 0.5rem 1rem;
+            background: rgba(255,215,0,0.1);
+            border-radius: 60px;
+            transition: all 0.3s;
+        }
+        
+        .top-user:hover {
+            transform: scale(1.05);
+            background: rgba(255,215,0,0.2);
+        }
+        
+        .top-user .rank-icon {
+            font-size: 1.5rem;
+        }
+        
+        .top-user .user-name {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--gold);
+        }
+        
+        .top-user .user-amount {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+        
+        /* فلاتر الوقت */
+        .time-filters {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .time-filter {
+            padding: 0.4rem 1rem;
+            border-radius: 60px;
+            background: var(--bg-body);
+            border: 1px solid var(--border-light);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+        
+        .time-filter.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .time-filter:hover:not(.active) {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .empty-feed {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+        
+        .empty-feed i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--border-light);
+        }
+        
+        /* زر التحديث */
+        .refresh-btn {
+            position: fixed;
+            bottom: 100px;
+            right: 25px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            z-index: 50;
+        }
+        
+        .refresh-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(211,47,47,0.4);
+        }
+        
+        /* دعاء */
+        .dua-text {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 0.85rem;
+            background: var(--bg-surface);
+            border-radius: 28px;
+            border: 1px solid var(--border-light);
+        }
+        
+        @media (max-width: 600px) {
+            .feed-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            .feed-amount, .feed-time {
+                text-align: center;
+            }
+            .feed-title {
+                justify-content: center;
+            }
+            .feed-details {
+                justify-content: center;
+            }
+            .stats-mini {
+                gap: 1rem;
+            }
+            .top-user {
+                padding: 0.3rem 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body class="light">
+
+<div id="falconLoader">
+    <div class="loader-content">
+        <div class="loader-dots-premium">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="loader-text-premium">جارِ التحميل...</div>
+    </div>
+</div>
+
+<header class="main-header">
+    <div class="header-container">
+        <div class="logo-wrapper">
+            <img src="photos/logo.png" alt="شعار المتجر" style="width:45px;height:45px;border-radius:16px;object-fit:cover;" onerror="this.src='https://placehold.co/45x45/D32F2F/white?text=F'">
+            <span class="logo-text">Falcon Store</span>
+        </div>
+        <a href="index.html" style="color: white; text-decoration: none;"><i class="fas fa-home"></i> الرئيسية</a>
+    </div>
+</header>
+
+<div class="feed-container">
+    <div class="feed-header">
+        <i class="fas fa-chart-line"></i>
+        <h1><span class="live-badge"><i class="fas fa-circle"></i> مباشر</span> سجل الشحنات</h1>
+        <p>جميع عمليات الشحن التي تتم عبر Falcon Store بشكل مباشر وشفاف</p>
+        <div class="stats-mini">
+            <div class="stat-mini"><div class="number" id="todayOrders">0</div><div class="label">طلبات اليوم</div></div>
+            <div class="stat-mini"><div class="number" id="weekOrders">0</div><div class="label">طلبات الأسبوع</div></div>
+            <div class="stat-mini"><div class="number" id="totalOrders">0</div><div class="label">إجمالي الطلبات</div></div>
+        </div>
+    </div>
+
+    <!-- حائط المشاهير (Hall of Fame) -->
+    <div class="hall-of-fame">
+        <div class="hall-title">
+            <i class="fas fa-crown"></i> حائط المشاهير - أكبر المشترين
+            <i class="fas fa-crown"></i>
+        </div>
+        <div class="time-filters">
+            <button class="time-filter active" data-period="day">اليوم</button>
+            <button class="time-filter" data-period="week">هذا الأسبوع</button>
+            <button class="time-filter" data-period="month">هذا الشهر</button>
+            <button class="time-filter" data-period="year">هذه السنة</button>
+            <button class="time-filter" data-period="all">كل الوقت</button>
+        </div>
+        <div class="top-users" id="topUsersList">
+            <div class="empty-feed" style="padding:1rem;"><i class="fas fa-spinner fa-spin"></i> جاري التحميل...</div>
+        </div>
+        <div style="text-align: center; margin-top: 0.5rem; font-size: 0.7rem; color: var(--text-muted);">
+            <i class="fas fa-user-secret"></i> يتم احترام خصوصية العملاء - تظهر الأسماء بشكل جزئي
+        </div>
+    </div>
+
+    <div class="feed-list" id="feedList">
+        <div class="empty-feed"><i class="fas fa-spinner fa-spin"></i><p>جاري تحميل السجل...</p></div>
+    </div>
+
+    <div class="dua-text">
+        <i class="fas fa-hands-praying"></i> ادعو لنا بالتوفيق وتيسير الأمور<br>
+        وتطوير اسم Falcon في السنين القادمة إن شاء الله ❤
+    </div>
+</div>
+
+<div class="refresh-btn" onclick="refreshFeed()"><i class="fas fa-sync-alt"></i></div>
+
+<!-- ==================== قسم التعليقات والآراء ==================== -->
+<div class="comments-wrapper">
+    <div class="comments-card">
+        <h3><i class="fas fa-comments"></i> آراء واستفسارات العملاء</h3>
+        <div class="comments-subtitle">شاركنا رأيك أو مشكلتك، سيقوم فريق الدعم بالرد عليك خلال 24 ساعة</div>
+        <div id="commentsSection"></div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/comments.js"></script>
+
+<script>
+    window.addEventListener('load', ()=>{
+        const l=document.getElementById('falconLoader');
+        if(l){ l.classList.add('fade-out'); setTimeout(()=>l.style.display='none',1000); }
+    });
+    setTimeout(()=>{
+        const l=document.getElementById('falconLoader');
+        if(l&&l.style.display!=='none'){ l.classList.add('fade-out'); setTimeout(()=>l.style.display='none',1000); }
+    },5000);
+
+    let allOrders = [], stats = { today:0, week:0, total:0 };
+    let currentPeriod = 'day';
+    let currentUser = null;
+
+    function loadFeed() {
+        const today = new Date(); today.setHours(0,0,0,0);
+        const weekStart = new Date(); weekStart.setDate(weekStart.getDate()-7);
+        db.collection('orders').where('status', 'in', ['completed','confirmed']).orderBy('createdAt','desc').limit(100).onSnapshot(snap => {
+            allOrders = []; stats = { today:0, week:0, total:0 };
+            snap.forEach(doc => {
+                const o = doc.data(); o.id = doc.id;
+                allOrders.push(o); stats.total++;
+                if (o.createdAt) {
+                    const d = o.createdAt.toDate();
+                    if (d >= today) stats.today++;
+                    if (d >= weekStart) stats.week++;
+                }
+            });
+            updateStats(); renderFeed(); loadTopUsers();
+        });
+    }
+
+    function updateStats() {
+        document.getElementById('todayOrders').textContent = stats.today;
+        document.getElementById('weekOrders').textContent = stats.week;
+        document.getElementById('totalOrders').textContent = stats.total;
+    }
+
+    function renderFeed() {
+        const c = document.getElementById('feedList');
+        if (!allOrders.length) { c.innerHTML = '<div class="empty-feed"><i class="fas fa-inbox"></i><p>لا توجد شحنات بعد.</p></div>'; return; }
+        c.innerHTML = allOrders.map(o => {
+            const time = o.createdAt ? formatTime(o.createdAt.toDate()) : '';
+            const icon = getGameIcon(o.game);
+            const masked = maskEmail(o.userEmail||'');
+            return `<div class="feed-item">
+                <div class="feed-icon"><i class="${icon}"></i></div>
+                <div class="feed-content">
+                    <div class="feed-title">${masked}<i class="fas fa-check-circle"></i></div>
+                    <div class="feed-details">
+                        <span><i class="fas fa-gamepad"></i> ${o.game}</span>
+                        <span><i class="fas fa-box"></i> ${o.item?.name||'-'}</span>
+                        ${o.playerId?`<span><i class="fas fa-id-card"></i> ${maskId(o.playerId)}</span>`:''}
+                    </div>
+                </div>
+                <div class="feed-amount">${o.totalPrice} ج.م</div>
+                <div class="feed-time">${time}</div>
+            </div>`;
+        }).join('');
+    }
+
+    // حائط المشاهير - أكبر المشترين
+    async function loadTopUsers() {
+        const container = document.getElementById('topUsersList');
+        container.innerHTML = '<div class="empty-feed" style="padding:1rem;"><i class="fas fa-spinner fa-spin"></i> جاري التحميل...</div>';
+        
+        let startDate = null;
+        const now = new Date();
+        switch(currentPeriod) {
+            case 'day':
+                startDate = new Date(); startDate.setHours(0,0,0,0);
+                break;
+            case 'week':
+                startDate = new Date(); startDate.setDate(startDate.getDate() - 7);
+                break;
+            case 'month':
+                startDate = new Date(); startDate.setMonth(startDate.getMonth() - 1);
+                break;
+            case 'year':
+                startDate = new Date(); startDate.setFullYear(startDate.getFullYear() - 1);
+                break;
+            default: startDate = null;
+        }
+        
+        let query = db.collection('orders').where('status', '==', 'completed');
+        if (startDate) {
+            query = query.where('createdAt', '>=', startDate);
+        }
+        
+        try {
+            const snapshot = await query.get();
+            const userSpending = {};
+            snapshot.forEach(doc => {
+                const order = doc.data();
+                const email = order.userEmail;
+                if (email) {
+                    if (!userSpending[email]) {
+                        userSpending[email] = { total: 0, name: order.userEmail?.split('@')[0] || 'عميل' };
+                    }
+                    userSpending[email].total += order.totalPrice || 0;
+                }
+            });
+            
+            const sorted = Object.entries(userSpending)
+                .sort((a,b) => b[1].total - a[1].total)
+                .slice(0, 10);
+            
+            if (sorted.length === 0) {
+                container.innerHTML = '<div class="empty-feed" style="padding:1rem;"><i class="fas fa-trophy"></i><p>لا توجد بيانات كافية</p></div>';
+                return;
+            }
+            
+            const medals = ['🥇', '🥈', '🥉'];
+            container.innerHTML = sorted.map(([email, data], idx) => {
+                const medal = idx < 3 ? medals[idx] : '⭐';
+                const maskedName = maskEmail(email);
+                return `
+                    <div class="top-user">
+                        <div class="rank-icon">${medal}</div>
+                        <div class="user-name">${maskedName}</div>
+                        <div class="user-amount">${data.total.toLocaleString()} ج.م</div>
+                    </div>
+                `;
+            }).join('');
+        } catch(e) {
+            console.error('خطأ في تحميل المشاهير:', e);
+            container.innerHTML = '<div class="empty-feed" style="padding:1rem;"><p>⚠️ لا توجد بيانات كافية</p></div>';
+        }
+    }
+
+    function formatTime(d) {
+        const now = new Date(), diff = now - d;
+        if (diff < 60000) return 'الآن';
+        if (diff < 3600000) return `قبل ${Math.floor(diff/60000)} د`;
+        if (diff < 86400000) return `قبل ${Math.floor(diff/3600000)} س`;
+        return d.toLocaleDateString('ar-EG');
+    }
+
+    function maskEmail(e) {
+        if (!e) return 'مستخدم';
+        // التحقق من إعدادات الخصوصية للمستخدم الحالي (إذا كان مسجل الدخول)
+        if (currentUser && localStorage.getItem(`privacyMode_${currentUser.uid}`) === 'true') {
+            return '🦅 عميل فالكون';
+        }
+        const p = e.split('@'); if (p.length!==2) return e;
+        const n = p[0]; return (n.length>3 ? n.substring(0,3)+'***' : n) + '@' + p[1];
+    }
+
+    function maskId(id) {
+        if (!id) return ''; if (id.length<=6) return id;
+        return id.substring(0,4)+'****'+id.slice(-2);
+    }
+
+    function getGameIcon(g) {
+        const icons = { 'Free Fire':'fas fa-fire', 'PUBG Mobile':'fas fa-crosshairs', 'Call of Duty':'fas fa-bullseye', 'eFootball':'fas fa-futbol', 'FIFA Mobile':'fas fa-futbol' };
+        return icons[g] || 'fas fa-gamepad';
+    }
+
+    function refreshFeed() {
+        const i = document.querySelector('.refresh-btn i');
+        i.classList.add('fa-spin');
+        setTimeout(() => { i.classList.remove('fa-spin'); if (typeof showSuccessModal === 'function') showSuccessModal('تم تحديث السجل'); else alert('تم تحديث السجل'); }, 1000);
+        if (typeof playClickSound === 'function') playClickSound();
+        else new Audio('sounds/click.mp3').play().catch(()=>{});
+        loadFeed();
+    }
+
+    // فلاتر الوقت لحائط المشاهير
+    document.querySelectorAll('.time-filter').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.time-filter').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentPeriod = this.dataset.period;
+            loadTopUsers();
+            if (typeof playClickSound === 'function') playClickSound();
+            else new Audio('sounds/click.mp3').play().catch(()=>{});
+        });
+    });
+
+    // جلب المستخدم الحالي لخصوصية العرض
+    onAuthStateChanged((user) => {
+        currentUser = user;
+    });
+    
+    if (typeof initComments === 'function') { initComments('public-feed'); }
+
+    loadFeed();
+</script>
+</body>
+</html>

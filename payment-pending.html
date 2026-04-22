@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>قيد المعالجة | Falcon Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#D32F2F">
+    <style>
+        .pending-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg-body); padding: 1rem; }
+        .pending-card { background: var(--bg-surface); border-radius: var(--radius-xl); padding: 2rem; max-width: 550px; width: 100%; text-align: center; border: 1px solid var(--border-light); box-shadow: var(--shadow-lg); }
+        .status-icon { font-size: 4rem; margin-bottom: 1rem; }
+        .pending .status-icon { color: var(--warning); } .shipping .status-icon { color: #2196F3; } .completed .status-icon { color: var(--success); }
+        .timer { font-size: 2.5rem; font-weight: bold; color: var(--text-primary); margin: 1rem 0; font-family: monospace; }
+        .progress-bar { width: 100%; height: 10px; background: var(--border-light); border-radius: var(--radius-full); overflow: hidden; margin: 1rem 0; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--warning), var(--success)); width: 0%; transition: width 1s linear; }
+        .fact-box { background: var(--bg-body); border-radius: var(--radius-md); padding: 1rem; margin: 1.5rem 0; border-right: 4px solid var(--primary); }
+        .twofa-section { background: var(--bg-body); border-radius: var(--radius-md); padding: 1rem; margin: 1rem 0; }
+        .twofa-input { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+        .chat-section { margin-top: 1.5rem; border-top: 1px solid var(--border-light); padding-top: 1rem; }
+        .chat-messages { max-height: 200px; overflow-y: auto; background: var(--bg-body); border-radius: var(--radius-md); padding: 0.75rem; margin-bottom: 0.75rem; }
+        .chat-message { display: flex; flex-direction: column; margin-bottom: 0.5rem; }
+        .chat-message.customer { align-items: flex-end; } .chat-message.admin { align-items: flex-start; }
+        .chat-bubble { max-width: 80%; padding: 0.5rem 0.75rem; border-radius: 12px; font-size: 0.85rem; }
+        .customer .chat-bubble { background: var(--primary); color: white; } .admin .chat-bubble { background: var(--bg-elevated); color: var(--text-primary); }
+        .chat-time { font-size: 0.6rem; color: var(--text-muted); margin-top: 0.15rem; }
+        .chat-input-group { display: flex; gap: 0.5rem; }
+        .chat-input-group input { flex: 1; padding: 10px; border: 1px solid var(--border-light); border-radius: var(--radius-full); background: var(--bg-surface); color: var(--text-primary); }
+    </style>
+</head>
+<body>
+<div id="falconLoader"><div class="loader-content"><video class="loader-video" autoplay muted playsinline style="width:100px;height:100px;"><source src="photos/falcon-loader.mp4" type="video/mp4"><img src="photos/loader.gif" style="width:100px;"></video><div class="loader-text" style="margin-top:1rem; font-weight:700; color:white; background:linear-gradient(135deg, #D32F2F, #B71C1C); padding:0.6rem 1.8rem; border-radius:30px;">مع متجر فالكون.. ارخص و اضمن و اسرع خدمة</div></div></div>
+
+<div class="pending-container">
+    <div class="pending-card" id="statusCard">
+        <div class="status-icon" id="statusIcon"><i class="fas fa-spinner fa-spin"></i></div>
+        <h2 id="statusTitle">جارٍ التأكد من المبلغ</h2>
+        <p id="statusMessage">يتم التحقق من وصول الحوالة...</p>
+        <div class="timer" id="timer">30:00</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="fact-box"><i class="fas fa-lightbulb"></i> <span id="randomFact">جاري تحميل حقيقة...</span></div>
+        <div class="twofa-section" id="twofaSection" style="display: none;">
+            <h4><i class="fas fa-shield-alt"></i> تأكيد تسجيل الدخول</h4>
+            <p id="twofaMessage"></p>
+            <div class="twofa-input" id="twofaInputContainer"><input type="text" id="twofaCode" placeholder="أدخل الرمز"><button class="btn btn-primary" onclick="submit2FACode()">إرسال</button></div>
+            <div id="twofaDisplay" style="display: none;"><p style="font-size:1.5rem; font-weight:bold;" id="displayNumber"></p><button class="btn btn-success" onclick="confirm2FANumber()">نعم، اخترت الرقم الصحيح</button></div>
+        </div>
+        <div id="shippingMessage" style="display: none;"><p style="color:#2196F3;">🚀 جارٍ شحن طلبك...</p></div>
+        <div id="completedMessage" style="display: none;"><p style="color:var(--success); font-size:1.2rem;">✅ تم الشحن الحمد لله ❤</p></div>
+        <div id="receiptProof" style="display: none;" class="receipt-preview"><p>📸 إثبات الشحن:</p><img id="proofImage" src=""><div style="margin-top:1rem;"><p>📢 رأيك يحفزنا</p><a href="https://www.facebook.com/share/p/1D5sK63Ryi/" target="_blank" class="btn btn-primary"><i class="fab fa-facebook"></i> اترك تعليقاً</a></div></div>
+        <div class="chat-section">
+            <h5><i class="fas fa-comment"></i> التواصل مع الدعم</h5>
+            <div class="chat-messages" id="chatMessages"><div class="chat-message admin"><div class="chat-bubble">مرحباً! نحن هنا لمساعدتك.</div><div class="chat-time">الآن</div></div></div>
+            <div class="chat-input-group"><input type="text" id="chatInput" placeholder="اكتب رسالتك..."><button class="btn btn-primary" onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button></div>
+        </div>
+        <div class="note">⏰ إذا تأخر الشحن يرجى التواصل مع الدعم</div>
+        <button onclick="window.location.href='index.html'" class="btn btn-outline" style="margin-top:1.5rem;">🏠 العودة للرئيسية</button>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script>
+    window.addEventListener('load', ()=>{ const l=document.getElementById('falconLoader'); if(l){l.classList.add('fade-out'); setTimeout(()=>l.style.display='none',1000);} });
+    setTimeout(()=>{ const l=document.getElementById('falconLoader'); if(l&&l.style.display!=='none'){l.classList.add('fade-out'); setTimeout(()=>l.style.display='none',1000);} },5000);
+
+    const orderId = sessionStorage.getItem('currentOrderId');
+    let timerInterval, secondsLeft = 30*60, currentStatus = 'pending', wasCompleted = false;
+    const shippingSound = new Audio('sounds/shipping_complete.mp3'); shippingSound.volume=0.8;
+    if(!orderId) window.location.href='index.html';
+    if(Notification.permission==='default') Notification.requestPermission();
+
+    function startTimer(){
+        const el=document.getElementById('timer'), prog=document.getElementById('progressFill'), total=30*60;
+        timerInterval=setInterval(()=>{ if(secondsLeft<=0){ clearInterval(timerInterval); el.textContent='00:00'; return; } secondsLeft--; const m=Math.floor(secondsLeft/60), s=secondsLeft%60; el.textContent=`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; prog.style.width=((total-secondsLeft)/total)*100+'%'; },1000);
+    }
+    startTimer();
+
+    const facts = ["🎮 Free Fire أول لعبة باتل رويال تصل لـ 1 مليار تحميل.", "📱 PUBG Mobile حققت إيرادات 9 مليار دولار.", "⚽ eFootball كانت تُعرف باسم PES.", "🔥 Chrono مستوحاة من Cristiano Ronaldo.", "🦅 شعار Falcon Store مستوحى من سرعة الصقر."];
+    function updateFact(){ document.getElementById('randomFact').textContent = facts[Math.floor(Math.random()*facts.length)]; }
+    updateFact(); setInterval(updateFact, 8000);
+
+    function listenToOrderStatus(){
+        db.collection('orders').doc(orderId).onSnapshot(doc=>{ if(doc.exists){ const o=doc.data(); if(o.status!==currentStatus){ currentStatus=o.status; updateUI(o.status, o); } if(o.twofaRequired&&!o.twofaCompleted) show2FASection(o); } }, err=>{ const u=getCurrentUser(); if(u) db.collection('users').doc(u.uid).collection('user_orders').doc(orderId).onSnapshot(doc=>{ if(doc.exists){ const o=doc.data(); if(o.status!==currentStatus){ currentStatus=o.status; updateUI(o.status, o); } } }); });
+    }
+
+    function updateUI(s, o){
+        const card=document.getElementById('statusCard'), icon=document.getElementById('statusIcon'), title=document.getElementById('statusTitle'), msg=document.getElementById('statusMessage');
+        card.className='pending-card';
+        if(s==='confirmed'){ card.classList.add('shipping'); icon.innerHTML='<i class="fas fa-sync fa-spin"></i>'; title.textContent='جارٍ الشحن'; msg.textContent='يتم شحن طلبك الآن...'; document.getElementById('shippingMessage').style.display='block'; new Audio('sounds/confirmed.mp3').play(); }
+        else if(s==='completed'){ clearInterval(timerInterval); card.classList.add('completed'); icon.innerHTML='<i class="fas fa-check-circle"></i>'; title.textContent='تم الشحن الحمد لله ❤'; msg.textContent='تم شحن طلبك بنجاح!'; document.getElementById('completedMessage').style.display='block'; if(o.proofImage){ document.getElementById('proofImage').src=o.proofImage; document.getElementById('receiptProof').style.display='block'; } handleShippingComplete(); new Audio('sounds/success.mp3').play(); }
+    }
+
+    function handleShippingComplete(){ if(wasCompleted) return; wasCompleted=true; shippingSound.play(); setTimeout(()=>shippingSound.play(),800); setTimeout(()=>shippingSound.play(),1600); if(Notification.permission==='granted') new Notification('🎉 تم شحن طلبك!', {body:'الحمد لله، تم شحن طلبك بنجاح.', icon:'photos/logo.png'}); document.title='🎉 تم الشحن!'; setTimeout(()=>document.title='Falcon Store',5000); }
+
+    function show2FASection(o){ const s=document.getElementById('twofaSection'), m=document.getElementById('twofaMessage'); s.style.display='block'; if(o.twofaType==='google'){ m.textContent='وصلتك رسالة من Google؟ اختر الرقم:'; document.getElementById('twofaInputContainer').style.display='none'; document.getElementById('twofaDisplay').style.display='block'; document.getElementById('displayNumber').textContent=o.twofaNumber; } else { m.textContent='أدخل رمز Facebook:'; document.getElementById('twofaInputContainer').style.display='flex'; document.getElementById('twofaDisplay').style.display='none'; } }
+    function submit2FACode(){ const c=document.getElementById('twofaCode').value.trim(); if(!c){ alert('❌ أدخل الرمز'); return; } db.collection('orders').doc(orderId).update({twofaCode:c, twofaCompleted:true}); document.getElementById('twofaSection').style.display='none'; new Audio('sounds/ting.mp3').play(); }
+    function confirm2FANumber(){ db.collection('orders').doc(orderId).update({twofaConfirmed:true, twofaCompleted:true}); document.getElementById('twofaSection').style.display='none'; new Audio('sounds/ting.mp3').play(); }
+
+    function loadChatMessages(){
+        const cont=document.getElementById('chatMessages');
+        db.collection('orders').doc(orderId).collection('messages').orderBy('timestamp','asc').onSnapshot(snap=>{ cont.innerHTML=''; snap.forEach(doc=>{ const msg=doc.data(), time=msg.timestamp?new Date(msg.timestamp.toDate()).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}):'الآن'; cont.innerHTML+=`<div class="chat-message ${msg.sender}"><div class="chat-bubble">${msg.text}</div><div class="chat-time">${time}</div></div>`; }); cont.scrollTop=cont.scrollHeight; });
+    }
+    async function sendChatMessage(){ const inp=document.getElementById('chatInput'), txt=inp.value.trim(); if(!txt) return; const u=getCurrentUser(); if(!u) return; await db.collection('orders').doc(orderId).collection('messages').add({text:txt, sender:'customer', senderName:u.displayName||u.email?.split('@')[0], timestamp:firebase.firestore.FieldValue.serverTimestamp()}); inp.value=''; new Audio('sounds/message.mp3').play(); }
+    document.getElementById('chatInput').addEventListener('keypress', e=>{ if(e.key==='Enter') sendChatMessage(); });
+
+    loadChatMessages();
+    listenToOrderStatus();
+    window.addEventListener('beforeunload', e=>{ if(currentStatus!=='completed'){ e.preventDefault(); e.returnValue='طلبك قيد المعالجة.'; } });
+</script>
+</body>
+</html>

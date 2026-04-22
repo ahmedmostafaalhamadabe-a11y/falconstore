@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>وكلائنا | Falcon Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#D32F2F">
+    <style>
+        .agents-container { max-width: 1000px; margin: 2rem auto; padding: 1rem; }
+        
+        /* هيدر الصفحة */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            border-radius: 32px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            animation: heroGlow 8s ease-in-out infinite;
+        }
+        
+        @keyframes heroGlow {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-5%, -5%); }
+        }
+        
+        .hero-section i {
+            font-size: 3.5rem;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-section h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-section p {
+            font-size: 1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* بطاقة الكود */
+        .referral-card {
+            background: var(--bg-surface);
+            border-radius: 28px;
+            padding: 2rem;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .referral-card:hover {
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+        
+        .referral-code-box {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            border-radius: 24px;
+            padding: 1.5rem;
+            color: white;
+            margin: 1.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .referral-code-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: codeGlow 6s ease-in-out infinite;
+        }
+        
+        @keyframes codeGlow {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-3%, -3%); }
+        }
+        
+        .referral-code {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: 5px;
+            margin: 0.5rem 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .copy-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .copy-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.02);
+        }
+        
+        .referral-link-box {
+            background: var(--bg-body);
+            border-radius: 60px;
+            padding: 0.5rem;
+            display: flex;
+            margin: 1rem 0;
+        }
+        
+        .referral-link-box input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            background: transparent;
+            color: var(--text-primary);
+            direction: ltr;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+        
+        .referral-link-box input:focus {
+            outline: none;
+        }
+        
+        .referral-link-box button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .referral-link-box button:hover {
+            background: var(--primary-dark);
+            transform: scale(1.02);
+        }
+        
+        /* الإحصائيات */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .stat-card {
+            background: var(--bg-body);
+            border-radius: 20px;
+            padding: 1.25rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            background: var(--bg-elevated);
+        }
+        
+        .stat-card .number {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        
+        .stat-card .label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        /* قائمة الوكلاء */
+        .agents-list-title {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .agent-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: var(--bg-body);
+            border-radius: 20px;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s;
+        }
+        
+        .agent-item:hover {
+            background: var(--bg-elevated);
+            transform: translateX(-5px);
+        }
+        
+        .agent-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .agent-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .agent-reward {
+            color: var(--success);
+            font-weight: bold;
+        }
+        
+        .empty-agents {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+        
+        /* شرح النظام */
+        .how-it-works {
+            background: var(--bg-surface);
+            border-radius: 28px;
+            padding: 2rem;
+            border: 1px solid var(--border-light);
+            margin-top: 2rem;
+        }
+        
+        .how-it-works h3 {
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .step {
+            text-align: center;
+        }
+        
+        .step-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--bg-body);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.8rem;
+            color: var(--primary);
+            transition: all 0.3s;
+        }
+        
+        .step:hover .step-icon {
+            transform: scale(1.05);
+            background: var(--primary);
+            color: white;
+        }
+        
+        .step h4 {
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .step p {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        
+        .example-box {
+            background: #FFF3CD;
+            border-radius: 20px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            color: #856404;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        body.dark .example-box {
+            background: #3E2723;
+            color: #FFB74D;
+        }
+        
+        @media (max-width: 600px) {
+            .stats-grid, .steps {
+                grid-template-columns: 1fr;
+            }
+            .hero-section {
+                padding: 1.5rem;
+            }
+            .referral-code {
+                font-size: 1.5rem;
+                letter-spacing: 3px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="falconLoader">
+    <div class="loader-content">
+        <div class="loader-dots-premium">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="loader-text-premium">جارِ التحميل...</div>
+    </div>
+</div>
+
+<header class="main-header">
+    <div class="header-container">
+        <div class="logo-wrapper">
+            <img src="photos/logo.png" alt="شعار المتجر" style="width:45px;height:45px;border-radius:16px;object-fit:cover;" onerror="this.src='https://placehold.co/45x45/D32F2F/white?text=F'">
+            <span class="logo-text">Falcon Store</span>
+        </div>
+        <a href="index.html" style="color:white;"><i class="fas fa-home"></i> الرئيسية</a>
+    </div>
+</header>
+
+<div class="agents-container">
+    <div class="hero-section">
+        <i class="fas fa-users"></i>
+        <h1>برنامج الوكلاء</h1>
+        <p>ادعُ أصدقائك واكسب نجوم ومكافآت</p>
+    </div>
+    
+    <div class="referral-card">
+        <h3><i class="fas fa-gift" style="color:var(--primary);"></i> كود الإحالة الخاص بك</h3>
+        <div class="referral-code-box">
+            <span>كودك</span>
+            <div class="referral-code" id="referralCode">------</div>
+            <button class="copy-btn" onclick="copyReferralCode()"><i class="far fa-copy"></i> نسخ الكود</button>
+        </div>
+        <p>أو شارك رابط الإحالة</p>
+        <div class="referral-link-box">
+            <input type="text" id="referralLink" readonly>
+            <button onclick="copyReferralLink()"><i class="far fa-copy"></i> نسخ</button>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="number" id="totalReferrals">0</div>
+                <div class="label">المسجلين</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="totalEarned">0</div>
+                <div class="label">النجوم المكتسبة</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="pendingRewards">0</div>
+                <div class="label">معلقة</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="referral-card">
+        <h3 class="agents-list-title"><i class="fas fa-list"></i> المسجلين عبر كودك</h3>
+        <div class="agents-list" id="agentsList"><div class="empty-agents">جاري التحميل...</div></div>
+    </div>
+    
+    <div class="how-it-works">
+        <h3><i class="fas fa-question-circle" style="color:var(--primary);"></i> كيف يعمل؟</h3>
+        <div class="steps">
+            <div class="step">
+                <div class="step-icon"><i class="fas fa-share-alt"></i></div>
+                <h4>1. شارك كودك</h4>
+                <p>انسخ الكود وشاركه مع أصدقائك</p>
+            </div>
+            <div class="step">
+                <div class="step-icon"><i class="fas fa-user-plus"></i></div>
+                <h4>2. صديقك يسجل</h4>
+                <p>يحصل على خصم 10% على أول طلب</p>
+            </div>
+            <div class="step">
+                <div class="step-icon"><i class="fas fa-star"></i></div>
+                <h4>3. اربح نجوم</h4>
+                <p>تحصل على 5% من قيمة أول طلب</p>
+            </div>
+        </div>
+        <div class="example-box">
+            <i class="fas fa-info-circle"></i>
+            مثال: إذا اشترى صديقك 1000 جوهرة بـ 550ج، تربح 27 نجمة في حسابك
+        </div>
+    </div>
+</div>
+
+<!-- ==================== قسم التعليقات والآراء ==================== -->
+<div class="comments-wrapper">
+    <div class="comments-card">
+        <h3><i class="fas fa-comments"></i> آراء واستفسارات العملاء</h3>
+        <div class="comments-subtitle">شاركنا رأيك أو مشكلتك، سيقوم فريق الدعم بالرد عليك خلال 24 ساعة</div>
+        <div id="commentsSection"></div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/comments.js"></script>
+
+<script>
+    window.addEventListener('load', ()=>{
+        const l=document.getElementById('falconLoader');
+        if(l){ l.classList.add('fade-out'); setTimeout(()=>l.style.display='none',1000); }
+    });
+    setTimeout(()=>{
+        const l=document.getElementById('falconLoader');
+        if(l&&l.style.display!=='none'){ l.classList.add('fade-out'); setTimeout(()=>l.style.display='none',1000); }
+    },5000);
+
+    let currentUser=null, userReferralCode='';
+    
+    async function loadPage(){ 
+        const u=getCurrentUser(); 
+        if(!u){window.location.href='login.html';return;} 
+        currentUser=u; 
+        await loadReferralCode(); 
+        await loadStats(); 
+        await loadAgentsList(); 
+    }
+    
+    async function loadReferralCode(){ 
+        const d=await db.collection('users').doc(currentUser.uid).get(); 
+        const data=d.data()||{}; 
+        userReferralCode=data.referralCode||currentUser.uid.substring(0,6).toUpperCase(); 
+        if(!data.referralCode) await db.collection('users').doc(currentUser.uid).update({referralCode:userReferralCode}); 
+        document.getElementById('referralCode').textContent=userReferralCode; 
+        document.getElementById('referralLink').value=`https://falconstore1.netlify.app/signup?ref=${userReferralCode}`; 
+    }
+    
+    async function loadStats(){ 
+        const refSnap=await db.collection('users').where('referredBy','==',currentUser.uid).get(); 
+        document.getElementById('totalReferrals').textContent=refSnap.size; 
+        let earned=0, pending=0; 
+        const rewSnap=await db.collection('users').doc(currentUser.uid).collection('referral_rewards').get(); 
+        rewSnap.forEach(d=>{ const r=d.data(); if(r.status==='earned') earned+=r.stars||0; else pending+=r.stars||0; }); 
+        document.getElementById('totalEarned').textContent=earned; 
+        document.getElementById('pendingRewards').textContent=pending; 
+    }
+    
+    async function loadAgentsList(){ 
+        const c=document.getElementById('agentsList'); 
+        const s=await db.collection('users').where('referredBy','==',currentUser.uid).orderBy('createdAt','desc').limit(20).get(); 
+        if(s.empty){ c.innerHTML='<div class="empty-agents">لا يوجد مسجلين بعد</div>'; return; } 
+        c.innerHTML=''; 
+        for(const d of s.docs){ 
+            const r=d.data(); 
+            const date=r.createdAt?.toDate().toLocaleDateString('ar-EG')||''; 
+            const rew=await db.collection('users').doc(currentUser.uid).collection('referral_rewards').where('referredUserId','==',d.id).limit(1).get(); 
+            let stars=0, status='pending'; 
+            if(!rew.empty){ const rd=rew.docs[0].data(); stars=rd.stars||0; status=rd.status||'pending'; } 
+            c.innerHTML+=`<div class="agent-item"><div class="agent-info"><div class="agent-avatar">${(r.displayName||'?')[0]}</div><div><div>${r.displayName||'مستخدم'}</div><div style="font-size:0.7rem;color:var(--text-muted);">${date}</div></div></div><div class="agent-reward">${status==='earned'?`+${stars} ⭐`:'⏳ معلق'}</div></div>`; 
+        } 
+    }
+    
+    function copyReferralCode(){ 
+        navigator.clipboard.writeText(userReferralCode); 
+        if(typeof showSuccessModal === 'function') showSuccessModal('✅ تم نسخ الكود'); 
+        else alert('✅ تم نسخ الكود'); 
+        if(typeof playTingSound === 'function') playTingSound(); 
+        else new Audio('sounds/ting.mp3').play().catch(()=>{}); 
+    }
+    
+    function copyReferralLink(){ 
+        navigator.clipboard.writeText(document.getElementById('referralLink').value); 
+        if(typeof showSuccessModal === 'function') showSuccessModal('✅ تم نسخ الرابط'); 
+        else alert('✅ تم نسخ الرابط'); 
+        if(typeof playTingSound === 'function') playTingSound(); 
+        else new Audio('sounds/ting.mp3').play().catch(()=>{}); 
+    }
+    
+    if (typeof initComments === 'function') { initComments('agents'); }
+    
+    onAuthStateChanged(u=>{ if(!u) window.location.href='login.html'; else loadPage(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+# ==================== Falcon Store - Netlify Redirects ====================
+# هذا الملف يحدد إعادة التوجيه لروابط Netlify
+
+# ==================== إعادة توجيه الألعاب ====================
+/freefire    /product.html?game=freefire    302
+/pubg        /product.html?game=pubg        302
+/cod         /product.html?game=cod         302
+/efootball   /product.html?game=efootball   302
+/pes         /product.html?game=efootball   302
+/fifa        /product.html?game=fifa        302
+
+# ==================== إعادة توجيه الصفحات الرئيسية ====================
+/rewards     /rewards.html     302
+/wheel       /wheel.html       302
+/profile     /profile.html     302
+/orders      /orders.html      302
+/favorites   /favorites.html   302
+/invoices    /my-invoices.html 302
+/security    /security.html    302
+/agents      /agents.html      302
+/about       /about.html       302
+/feed        /public-feed.html 302
+/login       /login.html       302
+/signup      /signup.html      302
+/admin       /admin.html       302
+/admin-stats /admin-stats.html 302
+/giftcards   /giftcards.html   302
+/kyc         /kyc.html         302
+/terms       /terms.html       302
+/privacy     /privacy.html     302
+/add-balance /add-balance.html 302
+
+# ==================== روابط التواصل الاجتماعي ====================
+/support     https://wa.me/201121816129  302
+/whatsapp    https://wa.me/201121816129  302
+/facebook    https://www.facebook.com/share/p/1D5sK63Ryi/  302
+/channel     https://whatsapp.com/channel/0029VbCg48HJUM2WDdkrEh0e  302
+/instagram   https://www.instagram.com/falcon_store50  302
+/tiktok      https://www.tiktok.com/@falcon_store50  302
+
+# ==================== إعادة توجيه جميع الصفحات غير الموجودة إلى index.html ====================
+# هذا السطر يجب أن يكون في الأسفل
+/*    /index.html   200

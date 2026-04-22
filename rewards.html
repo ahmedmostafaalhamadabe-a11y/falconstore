@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>متجر المكافآت | Falcon Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .rewards-container { max-width: 1000px; margin: 2rem auto; padding: 1rem; }
+        
+        /* هيدر النجوم - خزنة كنز */
+        .stars-header {
+            background: linear-gradient(135deg, var(--secondary), #FFA000);
+            border-radius: 32px;
+            padding: 2rem;
+            text-align: center;
+            color: #8B0000;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .stars-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+            animation: starsGlow 8s ease-in-out infinite;
+        }
+        
+        @keyframes starsGlow {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-5%, -5%); }
+        }
+        
+        .stars-header .balance {
+            font-size: 3.5rem;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .stars-header .label {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .stars-header .treasure-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* بطاقات الندرة (ذهبي/فضي/رمادي) */
+        .rarity-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .rarity-card.gold {
+            background: linear-gradient(135deg, #FFD700, #FFA000);
+            border: 2px solid #FFD700;
+            box-shadow: 0 0 15px rgba(255,215,0,0.5);
+        }
+        
+        .rarity-card.silver {
+            background: linear-gradient(135deg, #C0C0C0, #A9A9A9);
+            border: 2px solid #C0C0C0;
+        }
+        
+        .rarity-card.bronze {
+            background: linear-gradient(135deg, #CD7F32, #8B5A2B);
+            border: 2px solid #CD7F32;
+        }
+        
+        .rarity-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 60px;
+            height: 60px;
+            background: inherit;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            transform: rotate(15deg);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        /* شبكة المكافآت */
+        .rewards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .reward-card {
+            background: var(--bg-surface);
+            border-radius: 24px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid var(--border-light);
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .reward-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            border-color: var(--primary);
+        }
+        
+        .reward-card.disabled {
+            opacity: 0.6;
+        }
+        
+        .reward-card.disabled:hover {
+            transform: none;
+        }
+        
+        .reward-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .reward-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .reward-description {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        
+        .reward-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .redeem-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 60px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .redeem-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(211,47,47,0.3);
+        }
+        
+        .redeem-btn:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .best-value {
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: linear-gradient(135deg, var(--success), #2E7D32);
+            color: white;
+            font-size: 0.6rem;
+            padding: 3px 10px;
+            border-radius: 30px;
+            font-weight: bold;
+        }
+        
+        /* سجل الاستبدال */
+        .history-section {
+            background: var(--bg-surface);
+            border-radius: 24px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-light);
+        }
+        
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .history-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-body);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+        
+        .history-cost {
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
+        /* نافذة بيانات الحساب */
+        .account-fields-modal {
+            margin-top: 1rem;
+            text-align: right;
+        }
+        
+        .account-fields-modal input, .account-fields-modal select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 16px;
+            border: 1px solid var(--border-light);
+            background: var(--bg-body);
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        .platform-buttons-modal {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .platform-btn-modal {
+            flex: 1;
+            padding: 8px;
+            border-radius: 60px;
+            border: 1px solid var(--border-light);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .platform-btn-modal.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .warning-text {
+            background: #FFF3CD;
+            color: #856404;
+            padding: 10px;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
+        
+        body.dark .warning-text {
+            background: #3E2723;
+            color: #FFB74D;
+        }
+        
+        .id-field-modal {
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 600px) {
+            .rewards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="dark">
+
+<div id="falconLoader">
+    <div class="loader-content">
+        <div class="loader-dots-premium">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="loader-text-premium">جارِ التحميل...</div>
+    </div>
+</div>
+
+<header class="main-header">
+    <div class="header-container">
+        <div class="logo-wrapper">
+            <img src="photos/logo.png" alt="شعار المتجر" style="width:45px;height:45px;border-radius:16px;object-fit:cover;" onerror="this.src='https://placehold.co/45x45/D32F2F/white?text=F'">
+            <span class="logo-text">Falcon Store</span>
+        </div>
+        <a href="index.html" style="color:white;"><i class="fas fa-home"></i> الرئيسية</a>
+    </div>
+</header>
+
+<div class="rewards-container">
+    <div class="stars-header" onclick="window.location.href='profile.html'">
+        <div class="treasure-icon">💎💰⭐</div>
+        <div class="label"><i class="fas fa-star"></i> رصيدك الحالي - خزنة النجوم</div>
+        <div class="balance" id="starsBalance">0</div>
+        <div class="label">نجمة</div>
+        <div style="font-size:0.7rem; margin-top:0.5rem;"><i class="fas fa-info-circle"></i> اضغط للانتقال لملفك الشخصي</div>
+    </div>
+    
+    <h3 style="color:var(--text-primary); margin-bottom:1rem;"><i class="fas fa-gift" style="color:var(--primary);"></i> المكافآت المتاحة</h3>
+    <div class="rewards-grid" id="rewardsGrid"></div>
+    
+    <div class="history-section">
+        <div class="history-header">
+            <h4><i class="fas fa-history"></i> سجل الاستبدال</h4>
+            <button class="btn btn-outline btn-sm" onclick="loadRedemptionHistory()"><i class="fas fa-sync-alt"></i> تحديث</button>
+        </div>
+        <div class="history-list" id="historyList"><div class="empty-history" style="text-align:center;padding:2rem;">جاري التحميل...</div></div>
+    </div>
+</div>
+
+<!-- ==================== قسم التعليقات والآراء ==================== -->
+<div class="comments-wrapper">
+    <div class="comments-card">
+        <h3><i class="fas fa-comments"></i> آراء واستفسارات العملاء</h3>
+        <div class="comments-subtitle">شاركنا رأيك أو مشكلتك، سيقوم فريق الدعم بالرد عليك خلال 24 ساعة</div>
+        <div id="commentsSection"></div>
+    </div>
+</div>
+
+<!-- نافذة تأكيد الاستبدال -->
+<div class="modal-overlay" id="redeemConfirmModal">
+    <div class="modal-card" style="max-width: 450px;">
+        <i class="fas fa-exchange-alt" style="font-size:3rem; color:var(--primary);"></i>
+        <h3>تأكيد الاستبدال</h3>
+        <p>استبدال: <strong id="confirmRewardName"></strong></p>
+        <p>التكلفة: <strong id="confirmRewardCost"></strong> ⭐</p>
+        <div id="accountFieldsContainer" class="account-fields-modal"></div>
+        <div class="warning-text"><i class="fas fa-clock"></i> سيتم الشحن خلال 24 ساعة. يرجى التحلي بالصبر.</div>
+        <div class="modal-actions" style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+            <button class="btn btn-primary" onclick="confirmRedeemWithAccount()">تأكيد الاستبدال</button>
+            <button class="btn btn-outline" onclick="closeRedeemModal()">إلغاء</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="successModal">
+    <div class="modal-card">
+        <i class="fas fa-check-circle" style="font-size:3rem; color:var(--success);"></i>
+        <h3>تم الاستبدال</h3>
+        <p id="successMessage"></p>
+        <button class="btn btn-primary" onclick="closeSuccessModal()">حسناً</button>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/comments.js"></script>
+
+<script>
+    window.addEventListener('load', ()=>{
+        const l=document.getElementById('falconLoader');
+        if(l){ l.classList.add('fade-out'); setTimeout(()=>l.style.display='none',1000); }
+    });
+    setTimeout(()=>{
+        const l=document.getElementById('falconLoader');
+        if(l&&l.style.display!=='none'){ l.classList.add('fade-out'); setTimeout(()=>l.style.display='none',1000); }
+    },3000);
+
+    const rewardsList = [
+        { id: 'discount_5', name: 'خصم 5%', description: 'خصم 5% على أي طلب (مرة واحدة)', stars: 200, icon: '🏷️', type: 'discount', rarity: 'silver' },
+        { id: 'discount_10', name: 'خصم 10%', description: 'خصم 10% على أي طلب (مرة واحدة)', stars: 500, icon: '🏷️', type: 'discount', rarity: 'gold' },
+        { id: 'discount_month_5', name: 'خصم 5% لمدة شهر', description: 'خصم 5% على كل طلباتك لمدة شهر', stars: 3000, icon: '🏷️', type: 'discount_month', rarity: 'gold' },
+        { id: 'ff_50', name: '50 جواهر Free Fire', description: 'شحن 50 جوهرة', stars: 800, icon: '💎', type: 'product', game: 'freefire', platformRequired: true, shippingType: 'account', rarity: 'bronze' },
+        { id: 'ff_100', name: '100 جواهر Free Fire', description: 'شحن 100 جوهرة', stars: 1600, icon: '💎', type: 'product', game: 'freefire', platformRequired: true, bestValue: true, shippingType: 'account', rarity: 'silver' },
+        { id: 'ff_weekly', name: 'عضوية أسبوعية مخففة', description: 'عضوية أسبوعية مخففة', stars: 900, icon: '📅', type: 'product', game: 'freefire', platformRequired: true, shippingType: 'account', rarity: 'bronze' },
+        { id: 'pubg_30', name: '30 UC PUBG', description: 'شحن 30 UC', stars: 800, icon: '💰', type: 'product', game: 'pubg', shippingType: 'id', rarity: 'bronze' },
+        { id: 'pubg_60', name: '60 UC PUBG', description: 'شحن 60 UC', stars: 1500, icon: '💰', type: 'product', game: 'pubg', shippingType: 'id', rarity: 'silver' },
+        { id: 'cod_30', name: '30 CP Call of Duty', description: 'شحن 30 CP', stars: 700, icon: '⚡', type: 'product', game: 'cod', shippingType: 'id', rarity: 'bronze' },
+        { id: 'cod_80', name: '80 CP Call of Duty', description: 'شحن 80 CP', stars: 1600, icon: '⚡', type: 'product', game: 'cod', shippingType: 'id', rarity: 'silver' },
+        { id: 'fifa_40', name: '40 FC Points FIFA', description: 'شحن 40 FC Points', stars: 700, icon: '⚽', type: 'product', game: 'fifa', shippingType: 'id', rarity: 'bronze' },
+        { id: 'efootball_130', name: '130 كوين eFootball', description: 'شحن 130 كوين', stars: 1500, icon: '🎮', type: 'product', game: 'efootball', platformRequired: true, shippingType: 'account', rarity: 'silver' },
+        { id: 'raffle_ticket', name: 'تذكرة السحب الشهري', description: 'تذكرة دخول السحب الشهري', stars: 50, icon: '🎟️', type: 'raffle', rarity: 'bronze' },
+        { id: 'vip_month', name: 'ترقية VIP لمدة شهر', description: 'ترقية VIP لمدة شهر كامل', stars: 10, icon: '👑', type: 'vip', bestValue: true, rarity: 'gold' }
+    ];
+    
+    let currentUser = null, currentStars = 0, selectedReward = null;
+    let selectedPlatform = 'google';
+    let accountData = {};
+    let playerIdForReward = '';
+    
+    async function loadRewards() {
+        const u = getCurrentUser();
+        if (!u) { window.location.href = 'login.html'; return; }
+        currentUser = u;
+        const doc = await db.collection('users').doc(u.uid).get();
+        currentStars = doc.data()?.loyaltyPoints || 0;
+        document.getElementById('starsBalance').textContent = currentStars;
+        renderRewards();
+        loadRedemptionHistory();
+    }
+    
+    function getRarityClass(rarity) {
+        switch(rarity) {
+            case 'gold': return 'gold';
+            case 'silver': return 'silver';
+            default: return 'bronze';
+        }
+    }
+    
+    function getRarityIcon(rarity) {
+        switch(rarity) {
+            case 'gold': return '👑';
+            case 'silver': return '⭐';
+            default: return '🟤';
+        }
+    }
+    
+    function renderRewards() {
+        document.getElementById('rewardsGrid').innerHTML = rewardsList.map(r => {
+            const can = currentStars >= r.stars;
+            const rarityClass = getRarityClass(r.rarity);
+            const rarityIcon = getRarityIcon(r.rarity);
+            return `<div class="reward-card rarity-card ${rarityClass} ${can ? '' : 'disabled'}">
+                        <div class="rarity-badge">${rarityIcon}</div>
+                        ${r.bestValue ? '<span class="best-value">🏷️ أفضل قيمة</span>' : ''}
+                        <div class="reward-icon">${r.icon}</div>
+                        <div class="reward-name">${r.name}</div>
+                        <div class="reward-description">${r.description || ''}</div>
+                        <div class="reward-price">${r.stars} <i class="fas fa-star"></i></div>
+                        <button class="redeem-btn" onclick="openRedeemModal('${r.id}')" ${can ? '' : 'disabled'}>${can ? '🔄 استبدال' : '⭐ نجوم غير كافية'}</button>
+                    </div>`;
+        }).join('');
+    }
+    
+    function openRedeemModal(id) {
+        selectedReward = rewardsList.find(r => r.id === id);
+        if (!selectedReward || currentStars < selectedReward.stars) {
+            if (typeof showErrorModal === 'function') showErrorModal('❌ نجوم غير كافية');
+            else alert('❌ نجوم غير كافية');
+            return;
+        }
+        
+        document.getElementById('confirmRewardName').textContent = selectedReward.name;
+        document.getElementById('confirmRewardCost').textContent = selectedReward.stars;
+        
+        const container = document.getElementById('accountFieldsContainer');
+        
+        if (selectedReward.shippingType === 'account' && selectedReward.type === 'product') {
+            container.style.display = 'block';
+            container.innerHTML = `
+                <div class="id-field-modal">
+                    <input type="text" id="playerIdReward" placeholder="أدخل ID اللاعب (للتأكد من تطابق الحساب)" class="input-field">
+                </div>
+                <label style="display:block; margin-bottom:5px;">اختر المنصة:</label>
+                <div class="platform-buttons-modal">
+                    <button type="button" class="platform-btn-modal ${selectedPlatform === 'google' ? 'active' : ''}" onclick="selectPlatformModal('google')">Google</button>
+                    <button type="button" class="platform-btn-modal ${selectedPlatform === 'facebook' ? 'active' : ''}" onclick="selectPlatformModal('facebook')">Facebook</button>
+                    <button type="button" class="platform-btn-modal ${selectedPlatform === 'twitter' ? 'active' : ''}" onclick="selectPlatformModal('twitter')">Twitter</button>
+                    <button type="button" class="platform-btn-modal ${selectedPlatform === 'vk' ? 'active' : ''}" onclick="selectPlatformModal('vk')">VK</button>
+                </div>
+                <div id="dynamicAccountFields"></div>
+            `;
+            updateAccountFieldsModal();
+        }
+        else if (selectedReward.shippingType === 'id' && selectedReward.type === 'product') {
+            container.style.display = 'block';
+            container.innerHTML = `
+                <div class="id-field-modal">
+                    <input type="text" id="playerIdReward" placeholder="أدخل ID اللاعب" class="input-field">
+                </div>
+            `;
+        } else {
+            container.style.display = 'none';
+            container.innerHTML = '';
+        }
+        
+        document.getElementById('redeemConfirmModal').classList.add('show');
+    }
+    
+    function selectPlatformModal(platform) {
+        selectedPlatform = platform;
+        document.querySelectorAll('.platform-btn-modal').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+        updateAccountFieldsModal();
+    }
+    
+    function updateAccountFieldsModal() {
+        const container = document.getElementById('dynamicAccountFields');
+        if (!container) return;
+        
+        if (selectedPlatform === 'google') {
+            container.innerHTML = `
+                <input type="email" id="accountEmail" placeholder="البريد الإلكتروني" class="input-field">
+                <input type="password" id="accountPassword" placeholder="كلمة السر" class="input-field">
+            `;
+        } else if (selectedPlatform === 'facebook') {
+            container.innerHTML = `
+                <input type="text" id="accountLogin" placeholder="رقم الهاتف أو البريد الإلكتروني" class="input-field">
+                <input type="password" id="accountPassword" placeholder="كلمة السر" class="input-field">
+            `;
+        } else {
+            container.innerHTML = `
+                <input type="text" id="accountLogin" placeholder="اسم المستخدم" class="input-field">
+                <input type="password" id="accountPassword" placeholder="كلمة السر" class="input-field">
+            `;
+        }
+    }
+    
+    function closeRedeemModal() {
+        document.getElementById('redeemConfirmModal').classList.remove('show');
+        selectedReward = null;
+        accountData = {};
+        playerIdForReward = '';
+        selectedPlatform = 'google';
+    }
+    
+    async function confirmRedeemWithAccount() {
+        if (!selectedReward || !currentUser) return;
+        
+        const playerIdInput = document.getElementById('playerIdReward');
+        if (playerIdInput) {
+            playerIdForReward = playerIdInput.value.trim();
+            if (!playerIdForReward && selectedReward.type === 'product') {
+                if (typeof showErrorModal === 'function') showErrorModal('❌ يرجى إدخال ID اللاعب');
+                else alert('❌ يرجى إدخال ID اللاعب');
+                return;
+            }
+        }
+        
+        if (selectedReward.shippingType === 'account' && selectedReward.type === 'product') {
+            if (selectedPlatform === 'google') {
+                const email = document.getElementById('accountEmail')?.value.trim();
+                const password = document.getElementById('accountPassword')?.value.trim();
+                if (!email || !password) {
+                    if (typeof showErrorModal === 'function') showErrorModal('❌ يرجى إدخال البريد الإلكتروني وكلمة السر');
+                    else alert('❌ يرجى إدخال البريد الإلكتروني وكلمة السر');
+                    return;
+                }
+                accountData = { platform: selectedPlatform, login: email, password: password };
+            } else {
+                const login = document.getElementById('accountLogin')?.value.trim();
+                const password = document.getElementById('accountPassword')?.value.trim();
+                if (!login || !password) {
+                    if (typeof showErrorModal === 'function') showErrorModal('❌ يرجى إدخال بيانات تسجيل الدخول');
+                    else alert('❌ يرجى إدخال بيانات تسجيل الدخول');
+                    return;
+                }
+                accountData = { platform: selectedPlatform, login: login, password: password };
+            }
+        }
+        
+        closeRedeemModal();
+        
+        try {
+            await db.collection('users').doc(currentUser.uid).update({
+                loyaltyPoints: firebase.firestore.FieldValue.increment(-selectedReward.stars)
+            });
+            
+            await db.collection('users').doc(currentUser.uid).collection('redemptions').add({
+                rewardId: selectedReward.id,
+                rewardName: selectedReward.name,
+                starsSpent: selectedReward.stars,
+                playerId: playerIdForReward || null,
+                accountData: Object.keys(accountData).length ? accountData : null,
+                redeemedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            if (selectedReward.type === 'product') {
+                let gameName = 'Free Fire';
+                if (selectedReward.game === 'pubg') gameName = 'PUBG Mobile';
+                else if (selectedReward.game === 'cod') gameName = 'Call of Duty';
+                else if (selectedReward.game === 'fifa') gameName = 'FIFA Mobile';
+                else if (selectedReward.game === 'efootball') gameName = 'eFootball';
+                
+                const orderData = {
+                    orderId: `REWARD-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    game: gameName,
+                    type: 'reward',
+                    paymentType: 'stars',
+                    rewardName: selectedReward.name,
+                    item: { name: selectedReward.name, price: 0 },
+                    quantity: 1,
+                    totalPrice: 0,
+                    starsSpent: selectedReward.stars,
+                    playerId: playerIdForReward || null,
+                    accountData: Object.keys(accountData).length ? accountData : null,
+                    shippingType: selectedReward.shippingType || 'id',
+                    status: 'pending',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    note: `تم استبدال ${selectedReward.name} من متجر المكافآت بـ ${selectedReward.stars} نجمة. ${playerIdForReward ? 'ID: ' + playerIdForReward : ''} يرجى شحنه يدوياً خلال 24 ساعة.`
+                };
+                await db.collection('orders').add(orderData);
+            }
+            
+            currentStars -= selectedReward.stars;
+            document.getElementById('starsBalance').textContent = currentStars;
+            renderRewards();
+            loadRedemptionHistory();
+            
+            document.getElementById('successMessage').innerHTML = `✅ تم استبدال ${selectedReward.name} بنجاح!<br><br>⏳ سيتم الشحن خلال 24 ساعة. يرجى التحلي بالصبر.`;
+            document.getElementById('successModal').classList.add('show');
+            
+            if (typeof playRewardSound === 'function') playRewardSound();
+            else new Audio('sounds/reward.mp3').play().catch(() => {});
+            
+            if (typeof logActivity === 'function') {
+                logActivity(`قام ${currentUser.displayName || currentUser.email} باستبدال ${selectedReward.name}`, '🎁');
+            }
+            
+        } catch (error) {
+            console.error('خطأ في الاستبدال:', error);
+            if (typeof showErrorModal === 'function') showErrorModal('❌ حدث خطأ أثناء الاستبدال');
+            else alert('❌ حدث خطأ');
+        }
+    }
+    
+    function closeSuccessModal() {
+        document.getElementById('successModal').classList.remove('show');
+    }
+    
+    async function loadRedemptionHistory() {
+        const container = document.getElementById('historyList');
+        if (!currentUser) return;
+        const snapshot = await db.collection('users').doc(currentUser.uid).collection('redemptions').orderBy('redeemedAt', 'desc').limit(20).get();
+        if (snapshot.empty) {
+            container.innerHTML = '<div class="empty-history" style="text-align:center;padding:2rem;">لا توجد عمليات استبدال</div>';
+            return;
+        }
+        container.innerHTML = '';
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const date = data.redeemedAt?.toDate().toLocaleDateString('ar-EG') || 'غير محدد';
+            container.innerHTML += `
+                <div class="history-item">
+                    <div class="history-info">
+                        <div class="history-icon">🎁</div>
+                        <div>
+                            <div>${data.rewardName}</div>
+                            <div style="font-size:0.7rem;color:var(--text-muted);">${date}</div>
+                        </div>
+                    </div>
+                    <div class="history-cost">-${data.starsSpent} ⭐</div>
+                </div>
+            `;
+        });
+    }
+    
+    onAuthStateChanged(u => {
+        if (!u) window.location.href = 'login.html';
+        else loadRewards();
+    });
+    
+    if (typeof initComments === 'function') { initComments('rewards'); }
+    
+    window.openRedeemModal = openRedeemModal;
+    window.closeRedeemModal = closeRedeemModal;
+    window.confirmRedeemWithAccount = confirmRedeemWithAccount;
+    window.closeSuccessModal = closeSuccessModal;
+    window.loadRedemptionHistory = loadRedemptionHistory;
+    window.selectPlatformModal = selectPlatformModal;
+</script>
+</body>
+</html>

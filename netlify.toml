@@ -1,0 +1,251 @@
+# ==================== Falcon Store - Netlify Configuration ====================
+
+[build]
+  # مجلد النشر (حيث توجد الملفات النهائية)
+  publish = "."
+  
+  # أمر البناء (لا يوجد لأننا نرفع الملفات جاهزة)
+  command = ""
+
+# ==================== إعدادات الرؤوس (Headers) ====================
+[[headers]]
+  # تطبيق على جميع الملفات
+  for = "/*"
+  
+  [headers.values]
+    # سياسة الأمان (Content Security Policy)
+    Content-Security-Policy = """
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://cdn.jsdelivr.net https://apis.google.com https://cdnjs.cloudflare.com;
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com;
+      font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com;
+      img-src 'self' data: https: blob:;
+      connect-src 'self' https://*.firebaseio.com https://*.firebase.com https://*.googleapis.com wss://*.firebaseio.com https://api.sniffmail.io https://api.ipify.org https://ipapi.co;
+      frame-src 'self' https://*.firebaseapp.com https://*.facebook.com;
+      media-src 'self' data: blob:;
+    """
+    
+    # منع المتصفح من تخمين نوع الملف (MIME sniffing)
+    X-Content-Type-Options = "nosniff"
+    
+    # حماية من هجمات XSS
+    X-XSS-Protection = "1; mode=block"
+    
+    # منع تضمين الموقع في iframe (حماية من clickjacking)
+    X-Frame-Options = "DENY"
+    
+    # سياسة المراجع (Referrer Policy)
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    
+    # سياسة الأذونات (Permissions Policy)
+    Permissions-Policy = "geolocation=(self), microphone=(), camera=(), payment=(self)"
+
+# ==================== رؤوس خاصة للملفات الثابتة ====================
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/*.mp3"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    Service-Worker-Allowed = "/"
+
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+# ==================== إعدادات التوجيه (Redirects) ====================
+# نفس إعدادات _redirects لكن بشكل متقدم
+
+[[redirects]]
+  from = "/freefire"
+  to = "/product.html?game=freefire"
+  status = 302
+
+[[redirects]]
+  from = "/pubg"
+  to = "/product.html?game=pubg"
+  status = 302
+
+[[redirects]]
+  from = "/cod"
+  to = "/product.html?game=cod"
+  status = 302
+
+[[redirects]]
+  from = "/efootball"
+  to = "/product.html?game=efootball"
+  status = 302
+
+[[redirects]]
+  from = "/pes"
+  to = "/product.html?game=efootball"
+  status = 302
+
+[[redirects]]
+  from = "/fifa"
+  to = "/product.html?game=fifa"
+  status = 302
+
+[[redirects]]
+  from = "/rewards"
+  to = "/rewards.html"
+  status = 302
+
+[[redirects]]
+  from = "/wheel"
+  to = "/wheel.html"
+  status = 302
+
+[[redirects]]
+  from = "/profile"
+  to = "/profile.html"
+  status = 302
+
+[[redirects]]
+  from = "/orders"
+  to = "/orders.html"
+  status = 302
+
+[[redirects]]
+  from = "/favorites"
+  to = "/favorites.html"
+  status = 302
+
+[[redirects]]
+  from = "/invoices"
+  to = "/my-invoices.html"
+  status = 302
+
+[[redirects]]
+  from = "/security"
+  to = "/security.html"
+  status = 302
+
+[[redirects]]
+  from = "/agents"
+  to = "/agents.html"
+  status = 302
+
+[[redirects]]
+  from = "/about"
+  to = "/about.html"
+  status = 302
+
+[[redirects]]
+  from = "/feed"
+  to = "/public-feed.html"
+  status = 302
+
+[[redirects]]
+  from = "/login"
+  to = "/login.html"
+  status = 302
+
+[[redirects]]
+  from = "/signup"
+  to = "/signup.html"
+  status = 302
+
+[[redirects]]
+  from = "/admin"
+  to = "/admin.html"
+  status = 302
+
+[[redirects]]
+  from = "/giftcards"
+  to = "/giftcards.html"
+  status = 302
+
+[[redirects]]
+  from = "/support"
+  to = "https://wa.me/201121816129"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/whatsapp"
+  to = "https://wa.me/201121816129"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/facebook"
+  to = "https://www.facebook.com/share/p/1D5sK63Ryi/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/channel"
+  to = "https://whatsapp.com/channel/0029VbCg48HJUM2WDdkrEh0e"
+  status = 302
+  force = true
+
+# إعادة توجيه جميع الصفحات غير الموجودة إلى index.html (لـ SPA)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# ==================== تحسينات الأمان ====================
+[security]
+  # حماية من هجمات XSS و CSRF
+  [security.headers]
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+
+# ==================== إعدادات الضغط ====================
+[build.processing]
+  [build.processing.css]
+    bundle = true
+    minify = true
+  [build.processing.js]
+    bundle = true
+    minify = true
+  [build.processing.html]
+    pretty_urls = true
+  [build.processing.images]
+    compress = true
+
+# ==================== إعدادات البيئة ====================
+[context.production]
+  # متغيرات البيئة للإنتاج (ستضعها في Netlify Dashboard وليس هنا)
+  # لاحظ: لا تضع مفاتيح سرية في هذا الملف
+  
+[context.deploy-preview]
+  # إعدادات خاصة بمعاينات النشر
+
+[context.branch-deploy]
+  # إعدادات خاصة بنشر الفروع
+
+# ==================== تحسين الأداء ====================
+[build.environment]
+  NODE_VERSION = "18"
+  NETLIFY_USE_YARN = "false"

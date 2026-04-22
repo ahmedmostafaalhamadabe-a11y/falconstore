@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>الحماية | Falcon Store</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#D32F2F">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Falcon Store">
+    <link rel="apple-touch-icon" href="/photos/logo-192.png">
+    
+    <style>
+        .security-container { max-width: 750px; margin: 2rem auto; padding: 1rem; }
+        
+        /* الهيدر */
+        .security-header {
+            background: linear-gradient(135deg, var(--bg-surface), var(--bg-elevated));
+            border-radius: 28px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .security-header i {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+        
+        .security-header h2 {
+            color: var(--text-primary);
+            font-size: 1.3rem;
+        }
+        
+        .security-header p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        
+        /* الأقسام */
+        .security-section {
+            background: var(--bg-surface);
+            border-radius: 24px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .security-section:hover {
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .section-title i {
+            font-size: 1.3rem;
+            color: var(--primary);
+        }
+        
+        .section-title h3 {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+        }
+        
+        /* الحقول */
+        .input-group {
+            margin-bottom: 1.2rem;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 60px;
+            border: 1.5px solid var(--border-light);
+            background: var(--bg-body);
+            font-family: 'Cairo', sans-serif;
+            color: var(--text-primary);
+            transition: all 0.3s;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(211,47,47,0.1);
+        }
+        
+        .password-wrapper {
+            position: relative;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+        
+        .save-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 60px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(211,47,47,0.3);
+        }
+        
+        /* 2FA */
+        .twofa-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: var(--bg-body);
+            border-radius: 16px;
+            margin-bottom: 1rem;
+        }
+        
+        .twofa-badge {
+            padding: 4px 12px;
+            border-radius: 60px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .twofa-badge.enabled {
+            background: linear-gradient(135deg, var(--success), #2E7D32);
+            color: white;
+        }
+        
+        .twofa-badge.disabled {
+            background: linear-gradient(135deg, var(--danger), #b71c1c);
+            color: white;
+        }
+        
+        /* الجلسات */
+        .session-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: var(--bg-body);
+            border-radius: 16px;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s;
+        }
+        
+        .session-item:hover {
+            background: var(--bg-elevated);
+        }
+        
+        .session-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .session-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--bg-surface);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+        
+        .session-current {
+            padding: 4px 10px;
+            background: linear-gradient(135deg, var(--success), #2E7D32);
+            color: white;
+            border-radius: 60px;
+            font-size: 0.7rem;
+        }
+        
+        .logout-session {
+            color: var(--danger);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        
+        .logout-session:hover {
+            background: rgba(244,67,54,0.1);
+            transform: scale(1.05);
+        }
+        
+        .logout-all-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--danger), #b71c1c);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 60px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .logout-all-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(244,67,54,0.3);
+        }
+        
+        .error-msg { color: var(--danger); font-size: 0.8rem; margin-top: 0.25rem; }
+        .success-msg { color: var(--success); font-size: 0.8rem; margin-top: 0.25rem; }
+        
+        @media (max-width: 600px) {
+            .security-header {
+                text-align: center;
+                justify-content: center;
+            }
+            .twofa-status {
+                flex-direction: column;
+                gap: 0.5rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body class="light">
+
+<div id="falconLoader">
+    <div class="loader-content">
+        <div class="loader-dots-premium">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="loader-text-premium">جارِ التحميل...</div>
+    </div>
+</div>
+
+<header class="main-header">
+    <div class="header-container">
+        <div class="logo-wrapper">
+            <img src="photos/logo.png" alt="شعار المتجر" style="width:45px;height:45px;border-radius:16px;object-fit:cover;" onerror="this.src='https://placehold.co/45x45/D32F2F/white?text=F'">
+            <span class="logo-text">Falcon Store</span>
+        </div>
+        <a href="index.html" style="color: white; text-decoration: none;"><i class="fas fa-home"></i> الرئيسية</a>
+    </div>
+</header>
+
+<div class="security-container">
+    <div class="security-header">
+        <i class="fas fa-shield-alt"></i>
+        <div>
+            <h2>مركز الحماية</h2>
+            <p>إدارة إعدادات الأمان وحماية حسابك</p>
+        </div>
+    </div>
+
+    <!-- تغيير كلمة السر -->
+    <div class="security-section">
+        <div class="section-title"><i class="fas fa-lock"></i><h3>تغيير كلمة السر</h3></div>
+        <div class="input-group"><label>كلمة السر الحالية</label><div class="password-wrapper"><input type="password" id="currentPassword"><button class="password-toggle" onclick="togglePassword('currentPassword')"><i class="fas fa-eye"></i></button></div></div>
+        <div class="input-group"><label>كلمة السر الجديدة</label><div class="password-wrapper"><input type="password" id="newPassword"><button class="password-toggle" onclick="togglePassword('newPassword')"><i class="fas fa-eye"></i></button></div></div>
+        <div class="input-group"><label>تأكيد كلمة السر الجديدة</label><div class="password-wrapper"><input type="password" id="confirmNewPassword"><button class="password-toggle" onclick="togglePassword('confirmNewPassword')"><i class="fas fa-eye"></i></button></div></div>
+        <div class="error-msg" id="passwordError"></div>
+        <div class="success-msg" id="passwordSuccess"></div>
+        <button class="save-btn" onclick="changePassword()"><i class="fas fa-save"></i> حفظ التغييرات</button>
+    </div>
+
+    <!-- المصادقة الثنائية -->
+    <div class="security-section">
+        <div class="section-title"><i class="fas fa-mobile-alt"></i><h3>المصادقة الثنائية (2FA)</h3></div>
+        <div class="twofa-status"><span><i class="fas fa-shield"></i> حالة المصادقة</span><span class="twofa-badge disabled" id="twofaBadge">غير مفعلة</span></div>
+        <p style="color: var(--text-secondary); margin-bottom:1rem;"><i class="fas fa-info-circle"></i> قم بتفعيل المصادقة الثنائية لإضافة طبقة حماية إضافية لحسابك.</p>
+        <button class="save-btn" id="twofaBtn" onclick="toggle2FA()"><i class="fas fa-qrcode"></i> تفعيل المصادقة الثنائية</button>
+        <div class="success-msg" id="twofaSuccess" style="margin-top:0.5rem;"></div>
+    </div>
+
+    <!-- الجلسات النشطة -->
+    <div class="security-section">
+        <div class="section-title"><i class="fas fa-history"></i><h3>جلسات تسجيل الدخول النشطة</h3></div>
+        <div id="sessionsList"></div>
+        <button class="logout-all-btn" onclick="logoutAllDevices()"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج من جميع الأجهزة</button>
+    </div>
+
+    <!-- حذف الحساب -->
+    <div class="security-section">
+        <div class="section-title"><i class="fas fa-trash-alt"></i><h3>حذف الحساب</h3></div>
+        <p style="color: var(--text-secondary); margin-bottom:1rem;"><i class="fas fa-exclamation-triangle" style="color:var(--danger);"></i> تحذير: حذف الحساب إجراء دائم ولا يمكن التراجع عنه.</p>
+        <button class="logout-all-btn" onclick="deleteAccount()" style="background: linear-gradient(135deg, #b71c1c, #8B0000);"><i class="fas fa-trash-alt"></i> حذف الحساب نهائياً</button>
+    </div>
+</div>
+
+<!-- ==================== قسم التعليقات والآراء ==================== -->
+<div class="comments-wrapper">
+    <div class="comments-card">
+        <h3><i class="fas fa-comments"></i> آراء واستفسارات العملاء</h3>
+        <div class="comments-subtitle">شاركنا رأيك أو مشكلتك، سيقوم فريق الدعم بالرد عليك خلال 24 ساعة</div>
+        <div id="commentsSection"></div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/comments.js"></script>
+
+<script>
+    window.addEventListener('load', ()=>{
+        const l=document.getElementById('falconLoader');
+        if(l){ l.classList.add('fade-out'); setTimeout(()=>l.style.display='none',1000); }
+    });
+    setTimeout(()=>{
+        const l=document.getElementById('falconLoader');
+        if(l&&l.style.display!=='none'){ l.classList.add('fade-out'); setTimeout(()=>l.style.display='none',1000); }
+    },5000);
+
+    let currentUser = null;
+
+    async function loadSecurityPage() {
+        const user = getCurrentUser();
+        if (!user) { window.location.href = 'login.html'; return; }
+        currentUser = user;
+        const multiFactor = user.multiFactor;
+        if (multiFactor.enrolledFactors.length > 0) {
+            document.getElementById('twofaBadge').textContent = 'مفعلة ✅';
+            document.getElementById('twofaBadge').className = 'twofa-badge enabled';
+            document.getElementById('twofaBtn').innerHTML = '<i class="fas fa-qrcode"></i> إلغاء التفعيل';
+        }
+        loadActiveSessions();
+    }
+
+    function togglePassword(fieldId) {
+        const field = document.getElementById(fieldId);
+        const icon = field.parentElement.querySelector('.password-toggle i');
+        field.type = field.type === 'password' ? 'text' : 'password';
+        icon.classList.toggle('fa-eye');
+        icon.classList.toggle('fa-eye-slash');
+    }
+
+    async function changePassword() {
+        const cur = document.getElementById('currentPassword').value;
+        const newP = document.getElementById('newPassword').value;
+        const conf = document.getElementById('confirmNewPassword').value;
+        const err = document.getElementById('passwordError');
+        const suc = document.getElementById('passwordSuccess');
+        err.textContent = ''; suc.textContent = '';
+        if (!cur || !newP || !conf) { err.textContent = 'جميع الحقول مطلوبة'; return; }
+        if (newP.length < 6) { err.textContent = 'كلمة السر يجب أن تكون 6 أحرف على الأقل'; return; }
+        if (newP !== conf) { err.textContent = 'كلمة السر غير متطابقة'; return; }
+        try {
+            const cred = firebase.auth.EmailAuthProvider.credential(currentUser.email, cur);
+            await currentUser.reauthenticateWithCredential(cred);
+            await currentUser.updatePassword(newP);
+            suc.textContent = '✅ تم تغيير كلمة السر بنجاح';
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmNewPassword').value = '';
+            if (typeof playTingSound === 'function') playTingSound();
+            else new Audio('sounds/ting.mp3').play().catch(()=>{});
+            if (typeof logActivity === 'function') logActivity('قام بتغيير كلمة السر', '🔐');
+        } catch (e) {
+            err.textContent = e.code === 'auth/wrong-password' ? '❌ كلمة السر الحالية غير صحيحة' : '❌ حدث خطأ';
+            if (typeof playErrorSound === 'function') playErrorSound();
+            else new Audio('sounds/error.mp3').play().catch(()=>{});
+        }
+    }
+
+    function toggle2FA() {
+        if (typeof showInfoModal === 'function') showInfoModal('ميزة المصادقة الثنائية قيد التطوير حالياً.', 'قيد التطوير');
+        else alert('ميزة المصادقة الثنائية قيد التطوير حالياً.');
+    }
+
+    async function loadActiveSessions() {
+        const container = document.getElementById('sessionsList');
+        const ua = navigator.userAgent;
+        let device = 'متصفح', icon = 'fa-globe';
+        if (/Mobile|Android|iPhone/i.test(ua)) { device = 'هاتف محمول'; icon = 'fa-mobile-alt'; }
+        else if (/Tablet|iPad/i.test(ua)) { device = 'جهاز لوحي'; icon = 'fa-tablet-alt'; }
+        else { device = 'كمبيوتر'; icon = 'fa-desktop'; }
+        let loc = 'موقع غير محدد';
+        try { const r = await fetch('https://ipapi.co/json/'); const d = await r.json(); loc = `${d.city}, ${d.country_name}`; } catch(e){}
+        container.innerHTML = `<div class="session-item"><div class="session-info"><div class="session-icon"><i class="fas ${icon}"></i></div><div><div>${device}</div><div style="font-size:0.8rem;color:var(--text-muted);">${loc} · الجلسة الحالية</div></div></div><span class="session-current">حالية</span></div>`;
+        try {
+            const snap = await db.collection('users').doc(currentUser.uid).collection('sessions').orderBy('lastActive','desc').limit(5).get();
+            snap.forEach(doc => {
+                const s = doc.data();
+                if (s.sessionId !== currentUser.uid+'_current') {
+                    const d = document.createElement('div'); d.className = 'session-item';
+                    d.innerHTML = `<div class="session-info"><div class="session-icon"><i class="fas ${s.deviceIcon||'fa-globe'}"></i></div><div><div>${s.deviceName||'جهاز'}</div><div style="font-size:0.8rem;">${s.location||''} · ${formatTime(s.lastActive)}</div></div></div><span class="logout-session" onclick="logoutSession('${doc.id}')"><i class="fas fa-sign-out-alt"></i></span>`;
+                    container.appendChild(d);
+                }
+            });
+        } catch(e){}
+    }
+
+    function formatTime(ts) {
+        if (!ts) return '';
+        const d = ts.toDate(), now = new Date(), diff = now - d;
+        if (diff < 60000) return 'الآن';
+        if (diff < 3600000) return `قبل ${Math.floor(diff/60000)} د`;
+        if (diff < 86400000) return `قبل ${Math.floor(diff/3600000)} س`;
+        return d.toLocaleDateString('ar-EG');
+    }
+
+    async function logoutSession(sid) {
+        if (typeof showConfirmModal === 'function') {
+            showConfirmModal('تسجيل الخروج من هذا الجهاز؟', async ()=>{
+                await db.collection('users').doc(currentUser.uid).collection('sessions').doc(sid).delete();
+                loadActiveSessions();
+                if (typeof showSuccessModal === 'function') showSuccessModal('تم تسجيل الخروج');
+                else alert('تم تسجيل الخروج');
+            });
+        } else {
+            if (confirm('تسجيل الخروج من هذا الجهاز؟')) {
+                await db.collection('users').doc(currentUser.uid).collection('sessions').doc(sid).delete();
+                loadActiveSessions();
+                alert('تم تسجيل الخروج');
+            }
+        }
+    }
+
+    async function logoutAllDevices() {
+        if (typeof showConfirmModal === 'function') {
+            showConfirmModal('تسجيل الخروج من جميع الأجهزة الأخرى؟', async ()=>{
+                const snap = await db.collection('users').doc(currentUser.uid).collection('sessions').get();
+                const batch = db.batch();
+                snap.forEach(doc => { if (doc.id !== currentUser.uid+'_current') batch.delete(doc.ref); });
+                await batch.commit();
+                loadActiveSessions();
+                if (typeof showSuccessModal === 'function') showSuccessModal('تم تسجيل الخروج من جميع الأجهزة');
+                else alert('تم تسجيل الخروج من جميع الأجهزة');
+            });
+        } else {
+            if (confirm('تسجيل الخروج من جميع الأجهزة الأخرى؟')) {
+                const snap = await db.collection('users').doc(currentUser.uid).collection('sessions').get();
+                const batch = db.batch();
+                snap.forEach(doc => { if (doc.id !== currentUser.uid+'_current') batch.delete(doc.ref); });
+                await batch.commit();
+                loadActiveSessions();
+                alert('تم تسجيل الخروج من جميع الأجهزة');
+            }
+        }
+    }
+
+    async function deleteAccount() {
+        if (typeof showConfirmModal === 'function') {
+            showConfirmModal('⚠️ حذف الحساب نهائياً؟ لا يمكن التراجع.', async ()=>{
+                showConfirmModal('آخر تأكيد: سيتم حذف جميع بياناتك.', async ()=>{
+                    try {
+                        await db.collection('users').doc(currentUser.uid).delete();
+                        await currentUser.delete();
+                        if (typeof showSuccessModal === 'function') showSuccessModal('تم حذف الحساب');
+                        else alert('تم حذف الحساب');
+                        window.location.href = 'index.html';
+                    } catch (e) {
+                        if (e.code === 'auth/requires-recent-login') {
+                            if (typeof showErrorModal === 'function') showErrorModal('يرجى تسجيل الخروج ثم الدخول مجدداً');
+                            else alert('يرجى تسجيل الخروج ثم الدخول مجدداً');
+                        } else {
+                            if (typeof showErrorModal === 'function') showErrorModal(e.message);
+                            else alert(e.message);
+                        }
+                    }
+                });
+            });
+        } else {
+            if (confirm('⚠️ حذف الحساب نهائياً؟ لا يمكن التراجع.')) {
+                if (confirm('آخر تأكيد: سيتم حذف جميع بياناتك.')) {
+                    try {
+                        await db.collection('users').doc(currentUser.uid).delete();
+                        await currentUser.delete();
+                        alert('تم حذف الحساب');
+                        window.location.href = 'index.html';
+                    } catch (e) {
+                        alert(e.message);
+                    }
+                }
+            }
+        }
+    }
+
+    async function saveCurrentSession() {
+        if (!currentUser) return;
+        const ua = navigator.userAgent;
+        let device = 'متصفح', icon = 'fa-globe';
+        if (/Mobile|Android|iPhone/i.test(ua)) { device = 'هاتف محمول'; icon = 'fa-mobile-alt'; }
+        else if (/Tablet|iPad/i.test(ua)) { device = 'جهاز لوحي'; icon = 'fa-tablet-alt'; }
+        else { device = 'كمبيوتر'; icon = 'fa-desktop'; }
+        let loc = 'موقع غير محدد';
+        try { const r = await fetch('https://ipapi.co/json/'); const d = await r.json(); loc = `${d.city}, ${d.country_name}`; } catch(e){}
+        await db.collection('users').doc(currentUser.uid).collection('sessions').doc(currentUser.uid+'_current').set({
+            deviceName: device, deviceIcon: icon, location: loc, lastActive: firebase.firestore.FieldValue.serverTimestamp(), userAgent: ua
+        });
+    }
+    
+    if (typeof initComments === 'function') { initComments('security'); }
+
+    onAuthStateChanged(async (user) => {
+        if (!user) window.location.href = 'login.html';
+        else { currentUser = user; await loadSecurityPage(); await saveCurrentSession(); }
+    });
+    
+    window.togglePassword = togglePassword;
+    window.changePassword = changePassword;
+    window.toggle2FA = toggle2FA;
+    window.logoutSession = logoutSession;
+    window.logoutAllDevices = logoutAllDevices;
+    window.deleteAccount = deleteAccount;
+</script>
+</body>
+</html>

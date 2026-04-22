@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>من نحن | Falcon Store</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#D32F2F">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Falcon Store">
+    <link rel="apple-touch-icon" href="/photos/logo-192.png">
+    
+    <style>
+        .about-container { max-width: 900px; margin: 2rem auto; padding: 1rem; }
+        .hero-section { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); border-radius: var(--radius-xl); padding: 3rem 2rem; text-align: center; color: white; margin-bottom: 2rem; }
+        .hero-section i { font-size: 4rem; color: var(--secondary); margin-bottom: 1rem; }
+        .hero-section h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .about-card { background: var(--bg-surface); border-radius: var(--radius-xl); padding: 2rem; border: 1px solid var(--border-light); box-shadow: var(--shadow-md); margin-bottom: 2rem; }
+        .section-title { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; color: var(--text-primary); }
+        .section-title i { font-size: 1.5rem; color: var(--primary); }
+        .story-text { color: var(--text-secondary); line-height: 1.9; font-size: 1.05rem; }
+        .features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 1.5rem; }
+        .feature-item { display: flex; gap: 1rem; align-items: flex-start; }
+        .feature-icon { width: 50px; height: 50px; background: var(--bg-body); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.5rem; flex-shrink: 0; }
+        .feature-content h4 { color: var(--text-primary); margin-bottom: 0.25rem; }
+        .feature-content p { color: var(--text-muted); font-size: 0.9rem; }
+        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin: 2rem 0; }
+        .stat-box { text-align: center; padding: 1.5rem; background: var(--bg-body); border-radius: var(--radius-lg); }
+        .stat-number { font-size: 2rem; font-weight: bold; color: var(--primary); }
+        .contact-links { display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem; }
+        .contact-link { display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--bg-body); border-radius: var(--radius-full); text-decoration: none; color: var(--text-primary); transition: all 0.3s; }
+        .contact-link:hover { background: var(--primary); color: white; transform: translateX(-5px); }
+        .contact-link i { width: 40px; height: 40px; background: var(--bg-surface); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); }
+        .contact-link:hover i { background: white; }
+        .testimonial-card { background: var(--bg-body); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1rem; border-right: 4px solid var(--primary); }
+        .testimonial-text { color: var(--text-secondary); font-style: italic; margin-bottom: 1rem; }
+        .testimonial-author { display: flex; align-items: center; gap: 0.75rem; }
+        .testimonial-author i { color: var(--primary); }
+        .dua-box { background: linear-gradient(135deg, var(--secondary), #FFA000); border-radius: var(--radius-lg); padding: 1.5rem; text-align: center; color: #8B0000; margin-top: 2rem; }
+        @media (max-width: 600px) { .features-grid, .stats-row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body class="light">
+
+<!-- Loader -->
+<div id="falconLoader">
+    <div class="loader-content">
+        <div class="loader-dots-premium">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="loader-text-premium">جارِ التحميل...</div>
+    </div>
+</div>
+
+<header class="main-header">
+    <div class="header-container">
+        <div class="logo-wrapper"><i class="fas fa-falcon logo-icon"></i><span class="logo-text">Falcon Store</span></div>
+        <a href="index.html" style="color: white; text-decoration: none;"><i class="fas fa-home"></i> الرئيسية</a>
+    </div>
+</header>
+
+<div class="about-container">
+    <div class="hero-section">
+        <i class="fas fa-falcon"></i>
+        <h1>Falcon Store</h1>
+        <p>متجر الشحن الأول في مصر والوطن العربي - سرعة، أمان، وأفضل الأسعار</p>
+    </div>
+
+    <div class="about-card">
+        <div class="section-title"><i class="fas fa-book-open"></i><h2>قصتنا</h2></div>
+        <div class="story-text">
+            <p><strong>Falcon Store</strong> بدأ كحلم بسيط: توفير خدمة شحن ألعاب احترافية وسريعة للاعبين العرب. لاحظنا أن معظم اللاعبين يعانون من بطء الشحن، الأسعار المرتفعة، وغياب خدمة العملاء الحقيقية.</p>
+            <p style="margin-top:1rem;">انطلقنا في <strong>2024</strong> بهدف واضح: أن نكون <strong>الخيار الأول</strong> لكل لاعب عربي. نقدم اليوم خدمات شحن لجميع الألعاب الشهيرة بأسعار تنافسية، مع دعم فوري على مدار الساعة، وضمان استرداد الأموال.</p>
+            <p style="margin-top:1rem;"><i class="fas fa-quote-right" style="color:var(--primary); opacity:0.5; font-size:1.5rem;"></i> <strong>رسالتنا:</strong> نبني الثقة مع كل عميل، ونضمن له تجربة شحن سلسة وآمنة.</p>
+        </div>
+    </div>
+
+    <div class="about-card">
+        <div class="section-title"><i class="fas fa-star"></i><h2>لماذا Falcon Store؟</h2></div>
+        <div class="features-grid">
+            <div class="feature-item"><div class="feature-icon"><i class="fas fa-bolt"></i></div><div class="feature-content"><h4>شحن فوري وسريع</h4><p>متوسط وقت الشحن أقل من 15 دقيقة.</p></div></div>
+            <div class="feature-item"><div class="feature-icon"><i class="fas fa-shield-alt"></i></div><div class="feature-content"><h4>أمان 100%</h4><p>بياناتك محمية بالكامل.</p></div></div>
+            <div class="feature-item"><div class="feature-icon"><i class="fas fa-tags"></i></div><div class="feature-content"><h4>أفضل الأسعار</h4><p>خصومات دائمة وعروض حصرية.</p></div></div>
+            <div class="feature-item"><div class="feature-icon"><i class="fas fa-headset"></i></div><div class="feature-content"><h4>دعم فوري</h4><p>فريق دعم متواجد على واتساب وشات الموقع.</p></div></div>
+            <div class="feature-item"><div class="feature-icon"><i class="fas fa-gift"></i></div><div class="feature-content"><h4>مكافآت ونجوم</h4><p>اجمع النجوم واستبدلها بجوائز.</p></div></div>
+            <div class="feature-item"><div class="feature-icon"><i class="fas fa-undo-alt"></i></div><div class="feature-content"><h4>ضمان استرداد</h4><p>في حال فشل الشحن، نضمن استرداد كامل المبلغ.</p></div></div>
+        </div>
+    </div>
+
+    <div class="about-card">
+        <div class="section-title"><i class="fas fa-chart-bar"></i><h2>Falcon Store في أرقام</h2></div>
+        <div class="stats-row">
+            <div class="stat-box"><div class="stat-number" id="usersCount">+500</div><div class="stat-label">عميل سعيد</div></div>
+            <div class="stat-box"><div class="stat-number" id="ordersCount">+2000</div><div class="stat-label">عملية شحن ناجحة</div></div>
+            <div class="stat-box"><div class="stat-number">15</div><div class="stat-label">لعبة مدعومة</div></div>
+            <div class="stat-box"><div class="stat-number">24/7</div><div class="stat-label">دعم متواصل</div></div>
+        </div>
+    </div>
+
+    <div class="about-card">
+        <div class="section-title"><i class="fas fa-comments"></i><h2>ماذا يقول عملاؤنا؟</h2></div>
+        <div class="testimonial-card"><div class="testimonial-text">""بجد بجد ثقه يعني ومش ای کلام والله واول مره اجرب حاجه زي كدا بس بصراحه انا شوفت معاك تعامل لطيف جدا وربنا يخليك لأهلك يارب و أن شاء الله مش اخر تعامل ❤""</div><div class="testimonial-author"><i class="fas fa-user-circle"></i><span>Tarek Bashaa</span><span style="color:var(--warning); margin-right:auto;">★★★★★</span></div></div>
+        <div class="testimonial-card"><div class="testimonial-text">"احسن و اضمن و أرخص استور في مصر"</div><div class="testimonial-author"><i class="fas fa-user-circle"></i><span>Hamdy Ahmed</span><span style="color:var(--warning); margin-right:auto;">★★★★★</span></div></div>
+        <div class="testimonial-card"><div class="testimonial-text">"اقسم بالله راجل محترم"</div><div class="testimonial-author"><i class="fas fa-user-circle"></i><span>Amr Saleh</span><span style="color:var(--warning); margin-right:auto;">★★★★★</span></div></div>
+        <div style="text-align:center; margin-top:1rem;"><a href="https://www.facebook.com/share/p/1D5sK63Ryi/" target="_blank" class="btn btn-primary"><i class="fab fa-facebook"></i> شاهد المزيد من التقييمات</a></div>
+    </div>
+
+    <div class="about-card">
+        <div class="section-title"><i class="fas fa-address-card"></i><h2>تواصل معنا</h2></div>
+        <div class="contact-links">
+            <a href="https://wa.me/201121816129" target="_blank" class="contact-link"><i class="fab fa-whatsapp"></i><span>+20 112 181 6129 - دعم العملاء</span></a>
+            <a href="https://whatsapp.com/channel/0029VbCg48HJUM2WDdkrEh0e" target="_blank" class="contact-link"><i class="fab fa-whatsapp"></i><span>قناة العروض والتحديثات</span></a>
+            <a href="https://www.facebook.com/share/18bEU3zKdG/" target="_blank" class="contact-link"><i class="fab fa-facebook"></i><span>صفحتنا على فيسبوك</span></a>
+            <a href="mailto:falconstoresupport@gmail.com" class="contact-link"><i class="fas fa-envelope"></i><span>falconstoresupport@gmail.com</span></a>
+        </div>
+    </div>
+
+    <div class="dua-box">
+        <i class="fas fa-hands-praying"></i>
+        <p style="font-size:1.1rem; font-weight:600;">🤲 اللهم بارك لنا في هذا المتجر واجعله سبباً في إسعاد اللاعبين. ولا تنسونا من صالح دعائكم.</p>
+    </div>
+</div>
+
+<!-- ==================== قسم التعليقات والآراء ==================== -->
+<div class="comments-wrapper">
+    <div class="comments-card">
+        <h3><i class="fas fa-comments"></i> آراء واستفسارات العملاء</h3>
+        <div class="comments-subtitle">شاركنا رأيك أو مشكلتك، سيقوم فريق الدعم بالرد عليك خلال 24 ساعة</div>
+        <div id="commentsSection"></div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/comments.js"></script>
+
+<script>
+    // Loader
+    window.addEventListener('load', ()=>{
+        const l=document.getElementById('falconLoader');
+        if(l){ l.classList.add('fade-out'); setTimeout(()=>l.style.display='none',1000); }
+    });
+    setTimeout(()=>{
+        const l=document.getElementById('falconLoader');
+        if(l&&l.style.display!=='none'){ l.classList.add('fade-out'); setTimeout(()=>l.style.display='none',1000); }
+    },5000);
+
+    async function loadRealStats() {
+        try {
+            const usersSnap = await db.collection('users').get();
+            const usersCountElem = document.getElementById('usersCount');
+            if (usersCountElem && usersSnap.size > 0) usersCountElem.textContent = '+' + usersSnap.size;
+            
+            const ordersSnap = await db.collection('orders').get();
+            const ordersCountElem = document.getElementById('ordersCount');
+            if (ordersCountElem && ordersSnap.size > 0) ordersCountElem.textContent = '+' + ordersSnap.size;
+        } catch (e) {
+            console.warn('خطأ في تحميل الإحصائيات:', e);
+        }
+    }
+    loadRealStats();
+
+    document.querySelectorAll('.btn, .contact-link').forEach(el => {
+        el.addEventListener('click', () => { 
+            if (typeof playClickSound === 'function') playClickSound(); 
+        });
+    });
+    
+    // تهيئة نظام التعليقات لهذه الصفحة
+    if (typeof initComments === 'function') {
+        initComments('about');
+    }
+</script>
+</body>
+</html>

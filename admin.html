@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم | Falcon Store Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        .password-overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            z-index: 99999; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        .password-overlay.hidden { display: none; }
+        
+        .password-box { 
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem; 
+            padding: 2.5rem; 
+            max-width: 400px; 
+            width: 90%; 
+            text-align: center; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .password-box i { font-size: 4rem; color: #FFD966; margin-bottom: 1.5rem; }
+        .password-box h2 { color: white; margin-bottom: 1.5rem; }
+        .password-box input { 
+            width: 100%; 
+            padding: 15px; 
+            border-radius: 60px; 
+            border: none; 
+            background: rgba(255,255,255,0.2);
+            color: white; 
+            font-size: 1.2rem; 
+            text-align: center; 
+            font-family: 'Cairo', sans-serif; 
+            margin-bottom: 1.5rem; 
+            outline: none; 
+        }
+        .password-box input::placeholder { color: rgba(255,255,255,0.6); }
+        .password-box input:focus { background: rgba(255,255,255,0.3); }
+        .password-box button { 
+            width: 100%; 
+            padding: 14px; 
+            border-radius: 60px; 
+            border: none; 
+            background: linear-gradient(135deg, #e94560, #b71c1c);
+            color: white; 
+            font-size: 1.1rem; 
+            font-weight: bold; 
+            cursor: pointer; 
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.3s;
+        }
+        .password-box button:hover { transform: scale(1.02); }
+        .password-error { color: #f44336; margin-top: 1rem; min-height: 25px; }
+        
+        body { font-family: 'Cairo', sans-serif; background: #0f0c29; color: #eee; padding: 20px; }
+        .admin-content { display: block; } 
+        .admin-content.hidden { display: none; }
+        
+        .admin-header { 
+            background: linear-gradient(135deg, rgba(22,19,62,0.95), rgba(48,43,99,0.95));
+            backdrop-filter: blur(10px);
+            padding: 20px; 
+            border-radius: 24px; 
+            margin-bottom: 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            flex-wrap: wrap; 
+            gap: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .admin-header h1 { color: #FFD966; display: flex; align-items: center; gap: 0.5rem; }
+        .admin-badge { 
+            background: linear-gradient(135deg, #FFD700, #FFA000);
+            color: #1a1a2e; 
+            padding: 4px 12px; 
+            border-radius: 30px; 
+            font-size: 0.8rem; 
+            font-weight: bold; 
+            margin-right: 10px; 
+        }
+        .header-links { display: flex; gap: 10px; flex-wrap: wrap; }
+        .header-link { 
+            background: #25D366; 
+            color: white; 
+            padding: 10px 20px; 
+            border-radius: 30px; 
+            text-decoration: none; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        .header-link:hover { transform: translateY(-2px); }
+        .header-link.stats { background: #9C27B0; }
+        .header-link.channel { background: #075E54; }
+        .logout-btn { 
+            background: #e94560; 
+            border: none; 
+            color: white; 
+            padding: 10px 20px; 
+            border-radius: 30px; 
+            cursor: pointer; 
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.3s;
+        }
+        .logout-btn:hover { transform: translateY(-2px); }
+        
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
+        .stat-card { 
+            background: rgba(22,19,62,0.8);
+            backdrop-filter: blur(10px);
+            padding: 20px; 
+            border-radius: 20px; 
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
+        }
+        .stat-card:hover { transform: translateY(-3px); border-color: #e94560; }
+        .stat-card .number { font-size: 2rem; font-weight: bold; color: #FFD966; }
+        .stat-card .label { color: #aaa; font-size: 0.85rem; }
+        
+        .orders-container { 
+            background: rgba(22,19,62,0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 24px; 
+            padding: 20px; 
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .orders-header { display: flex; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
+        .order-tabs { display: flex; gap: 10px; flex-wrap: wrap; }
+        .tab-btn { 
+            background: rgba(255,255,255,0.1);
+            border: none; 
+            color: white; 
+            padding: 10px 20px; 
+            border-radius: 30px; 
+            cursor: pointer; 
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.3s;
+        }
+        .tab-btn.active { background: #e94560; box-shadow: 0 4px 12px rgba(233,69,96,0.3); }
+        .tab-btn:hover:not(.active) { background: rgba(255,255,255,0.2); }
+        
+        .refresh-btn-header {
+            background: rgba(76,175,80,0.3);
+            border: none;
+            color: white;
+            padding: 8px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        .refresh-btn-header:hover { background: #4CAF50; transform: scale(1.02); }
+        
+        .order-card { 
+            background: rgba(48,43,99,0.6);
+            border-radius: 20px; 
+            padding: 20px; 
+            margin-bottom: 15px; 
+            border-right: 5px solid;
+            transition: all 0.3s;
+        }
+        .order-card:hover { transform: translateX(-5px); background: rgba(48,43,99,0.8); }
+        .order-card.pending { border-color: #FF9800; }
+        .order-card.confirmed { border-color: #2196F3; }
+        .order-card.completed { border-color: #4CAF50; }
+        .order-card.reward { border-right: 5px solid #9C27B0; background: linear-gradient(135deg, rgba(48,43,99,0.8), rgba(156,39,176,0.2)); }
+        .reward-badge { 
+            background: linear-gradient(135deg, #9C27B0, #7B1FA2);
+            color: white; 
+            padding: 3px 10px; 
+            border-radius: 30px; 
+            font-size: 0.7rem; 
+            margin-right: 10px;
+        }
+        
+        .order-header { display: flex; justify-content: space-between; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+        .order-id { font-weight: bold; color: #FFD966; }
+        .order-date { color: #aaa; font-size: 0.8rem; }
+        .status-badge { padding: 5px 15px; border-radius: 30px; font-size: 0.75rem; font-weight: bold; }
+        .status-badge.pending { background: #FF9800; color: #000; }
+        .status-badge.confirmed { background: #2196F3; color: white; }
+        .status-badge.completed { background: #4CAF50; color: white; }
+        
+        .order-details { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 15px; }
+        .detail-item { background: rgba(0,0,0,0.2); padding: 10px; border-radius: 12px; }
+        .detail-label { color: #aaa; font-size: 0.7rem; }
+        .detail-value { font-weight: bold; color: #eee; }
+        
+        .whatsapp-link { color: #25D366; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; }
+        .receipt-image { max-width: 150px; max-height: 150px; border-radius: 12px; margin-top: 10px; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); }
+        
+        .order-actions { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
+        .action-btn { 
+            flex: 1; 
+            min-width: 120px; 
+            padding: 12px; 
+            border: none; 
+            border-radius: 60px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            font-family: 'Cairo', sans-serif; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        .action-btn:hover { transform: translateY(-2px); }
+        .confirm-btn { background: #4CAF50; color: white; }
+        .complete-btn { background: #2196F3; color: white; }
+        .whatsapp-btn { background: #25D366; color: white; }
+        .reject-btn { background: #f44336; color: white; }
+        
+        .admin-chat-box { background: rgba(0,0,0,0.3); border-radius: 16px; margin-top: 15px; overflow: hidden; }
+        .admin-chat-header { background: #e94560; padding: 10px 15px; color: white; display: flex; align-items: center; justify-content: space-between; }
+        .admin-chat-body { padding: 10px; max-height: 200px; overflow-y: auto; background: rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 8px; }
+        .admin-chat-footer { padding: 10px; background: rgba(0,0,0,0.3); display: flex; gap: 8px; }
+        .admin-chat-footer input { flex: 1; padding: 10px; border-radius: 60px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: white; font-family: 'Cairo', sans-serif; }
+        .admin-chat-footer input:focus { outline: none; border-color: #e94560; }
+        .admin-chat-message { display: flex; flex-direction: column; max-width: 80%; }
+        .admin-chat-message.admin-msg { align-self: flex-end; }
+        .admin-chat-message.customer-msg { align-self: flex-start; }
+        .admin-chat-bubble { padding: 8px 12px; border-radius: 18px; font-size: 0.85rem; }
+        .admin-msg .admin-chat-bubble { background: #e94560; color: white; }
+        .customer-msg .admin-chat-bubble { background: rgba(255,255,255,0.1); color: #eee; }
+        .admin-chat-time { font-size: 0.6rem; color: #aaa; margin-top: 2px; }
+        
+        .notification-popup { 
+            position: fixed; 
+            bottom: 20px; 
+            right: 20px; 
+            background: linear-gradient(135deg, #e94560, #b71c1c);
+            color: white; 
+            padding: 20px; 
+            border-radius: 20px; 
+            display: none; 
+            align-items: center; 
+            gap: 15px; 
+            z-index: 10000; 
+            max-width: 350px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: slideInRight 0.3s ease;
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .notification-popup.show { display: flex; }
+        .close-notification { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; }
+        
+        .image-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; justify-content: center; align-items: center; z-index: 10001; cursor: pointer; }
+        .image-modal.show { display: flex; }
+        .image-modal img { max-width: 90%; max-height: 90%; border-radius: 20px; }
+        
+        .kyc-panel { margin-top: 20px; }
+        .kyc-card { background: rgba(48,43,99,0.6); border-radius: 20px; padding: 20px; margin-bottom: 15px; }
+        .kyc-images { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+        .kyc-images img { max-width: 100px; border-radius: 12px; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); }
+        
+        .empty-state { text-align: center; padding: 40px; color: #aaa; }
+        
+        @media (max-width: 768px) { 
+            .stats { grid-template-columns: repeat(2, 1fr); }
+            .order-details { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="password-overlay" id="passwordOverlay">
+    <div class="password-box">
+        <i class="fas fa-falcon"></i>
+        <h2>دخول آمن</h2>
+        <input type="password" id="adminPassword" placeholder="كلمة السر" autocomplete="off">
+        <button onclick="checkPassword()">دخول</button>
+        <div class="password-error" id="passwordError"></div>
+    </div>
+</div>
+<div class="admin-content hidden" id="adminContent">
+    <div class="admin-header">
+        <h1><i class="fas fa-falcon"></i> لوحة تحكم Falcon Store <span class="admin-badge"><i class="fas fa-crown"></i> مشرف</span></h1>
+        <div class="header-links">
+            <a href="admin-stats.html" class="header-link stats"><i class="fas fa-chart-line"></i> الإحصائيات</a>
+            <a href="https://wa.me/201121816129" target="_blank" class="header-link"><i class="fab fa-whatsapp"></i> واتساب</a>
+            <a href="https://whatsapp.com/channel/0029VbCg48HJUM2WDdkrEh0e" target="_blank" class="header-link channel"><i class="fab fa-whatsapp"></i> القناة</a>
+            <button class="logout-btn" onclick="handleLogout()">تسجيل خروج</button>
+        </div>
+    </div>
+    <div class="stats">
+        <div class="stat-card"><div class="number" id="pendingCount">0</div><div class="label">معلقة</div></div>
+        <div class="stat-card"><div class="number" id="confirmedCount">0</div><div class="label">قيد الشحن</div></div>
+        <div class="stat-card"><div class="number" id="completedCount">0</div><div class="label">مكتملة</div></div>
+        <div class="stat-card"><div class="number" id="totalRevenue">0</div><div class="label">الإيرادات (ج.م)</div></div>
+    </div>
+    <div class="orders-container">
+        <div class="orders-header">
+            <h2><i class="fas fa-list"></i> الطلبات</h2>
+            <div style="display: flex; gap: 10px;">
+                <button class="refresh-btn-header" onclick="manualRefreshOrders()"><i class="fas fa-sync-alt"></i> تحديث يدوي</button>
+                <div class="order-tabs">
+                    <button class="tab-btn active" onclick="filterOrders('pending')">معلقة</button>
+                    <button class="tab-btn" onclick="filterOrders('confirmed')">قيد الشحن</button>
+                    <button class="tab-btn" onclick="filterOrders('completed')">مكتملة</button>
+                    <button class="tab-btn" onclick="filterOrders('all')">الكل</button>
+                    <button class="tab-btn" onclick="filterOrders('reward')">🎁 مكافآت</button>
+                    <button class="tab-btn" onclick="showKYCPanel()">🆔 طلبات التوثيق</button>
+                </div>
+            </div>
+        </div>
+        <div id="ordersList"></div>
+        <div id="kycPanel" style="display: none;" class="kyc-panel">
+            <h3><i class="fas fa-id-card"></i> طلبات توثيق الهوية</h3>
+            <div id="kycList"></div>
+        </div>
+    </div>
+</div>
+<div class="notification-popup" id="notificationPopup">
+    <i class="fas fa-bell"></i>
+    <div><strong>🚀 طلب جديد!</strong><div id="notificationMessage"></div></div>
+    <button class="close-notification" onclick="closeNotification()">&times;</button>
+</div>
+<div class="image-modal" id="imageModal" onclick="closeImageModal()"><img id="modalImage" src=""></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+
+<script>
+    const ADMIN_PASSWORD = 'Falcon2026@', ADMIN_UID = 'tvipwJt6kIYwTNGenxKrLhBKmRh2';
+    let currentFilter = 'pending', firebaseLoaded = false;
+    
+    // الأصوات - إشعارات فورية + صوت الصقر
+    const newOrderSound = new Audio('sounds/new_order.mp3');
+    const falconScreechSound = new Audio('sounds/falcon-screech.mp3');
+    const confirmSound = new Audio('sounds/confirm.mp3');
+    const successSound = new Audio('sounds/success.mp3');
+    
+    newOrderSound.volume = 0.8;
+    falconScreechSound.volume = 0.7;
+    
+    function playNewOrderAlert() {
+        // تشغيل صوت الطلب الجديد
+        newOrderSound.currentTime = 0;
+        newOrderSound.play().catch(e => console.log('صوت الطلب الجديد غير متاح'));
+        
+        // تشغيل صوت الصقر
+        falconScreechSound.currentTime = 0;
+        falconScreechSound.play().catch(e => console.log('صوت الصقر غير متاح'));
+        
+        // اهتزاز الصفحة (إن وجد)
+        if (typeof triggerHapticFeedback === 'function') {
+            triggerHapticFeedback('heavy');
+        }
+    }
+    
+    function checkPassword() { 
+        if (document.getElementById('adminPassword').value === ADMIN_PASSWORD) { 
+            document.getElementById('passwordOverlay').classList.add('hidden'); 
+            document.getElementById('adminContent').classList.remove('hidden'); 
+            sessionStorage.setItem('adminAuth','true'); 
+            loadFirebaseAndContent(); 
+        } else { 
+            document.getElementById('passwordError').textContent='❌ كلمة السر غير صحيحة'; 
+        } 
+    }
+    document.getElementById('adminPassword').addEventListener('keypress',e=>{if(e.key==='Enter')checkPassword();});
+    if(sessionStorage.getItem('adminAuth')==='true'){document.getElementById('passwordOverlay').classList.add('hidden');document.getElementById('adminContent').classList.remove('hidden');loadFirebaseAndContent();}
+    
+    function loadFirebaseAndContent(){ 
+        if(firebaseLoaded) return; 
+        firebaseLoaded=true; 
+        document.getElementById('ordersList').innerHTML='<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>جاري التحميل...</p></div>'; 
+        onAuthStateChanged(async u=>{if(!u||u.uid!==ADMIN_UID){alert('❌ غير مصرح');window.location.href='login.html';return;} loadStats(); listenToNewOrders(); loadOrders(); }); 
+    }
+    
+    function loadStats(){ 
+        db.collection('orders').onSnapshot(s=>{ 
+            let p=0,c=0,comp=0,rev=0; 
+            s.forEach(d=>{ 
+                const o=d.data(); 
+                if(o.status==='pending')p++; 
+                else if(o.status==='confirmed')c++; 
+                else if(o.status==='completed'){comp++; rev+=o.totalPrice||0;} 
+            }); 
+            document.getElementById('pendingCount').textContent=p; 
+            document.getElementById('confirmedCount').textContent=c; 
+            document.getElementById('completedCount').textContent=comp; 
+            document.getElementById('totalRevenue').textContent=rev.toLocaleString(); 
+        }); 
+    }
+    
+    function listenToNewOrders(){ 
+        db.collection('orders').where('status','==','pending').onSnapshot(s=>{ 
+            s.docChanges().forEach(c=>{ 
+                if(c.type==='added'){ 
+                    const o=c.doc.data(); 
+                    playNewOrderAlert(); // تشغيل صوت الطلب الجديد + صوت الصقر فوراً
+                    showNotificationPopup(o); 
+                    if(Notification.permission==='granted') new Notification('🚀 طلب جديد!',{body:`${o.game || o.rewardName || 'مكافأة'} - ${o.totalPrice || 0} ج.م`,icon:'photos/logo.png'}); 
+                    if(currentFilter==='pending'||currentFilter==='all'||(currentFilter==='reward' && o.type==='reward')) loadOrders(); 
+                } 
+            }); 
+        }); 
+    }
+    
+    function showNotificationPopup(o){ 
+        document.getElementById('notificationMessage').innerHTML=`${o.game || o.rewardName || 'طلب جديد'}<br>${o.item?.name||''} - ${o.totalPrice || 0} ج.م`; 
+        document.getElementById('notificationPopup').classList.add('show'); 
+        setTimeout(()=>document.getElementById('notificationPopup').classList.remove('show'),8000); 
+    }
+    function closeNotification(){ document.getElementById('notificationPopup').classList.remove('show'); }
+    
+    function manualRefreshOrders() {
+        const btn = event?.target;
+        if(btn) {
+            const icon = btn.querySelector('i');
+            icon.classList.add('fa-spin');
+            setTimeout(() => icon.classList.remove('fa-spin'), 1000);
+        }
+        loadOrders();
+        if (typeof playClickSound === 'function') playClickSound();
+        else new Audio('sounds/click.mp3').play().catch(()=>{});
+    }
+    
+    function loadOrders(){
+        const cont=document.getElementById('ordersList'); 
+        cont.innerHTML='<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>جاري التحميل...</p></div>';
+        let query = db.collection('orders').orderBy('createdAt','desc').limit(50);
+        
+        if (currentFilter === 'reward') {
+            query = query.where('type', '==', 'reward');
+        } else if (currentFilter !== 'all') {
+            query = query.where('status', '==', currentFilter);
+        }
+        
+        query.get().then(snapshot=>{ 
+            if(snapshot.empty){ cont.innerHTML='<div class="empty-state"><i class="fas fa-inbox"></i><p>لا توجد طلبات</p></div>'; return; } 
+            cont.innerHTML=''; 
+            snapshot.forEach(doc=>cont.appendChild(createOrderElement(doc.id,doc.data()))); 
+        }).catch(e=>{ 
+            if(e.code === 'failed-precondition'){
+                const url = e.message.match(/https:\/\/console\.firebase\.google\.com[^\s]+/);
+                cont.innerHTML=`<div class="empty-state"><p>⚠️ مطلوب إنشاء فهرس</p><a href="${url}" target="_blank"><button class="action-btn confirm-btn" style="margin-top:15px;">🔧 إنشاء الفهرس</button></a></div>`;
+            } else {
+                cont.innerHTML=`<div class="empty-state"><p>❌ ${e.message}</p></div>`;
+            }
+        });
+    }
+    
+    function createOrderElement(oid, o){
+        const isReward = o.type === 'reward';
+        const d=document.createElement('div'); 
+        d.className=`order-card ${o.status} ${isReward ? 'reward' : ''}`;
+        const date=o.createdAt?.toDate().toLocaleString('ar-EG')||'غير محدد';
+        const statusText=o.status==='pending'?'معلق':o.status==='confirmed'?'قيد الشحن':'مكتمل';
+        
+        d.innerHTML=`
+            <div class="order-header">
+                <span class="order-id">${o.orderId || o.id}</span>
+                <span class="order-date">${date}</span>
+                <div>
+                    ${isReward ? '<span class="reward-badge"><i class="fas fa-star"></i> مكافأة نجوم</span>' : ''}
+                    <span class="status-badge ${o.status}">${statusText}</span>
+                </div>
+            </div>
+            ${isReward ? `
+            <div class="order-details">
+                <div class="detail-item"><div class="detail-label">نوع المكافأة</div><div class="detail-value">🎁 ${o.rewardName || o.item?.name || '-'}</div></div>
+                <div class="detail-item"><div class="detail-label">النجوم المستهلكة</div><div class="detail-value" style="color:#FFD966;">⭐ ${o.starsSpent || 0}</div></div>
+                <div class="detail-item"><div class="detail-label">اللعبة</div><div class="detail-value">${o.game || '-'}</div></div>
+            </div>
+            ` : `
+            <div class="order-details">
+                <div class="detail-item"><div class="detail-label">اللعبة</div><div class="detail-value">${o.game}</div></div>
+                <div class="detail-item"><div class="detail-label">النوع</div><div class="detail-value">${o.type==='id'?'ID':'أكونت'}</div></div>
+                <div class="detail-item"><div class="detail-label">المنتج</div><div class="detail-value">${o.item?.name||'-'}</div></div>
+                <div class="detail-item"><div class="detail-label">الكمية</div><div class="detail-value">${o.quantity||1}</div></div>
+                <div class="detail-item"><div class="detail-label">${o.type==='id'?'ID اللاعب':'المنصة'}</div><div class="detail-value">${o.playerId||o.accountData?.platform||'-'}</div></div>
+                <div class="detail-item"><div class="detail-label">المبلغ</div><div class="detail-value" style="color:#FFD966;">${o.totalPrice} ج.م</div></div>
+            </div>
+            `}
+            ${o.accountData ? `<div class="detail-item"><div class="detail-label">بيانات الحساب</div><div class="detail-value">${o.accountData.login||'-'} / ${o.accountData.password?'••••••':''}</div></div>` : ''}
+            ${o.note ? `<div class="detail-item"><div class="detail-label">ملاحظة</div><div class="detail-value" style="background:rgba(0,0,0,0.3);padding:8px;border-radius:10px;">${escapeHtml(o.note)}</div></div>` : ''}
+            <a href="https://wa.me/201121816129" target="_blank" class="whatsapp-link"><i class="fab fa-whatsapp"></i> 201121816129</a>
+            ${o.receiptImage ? `<div><strong>📸 التحويل:</strong><br><img src="${o.receiptImage}" class="receipt-image" onclick="showImage('${o.receiptImage}')"></div>` : ''}
+            <div class="admin-chat-box"><div class="admin-chat-header"><span><i class="fas fa-comment"></i> محادثة</span><button onclick="refreshChat('${oid}')" style="background:none;border:none;color:white;"><i class="fas fa-sync-alt"></i></button></div><div class="admin-chat-body" id="chat-${oid}"></div><div class="admin-chat-footer"><input type="text" id="chatInput-${oid}" placeholder="اكتب رداً..."><button class="action-btn confirm-btn" onclick="sendAdminMessage('${oid}')"><i class="fas fa-paper-plane"></i></button></div></div>
+            <div class="order-actions">
+                ${o.status==='pending' ? `<button class="action-btn confirm-btn" onclick="confirmOrder('${oid}')">✅ ${isReward ? 'تم الشحن' : 'تأكيد التحويل'}</button>` : ''}
+                ${o.status==='confirmed' ? `<button class="action-btn complete-btn" onclick="showCompleteModal('${oid}')">🎮 تم الشحن</button>` : ''}
+                <button class="action-btn whatsapp-btn" onclick="window.open('https://wa.me/201121816129')"><i class="fab fa-whatsapp"></i> واتساب</button>
+            </div>
+        `;
+        loadChatForOrder(oid); 
+        return d;
+    }
+    
+    function loadChatForOrder(oid){ const b=document.getElementById(`chat-${oid}`); if(!b) return; db.collection('orders').doc(oid).collection('messages').orderBy('timestamp','asc').onSnapshot(s=>{ b.innerHTML=''; s.forEach(d=>{ const m=d.data(), t=m.timestamp?new Date(m.timestamp.toDate()).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}):''; b.innerHTML+=`<div class="admin-chat-message ${m.sender==='admin'?'admin-msg':'customer-msg'}"><div class="admin-chat-bubble">${escapeHtml(m.text)}</div><div class="admin-chat-time">${t}</div></div>`; }); b.scrollTop=b.scrollHeight; }); }
+    function refreshChat(oid){ loadChatForOrder(oid); }
+    async function sendAdminMessage(oid){ const i=document.getElementById(`chatInput-${oid}`), t=i.value.trim(); if(!t) return; await db.collection('orders').doc(oid).collection('messages').add({text:t,sender:'admin',timestamp:firebase.firestore.FieldValue.serverTimestamp()}); i.value=''; new Audio('sounds/message.mp3').play().catch(()=>{}); }
+    async function confirmOrder(oid){ showConfirmModal('تأكيد اكتمال الطلب؟', async ()=>{ await db.collection('orders').doc(oid).update({status:'confirmed',confirmedAt:firebase.firestore.FieldValue.serverTimestamp()}); confirmSound.play().catch(()=>{}); loadOrders(); }); }
+    function showCompleteModal(oid){ const i=document.createElement('input'); i.type='file'; i.accept='image/*'; i.onchange=async e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=async ev=>{ await db.collection('orders').doc(oid).update({status:'completed',proofImage:ev.target.result,completedAt:firebase.firestore.FieldValue.serverTimestamp()}); successSound.play().catch(()=>{}); if(typeof showSuccessModal === 'function') showSuccessModal('✅ تم'); else alert('✅ تم'); loadOrders(); }; r.readAsDataURL(f); }; i.click(); }
+    
+    function filterOrders(s){ 
+        currentFilter = s; 
+        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); 
+        if(event && event.target) event.target.classList.add('active');
+        document.getElementById('ordersList').style.display='block'; 
+        document.getElementById('kycPanel').style.display='none'; 
+        loadOrders(); 
+    }
+    
+    function showKYCPanel(){ 
+        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); 
+        if(event && event.target) event.target.classList.add('active');
+        document.getElementById('ordersList').style.display='none'; 
+        document.getElementById('kycPanel').style.display='block'; 
+        loadKYCRequests(); 
+    }
+    
+    async function loadKYCRequests(){
+        const c=document.getElementById('kycList'); c.innerHTML='<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>جاري التحميل...</p></div>';
+        try{
+            const s=await db.collection('kyc_requests').where('status','==','pending').orderBy('submittedAt','desc').get();
+            if(s.empty){ c.innerHTML='<div class="empty-state"><p>لا توجد طلبات</p></div>'; return; }
+            c.innerHTML=''; s.forEach(d=>{ const r=d.data(); const card=document.createElement('div'); card.className='kyc-card'; card.innerHTML=`<div class="order-header"><span><strong>${r.fullName}</strong> (${r.userEmail})</span><span>${r.submittedAt?.toDate().toLocaleDateString('ar-EG')}</span></div><div class="order-details"><div class="detail-item"><div class="detail-label">الهاتف</div><div class="detail-value">${r.phone}</div></div><div class="detail-item"><div class="detail-label">نوع الهوية</div><div class="detail-value">${r.idType}</div></div><div class="detail-item"><div class="detail-label">رقم الهوية</div><div class="detail-value">${r.idNumber}</div></div></div><div class="kyc-images"><img src="${r.frontImage}" onclick="showImage('${r.frontImage}')"><img src="${r.backImage}" onclick="showImage('${r.backImage}')"><img src="${r.selfieImage}" onclick="showImage('${r.selfieImage}')"></div><div class="order-actions"><button class="action-btn confirm-btn" onclick="approveKYC('${d.id}','${r.userId}')">✅ قبول</button><button class="action-btn reject-btn" onclick="rejectKYC('${d.id}')">❌ رفض</button></div>`; c.appendChild(card); });
+        }catch(e){ c.innerHTML='<div class="empty-state"><p>❌ خطأ</p></div>'; }
+    }
+    
+    async function approveKYC(rid,uid){ showConfirmModal('قبول طلب التوثيق؟', async ()=>{ await db.collection('kyc_requests').doc(rid).update({status:'approved',approvedAt:firebase.firestore.FieldValue.serverTimestamp(),approvedBy:getCurrentUser().uid}); await db.collection('users').doc(uid).update({kycVerified:true,kycVerifiedAt:firebase.firestore.FieldValue.serverTimestamp()}); loadKYCRequests(); if(typeof showSuccessModal === 'function') showSuccessModal('تم القبول'); else alert('تم القبول'); }); }
+    async function rejectKYC(rid){ showConfirmModal('رفض طلب التوثيق؟', async ()=>{ const reason=prompt('سبب الرفض:'); await db.collection('kyc_requests').doc(rid).update({status:'rejected',rejectReason:reason||'غير محدد',rejectedAt:firebase.firestore.FieldValue.serverTimestamp(),rejectedBy:getCurrentUser().uid}); loadKYCRequests(); if(typeof showErrorModal === 'function') showErrorModal('تم الرفض'); else alert('تم الرفض'); }); }
+    
+    function showImage(src){ document.getElementById('modalImage').src=src; document.getElementById('imageModal').classList.add('show'); }
+    function closeImageModal(){ document.getElementById('imageModal').classList.remove('show'); }
+    async function handleLogout(){ showConfirmModal('تسجيل الخروج؟', async ()=>{ sessionStorage.removeItem('adminAuth'); await logout(); window.location.href='login.html'; }); }
+    
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    function showConfirmModal(m, onConfirm){ 
+        const result = confirm(m); 
+        if(result) onConfirm(); 
+    }
+    
+    if(Notification.permission==='default') Notification.requestPermission();
+    
+    window.filterOrders = filterOrders;
+    window.showKYCPanel = showKYCPanel;
+    window.confirmOrder = confirmOrder;
+    window.showCompleteModal = showCompleteModal;
+    window.sendAdminMessage = sendAdminMessage;
+    window.refreshChat = refreshChat;
+    window.showImage = showImage;
+    window.closeImageModal = closeImageModal;
+    window.handleLogout = handleLogout;
+    window.approveKYC = approveKYC;
+    window.rejectKYC = rejectKYC;
+    window.manualRefreshOrders = manualRefreshOrders;
+</script>
+</body>
+</html>

@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>شحن | Falcon Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#D32F2F">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Falcon Store">
+    <link rel="apple-touch-icon" href="/photos/logo-192.png">
+    <style>
+        /* ===== جميع المتغيرات والأنماط ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #D32F2F;
+            --primary-dark: #B71C1C;
+            --primary-light: #EF5350;
+            --secondary: #FFD966;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --danger: #f44336;
+            --bg-body: #0F0F0F;
+            --bg-surface: #1A1A1A;
+            --bg-card: #242424;
+            --bg-elevated: #2A2A2A;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B0B0B0;
+            --text-muted: #808080;
+            --border-light: #333333;
+            --border-lighter: #2A2A2A;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.2);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.3);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
+            --radius: 16px;
+            --radius-lg: 24px;
+            --radius-full: 9999px;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+            padding-bottom: 90px;
+        }
+
+        /* ==================== لودر ==================== */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-body);
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            transition: opacity 0.3s;
+        }
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border-light);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .loader-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* ==================== الهيدر ==================== */
+        .main-header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            padding: 0.75rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            width: 100%;
+        }
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .logo-wrapper { display: flex; align-items: center; gap: 0.75rem; }
+        .logo-img { width: 45px; height: 45px; border-radius: 16px; object-fit: cover; }
+        .logo-text { font-size: 1.5rem; font-weight: 800; color: white; }
+        .header-actions { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+        .search-wrapper { position: relative; display: flex; align-items: center; }
+        .search-icon { position: absolute; right: 12px; color: var(--text-muted); font-size: 0.9rem; }
+        .search-input {
+            padding: 0.6rem 2.5rem 0.6rem 1rem;
+            border-radius: 60px;
+            border: none;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.9rem;
+            width: 220px;
+            transition: all 0.3s;
+        }
+        .search-input::placeholder { color: rgba(255,255,255,0.7); }
+        .search-input:focus { outline: none; background: rgba(255,255,255,0.25); width: 260px; }
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .icon-btn:hover { background: rgba(255,255,255,0.25); transform: scale(1.05); }
+
+        /* ==================== شريط المستخدم ==================== */
+        .user-bar {
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border-lighter);
+            padding: 0.5rem 1.5rem;
+            width: 100%;
+        }
+        .user-bar-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .user-info-wrapper { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--bg-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary);
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .auth-buttons { display: flex; gap: 0.5rem; }
+        .user-details { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+        .user-name { font-weight: 600; color: var(--text-primary); cursor: pointer; }
+        .stars-badge {
+            background: linear-gradient(135deg, var(--secondary), #FFA000);
+            padding: 0.3rem 0.8rem;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: #8B0000;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .daily-reward {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        .daily-reward.show { display: flex; }
+        .user-level-badge, .user-orders-badge {
+            background: var(--bg-body);
+            padding: 0.25rem 0.75rem;
+            border-radius: 60px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        .verified-badge { color: #2196F3; }
+        .verified-badge-gold { color: #FFD700; }
+
+        /* ==================== شريط الشحنات المباشرة ==================== */
+        .live-shipping-bar {
+            background: var(--bg-surface);
+            border-radius: 60px;
+            padding: 0.6rem 1.5rem;
+            margin: 0.5rem 1.5rem;
+            border: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .live-shipping-bar:hover { border-color: var(--primary); transform: translateY(-2px); }
+        .skeleton-loader {
+            background: linear-gradient(90deg, var(--bg-surface) 25%, var(--bg-elevated) 50%, var(--bg-surface) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: 60px;
+            height: 40px;
+            width: 100%;
+        }
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ==================== صندوق الشفافية ==================== */
+        .transparency-box {
+            background: linear-gradient(135deg, rgba(33,150,243,0.1), rgba(33,150,243,0.05));
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin: 16px;
+            border: 1px solid rgba(33,150,243,0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .transparency-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+        }
+        .transparency-item i { font-size: 1rem; }
+
+        /* ==================== عداد المشاهدين ==================== */
+        .viewers-counter {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            margin-right: 10px;
+        }
+        .viewers-counter i {
+            color: #4CAF50;
+            font-size: 0.6rem;
+            animation: blink 1.5s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* ==================== المحتوى الرئيسي ==================== */
+        .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* ==================== رأس اللعبة ==================== */
+        .game-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+        }
+        .game-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            object-fit: cover;
+        }
+        .game-name {
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        /* ==================== حقل ID (يظهر فقط لنوع ID) ==================== */
+        .id-section {
+            background: var(--bg-surface);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border-light);
+        }
+        .id-label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .id-input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-light);
+            background: var(--bg-body);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        .id-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .id-input.valid {
+            border-color: var(--success);
+        }
+        .id-input.invalid {
+            border-color: var(--danger);
+        }
+        .id-error {
+            font-size: 0.75rem;
+            margin-top: 8px;
+            color: var(--danger);
+        }
+        .save-data {
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* ==================== حقل الأكونت (يظهر فقط لنوع Account) ==================== */
+        .account-section {
+            background: var(--bg-surface);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border-light);
+        }
+        .account-platform {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .platform-btn {
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1px solid var(--border-light);
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .platform-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .account-field {
+            width: 100%;
+            padding: 12px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-light);
+            background: var(--bg-body);
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        /* ==================== التبويبات ==================== */
+        .tabs-section {
+            margin-bottom: 24px;
+        }
+        .tabs-buttons {
+            display: flex;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 0;
+            overflow-x: auto;
+        }
+        .tab-btn {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        /* ==================== شبكة الباقات ==================== */
+        .packages-section {
+            margin-bottom: 24px;
+        }
+        .packages-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        .package-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            position: relative;
+        }
+        .package-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+        .package-card.selected {
+            border-color: var(--primary);
+            background: rgba(211,47,47,0.1);
+        }
+        .package-card.featured {
+            border-color: var(--secondary);
+        }
+        .package-img {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+            margin-bottom: 12px;
+        }
+        .package-name {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .package-bonus {
+            font-size: 0.7rem;
+            color: var(--success);
+            margin-bottom: 8px;
+        }
+        .package-price {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .featured-badge {
+            position: absolute;
+            top: -8px;
+            right: 12px;
+            background: linear-gradient(135deg, var(--secondary), #FFA000);
+            color: #000;
+            font-size: 0.6rem;
+            font-weight: bold;
+            padding: 2px 10px;
+            border-radius: 30px;
+        }
+
+        /* ==================== طرق الدفع ==================== */
+        .payment-section {
+            margin-bottom: 24px;
+        }
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .payment-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .payment-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .payment-card i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        .payment-card span {
+            font-size: 0.85rem;
+        }
+        .payment-card.selected {
+            border-color: var(--primary);
+            background: rgba(211,47,47,0.1);
+        }
+
+        /* ==================== ملاحظات ==================== */
+        .notes-section {
+            margin-bottom: 24px;
+        }
+        .notes-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-light);
+            background: var(--bg-surface);
+            color: var(--text-primary);
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        /* ==================== زر ثابت أسفل الشاشة ==================== */
+        .sticky-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border-light);
+            padding: 12px 20px;
+            z-index: 100;
+        }
+        .sticky-container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+        .total-price {
+            display: flex;
+            flex-direction: column;
+        }
+        .total-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+        .total-value {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        .buy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 60px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .buy-btn:hover:not(:disabled) {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        .buy-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* ==================== تجاوب ==================== */
+        @media (min-width: 768px) {
+            .packages-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .payment-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        @media (min-width: 1024px) {
+            .packages-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- لودر -->
+<div id="loader">
+    <div class="loader-spinner"></div>
+    <div class="loader-text">جاري التحميل...</div>
+</div>
+
+<!-- ==================== الهيدر ==================== -->
+<header class="main-header">
+    <div class="header-container">
+        <div class="logo-wrapper">
+            <img src="photos/logo.png" alt="شعار المتجر" class="logo-img" onerror="this.src='https://placehold.co/45x45/D32F2F/white?text=F'">
+            <span class="logo-text">Falcon Store</span>
+        </div>
+        <div class="header-actions">
+            <div class="search-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" placeholder="ابحث..." class="search-input">
+            </div>
+            <div class="viewers-counter" id="viewersCounter">
+                <i class="fas fa-eye"></i>
+                <span id="viewersCount">0</span>
+                <span>عميل يشاهدون الآن</span>
+            </div>
+            <button class="icon-btn theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
+            <button class="icon-btn menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        </div>
+    </div>
+</header>
+
+<!-- ==================== شريط الشحنات المباشرة ==================== -->
+<div class="live-shipping-bar" id="liveShippingBar" onclick="window.location.href='public-feed.html'">
+    <i class="fas fa-circle" style="color: var(--success);"></i>
+    <div class="skeleton-loader" id="shippingSkeleton"></div>
+    <span id="liveShippingText" style="display: none;">🛡️ جاري تحميل الشحنات...</span>
+</div>
+
+<!-- ==================== شريط المستخدم ==================== -->
+<div class="user-bar">
+    <div class="user-bar-container">
+        <div class="user-info-wrapper">
+            <div class="user-avatar" id="userAvatar" onclick="window.location.href='profile.html'">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <div id="authButtons" class="auth-buttons">
+                <button class="btn btn-outline btn-sm" id="loginBtn" onclick="window.location.href='login.html'">تسجيل الدخول</button>
+                <button class="btn btn-primary btn-sm" id="signupBtn" onclick="window.location.href='signup.html'">إنشاء حساب</button>
+                <button class="btn btn-danger btn-sm" id="logoutBtn" style="display:none;" onclick="handleLogout()">تسجيل خروج</button>
+            </div>
+            <div id="userInfo" class="user-details" style="display:none;">
+                <span class="user-name" id="userName" onclick="window.location.href='profile.html'"></span>
+                <div class="stars-badge" onclick="window.location.href='rewards.html'">
+                    <i class="fas fa-star"></i><span id="starsCount">0</span>
+                </div>
+                <span class="user-level-badge" id="userLevel" onclick="window.location.href='profile.html'">برونزي</span>
+            </div>
+        </div>
+        <div class="daily-reward" id="dailyReward"><i class="fas fa-gift"></i><span>الهدية اليومية</span></div>
+    </div>
+</div>
+
+<!-- ==================== صندوق الشفافية ==================== -->
+<div class="transparency-box" id="transparencyBox">
+    <div class="transparency-item">
+        <i class="fas fa-tachometer-alt" style="color: var(--info);"></i>
+        <span>🟢 الشحن فوري (متوسط <span id="avgShippingTime">0</span> دقائق)</span>
+    </div>
+    <div class="transparency-item">
+        <i class="fas fa-box" style="color: var(--success);"></i>
+        <span>📦 طلبات اليوم: <strong id="todayOrdersCount">0</strong></span>
+    </div>
+    <div class="transparency-item">
+        <i class="fas fa-star" style="color: var(--secondary);"></i>
+        <span>⭐ تم منح <strong id="starsGivenToday">0</strong> نجمة اليوم</span>
+    </div>
+</div>
+
+<!-- ==================== المحتوى الرئيسي ==================== -->
+<main class="main-content">
+    
+    <!-- رأس اللعبة -->
+    <div class="game-header">
+        <img id="gameImage" src="" alt="" class="game-img">
+        <h1 class="game-name"><span id="gameName"></span></h1>
+    </div>
+    
+    <!-- قسم ID (يظهر فقط إذا كان نوع الشحن ID) -->
+    <div id="idSection" class="id-section" style="display: none;">
+        <label class="id-label"><i class="fas fa-id-card"></i> ID اللاعب</label>
+        <input type="text" id="playerId" class="id-input" placeholder="أدخل ID اللاعب">
+        <div class="id-error" id="idError"></div>
+        <div class="save-data">
+            <input type="checkbox" id="saveId">
+            <label for="saveId">💾 حفظ ID للدفع السريع</label>
+        </div>
+    </div>
+    
+    <!-- قسم الأكونت (يظهر فقط إذا كان نوع الشحن Account) -->
+    <div id="accountSection" class="account-section" style="display: none;">
+        <div class="account-platform" id="platformContainer">
+            <button class="platform-btn active" data-platform="google">Google</button>
+            <button class="platform-btn" data-platform="facebook">Facebook</button>
+            <button class="platform-btn" data-platform="twitter">Twitter</button>
+            <button class="platform-btn" data-platform="vk">VK</button>
+        </div>
+        <div id="accountFields"></div>
+    </div>
+    
+    <!-- تبويبات الفئات -->
+    <div class="tabs-section">
+        <div class="tabs-buttons" id="tabsContainer"></div>
+    </div>
+    
+    <!-- شبكة الباقات -->
+    <div class="packages-section">
+        <div class="packages-grid" id="packagesGrid"></div>
+    </div>
+    
+    <!-- طرق الدفع -->
+    <div class="payment-section">
+        <h3 class="section-title"><i class="fas fa-credit-card"></i> طريقة الدفع</h3>
+        <div class="payment-grid" id="paymentGrid"></div>
+    </div>
+    
+    <!-- ملاحظات -->
+    <div class="notes-section">
+        <textarea id="orderNote" class="notes-input" placeholder="ملاحظات إضافية (اختياري)" rows="2"></textarea>
+    </div>
+    
+</main>
+
+<!-- زر ثابت أسفل الشاشة -->
+<div class="sticky-bottom" id="stickyBottom">
+    <div class="sticky-container">
+        <div class="total-price">
+            <span class="total-label">الإجمالي</span>
+            <span class="total-value" id="totalPrice">0 ج.م</span>
+        </div>
+        <button class="buy-btn" id="buyBtn" disabled>
+            <i class="fas fa-shopping-cart"></i> متابعة
+        </button>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/main.js"></script>
+<script src="js/shipping-notifications.js"></script>
+
+<script>
+    // ==================== إخفاء اللودر ====================
+    (function() {
+        const loader = document.getElementById('loader');
+        if (loader) {
+            loader.style.opacity = '0';
+            setTimeout(() => loader.style.display = 'none', 300);
+        }
+    })();
+    
+    // ==================== قراءة المعاملات من الرابط ====================
+    const urlParams = new URLSearchParams(window.location.search);
+    const gameKey = urlParams.get('game') || 'freefire';
+    const shippingType = urlParams.get('type') || 'id'; // 'id' أو 'account'
+    
+    // ==================== بيانات اللعبة ====================
+    const gamesData = {
+        freefire: {
+            name: 'Free Fire',
+            image: 'photos/freefire.jpg',
+            hasId: true,
+            hasAccount: true,
+            categories: {
+                diamonds: {
+                    name: 'الجواهر 💎',
+                    items: [
+                        { name: '50', price: 30, img: 'photos/freefire/diamond50.png', bonus: 0 },
+                        { name: '100', price: 59, img: 'photos/freefire/diamond100.png', bonus: 0 },
+                        { name: '310', price: 155, img: 'photos/freefire/diamond310.png', bonus: 0 },
+                        { name: '520', price: 280, img: 'photos/freefire/diamond520.png', bonus: 0 },
+                        { name: '1060', price: 500, img: 'photos/freefire/diamond1060.png', bonus: 106, featured: true },
+                        { name: '2180', price: 1050, img: 'photos/freefire/diamond2180.png', bonus: 218 },
+                        { name: '5600', price: 2499, img: 'photos/freefire/diamond5600.png', bonus: 560, featured: true }
+                    ]
+                },
+                memberships: {
+                    name: 'العضويات',
+                    items: [
+                        { name: 'أسبوعية', price: 120, img: 'photos/freefire/membership-weekly1.png' },
+                        { name: 'شهرية', price: 569, img: 'photos/freefire/membership-monthly.png' }
+                    ]
+                }
+            }
+        },
+        pubg: {
+            name: 'PUBG Mobile',
+            image: 'photos/pubg.jpg',
+            hasId: true,
+            hasAccount: true,
+            categories: {
+                uc: {
+                    name: 'شدات UC',
+                    items: [
+                        { name: '30', price: 30, img: 'photos/pubg/uc-30.png', bonus: 0 },
+                        { name: '60', price: 55, img: 'photos/pubg/uc-60.png', bonus: 0 },
+                        { name: '325', price: 235, img: 'photos/pubg/uc-325.png', bonus: 0 },
+                        { name: '660', price: 450, img: 'photos/pubg/uc-660.png', bonus: 0 },
+                        { name: '1800', price: 1100, img: 'photos/pubg/uc-1800.png', bonus: 180, featured: true },
+                        { name: '3850', price: 2150, img: 'photos/pubg/uc-3850.png', bonus: 385 },
+                        { name: '8100', price: 4300, img: 'photos/pubg/uc-8100.png', bonus: 810, featured: true }
+                    ]
+                }
+            }
+        },
+        cod: {
+            name: 'Call of Duty',
+            image: 'photos/cod.jpg',
+            hasId: true,
+            hasAccount: false,
+            categories: {
+                cp: {
+                    name: 'نقاط CP',
+                    items: [
+                        { name: '30', price: 25, img: 'photos/cod/cp-icon.png', bonus: 0 },
+                        { name: '88', price: 60, img: 'photos/cod/cp-icon.png', bonus: 0 },
+                        { name: '160', price: 70, img: 'photos/cod/cp-icon.png', bonus: 0 },
+                        { name: '460', price: 250, img: 'photos/cod/cp-icon.png', bonus: 0 },
+                        { name: '960', price: 500, img: 'photos/cod/cp-icon.png', bonus: 96, featured: true },
+                        { name: '2600', price: 1150, img: 'photos/cod/cp-icon.png', bonus: 260 }
+                    ]
+                }
+            }
+        },
+        efootball: {
+            name: 'eFootball',
+            image: 'photos/pes.jpg',
+            hasId: false,
+            hasAccount: true,
+            accountOnly: 'konami',
+            categories: {
+                coins: {
+                    name: 'كوينات',
+                    items: [
+                        { name: '130', price: 59, img: 'photos/pes/coin.png', bonus: 0 },
+                        { name: '300', price: 149, img: 'photos/pes/coin.png', bonus: 0 },
+                        { name: '550', price: 249, img: 'photos/pes/coin.png', bonus: 0 },
+                        { name: '1040', price: 449, img: 'photos/pes/coin.png', bonus: 104, featured: true },
+                        { name: '2130', price: 919, img: 'photos/pes/coin.png', bonus: 213 }
+                    ]
+                }
+            }
+        },
+        fifa: {
+            name: 'FIFA Mobile',
+            image: 'photos/fifa.jpg',
+            hasId: true,
+            hasAccount: false,
+            categories: {
+                fc: {
+                    name: 'نقاط FC',
+                    items: [
+                        { name: '40', price: 25, img: 'photos/fifa/fc-points40.png', bonus: 0 },
+                        { name: '100', price: 55, img: 'photos/fifa/fc-points100.png', bonus: 0 },
+                        { name: '520', price: 280, img: 'photos/fifa/fc-points520.png', bonus: 0 },
+                        { name: '1070', price: 540, img: 'photos/fifa/fc-points1070.png', bonus: 107, featured: true },
+                        { name: '2200', price: 1050, img: 'photos/fifa/fc-points2200.png', bonus: 220 }
+                    ]
+                }
+            }
+        }
+    };
+    
+    const gameData = gamesData[gameKey];
+    if (!gameData) window.location.href = 'index.html';
+    
+    document.getElementById('gameName').textContent = gameData.name;
+    document.getElementById('gameImage').src = gameData.image;
+    
+    // ==================== إظهار/إخفاء الأقسام حسب نوع الشحن ====================
+    const idSection = document.getElementById('idSection');
+    const accountSection = document.getElementById('accountSection');
+    
+    if (shippingType === 'id' && gameData.hasId) {
+        idSection.style.display = 'block';
+        accountSection.style.display = 'none';
+    } else if (shippingType === 'account' && gameData.hasAccount) {
+        idSection.style.display = 'none';
+        accountSection.style.display = 'block';
+        updateAccountFields();
+    } else {
+        // إذا كان النوع غير مدعوم، نعيد التوجيه
+        window.location.href = 'index.html';
+    }
+    
+    // ==================== بيانات الباقات ====================
+    let currentCategory = Object.keys(gameData.categories)[0];
+    let selectedPackage = null;
+    let selectedPayment = null;
+    let currentPlatform = 'google';
+    let idValid = false;
+    let currentQuantity = 1;
+    
+    // ==================== عرض التبويبات ====================
+    const tabsContainer = document.getElementById('tabsContainer');
+    Object.entries(gameData.categories).forEach(([key, cat]) => {
+        tabsContainer.innerHTML += `<button class="tab-btn ${key === currentCategory ? 'active' : ''}" data-category="${key}">${cat.name}</button>`;
+    });
+    
+    // ==================== عرض الباقات ====================
+    function renderPackages() {
+        const grid = document.getElementById('packagesGrid');
+        const items = gameData.categories[currentCategory]?.items || [];
+        if (!items.length) {
+            grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;">لا توجد باقات</div>';
+            return;
+        }
+        grid.innerHTML = items.map((item, i) => {
+            let featuredBadge = '';
+            let bonusHtml = '';
+            if (item.featured) featuredBadge = '<span class="featured-badge">🔥 عرض خاص</span>';
+            if (item.bonus && item.bonus > 0) {
+                bonusHtml = `<div class="package-bonus">🎁 +${item.bonus} ${gameData.name === 'Free Fire' ? 'جوهرة' : (gameData.name === 'PUBG Mobile' ? 'UC' : 'نقطة')} مكافأة</div>`;
+            }
+            return `
+                <div class="package-card ${i === 0 && !selectedPackage ? 'selected' : ''}" data-index="${i}" data-price="${item.price}" data-name="${item.name}">
+                    ${featuredBadge}
+                    <img src="${item.img}" alt="${item.name}" class="package-img" onerror="this.src='https://placehold.co/70/D32F2F/white?text=${item.name}'">
+                    <div class="package-name">${item.name}</div>
+                    ${bonusHtml}
+                    <div class="package-price">${item.price} ج.م</div>
+                </div>
+            `;
+        }).join('');
+        
+        const firstCard = document.querySelector('.package-card');
+        if (firstCard && !selectedPackage) {
+            const idx = firstCard.dataset.index;
+            const item = items[idx];
+            selectedPackage = { name: item.name, price: item.price };
+            updateTotal();
+        }
+        
+        document.querySelectorAll('.package-card').forEach((card, idx) => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.package-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                const item = items[idx];
+                selectedPackage = { name: item.name, price: item.price };
+                updateTotal();
+                if (typeof playClickSound === 'function') playClickSound();
+                updateBuyButton();
+            });
+        });
+    }
+    
+    // ==================== طرق الدفع ====================
+    const paymentGrid = document.getElementById('paymentGrid');
+    paymentGrid.innerHTML = `
+        <div class="payment-card" data-payment="vodafone">
+            <i class="fas fa-mobile-alt"></i>
+            <span>فودافون كاش</span>
+        </div>
+        <div class="payment-card" data-payment="fawry">
+            <i class="fas fa-qrcode"></i>
+            <span>فوري</span>
+        </div>
+        <div class="payment-card" data-payment="card">
+            <i class="fas fa-credit-card"></i>
+            <span>بطاقة ائتمان</span>
+        </div>
+        <div class="payment-card" data-payment="orange">
+            <i class="fas fa-mobile-alt"></i>
+            <span>أورنج كاش</span>
+        </div>
+    `;
+    
+    document.querySelectorAll('.payment-card').forEach(card => {
+        card.addEventListener('click', () => {
+            document.querySelectorAll('.payment-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            selectedPayment = card.dataset.payment;
+            if (typeof playClickSound === 'function') playClickSound();
+            updateBuyButton();
+        });
+    });
+    
+    const firstPayment = document.querySelector('.payment-card');
+    if (firstPayment) {
+        firstPayment.classList.add('selected');
+        selectedPayment = firstPayment.dataset.payment;
+    }
+    
+    // ==================== تحديث السعر ====================
+    function updateTotal() {
+        if (selectedPackage) {
+            const total = selectedPackage.price * currentQuantity;
+            document.getElementById('totalPrice').textContent = total + ' ج.م';
+            updateBuyButton();
+        }
+    }
+    
+    // ==================== تحديث حقول الأكونت ====================
+    function updateAccountFields() {
+        const container = document.getElementById('accountFields');
+        if (gameData.accountOnly === 'konami') {
+            container.innerHTML = `<input type="text" id="konamiId" class="account-field" placeholder="Konami ID">`;
+        } else if (currentPlatform === 'google') {
+            container.innerHTML = `<input type="email" id="accountEmail" class="account-field" placeholder="البريد الإلكتروني"><input type="password" id="accountPassword" class="account-field" placeholder="كلمة السر">`;
+        } else {
+            container.innerHTML = `<input type="text" id="accountLogin" class="account-field" placeholder="اسم المستخدم"><input type="password" id="accountPassword" class="account-field" placeholder="كلمة السر">`;
+        }
+    }
+    
+    document.querySelectorAll('.platform-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentPlatform = this.dataset.platform;
+            updateAccountFields();
+            if (typeof playClickSound === 'function') playClickSound();
+        });
+    });
+    
+    // ==================== التحقق من ID ====================
+    const playerIdInput = document.getElementById('playerId');
+    const idError = document.getElementById('idError');
+    
+    function validateId() {
+        const id = playerIdInput?.value.trim();
+        if (!id) {
+            if (idError) idError.textContent = '❌ يرجى إدخال ID اللاعب';
+            idValid = false;
+            playerIdInput?.classList.add('invalid');
+            playerIdInput?.classList.remove('valid');
+        } else if (!/^\d+$/.test(id)) {
+            if (idError) idError.textContent = '❌ ID يجب أن يكون أرقام فقط';
+            idValid = false;
+            playerIdInput?.classList.add('invalid');
+            playerIdInput?.classList.remove('valid');
+        } else if (id.length < 5 || id.length > 15) {
+            if (idError) idError.textContent = '❌ ID غير صالح (5-15 رقم)';
+            idValid = false;
+            playerIdInput?.classList.add('invalid');
+            playerIdInput?.classList.remove('valid');
+        } else {
+            if (idError) idError.textContent = '';
+            idValid = true;
+            playerIdInput?.classList.add('valid');
+            playerIdInput?.classList.remove('invalid');
+        }
+        updateBuyButton();
+    }
+    
+    if (playerIdInput) playerIdInput.addEventListener('input', validateId);
+    
+    // ==================== تحديث زر الشراء ====================
+    function updateBuyButton() {
+        const btn = document.getElementById('buyBtn');
+        let canBuy = true;
+        if (!selectedPackage) canBuy = false;
+        if (!selectedPayment) canBuy = false;
+        if (shippingType === 'id' && !idValid) canBuy = false;
+        btn.disabled = !canBuy;
+    }
+    
+    // ==================== متابعة الدفع ====================
+    function proceedToCheckout() {
+        const user = getCurrentUser();
+        if (!user) {
+            if (typeof showErrorModal === 'function') showErrorModal('❌ يجب تسجيل الدخول أولاً');
+            else alert('❌ سجل دخول');
+            window.location.href = 'login.html';
+            return;
+        }
+        if (!selectedPackage || !selectedPayment) return;
+        
+        const playerId = playerIdInput?.value.trim();
+        const note = document.getElementById('orderNote')?.value.trim() || '';
+        let accountData = null;
+        
+        if (shippingType === 'account') {
+            if (gameData.accountOnly === 'konami') {
+                accountData = { platform: 'konami', login: document.getElementById('konamiId')?.value.trim() };
+            } else {
+                const email = document.getElementById('accountEmail')?.value.trim();
+                const login = document.getElementById('accountLogin')?.value.trim();
+                const password = document.getElementById('accountPassword')?.value.trim();
+                accountData = { platform: currentPlatform, login: email || login, password };
+            }
+        }
+        
+        const order = {
+            game: gameData.name,
+            gameKey: gameKey,
+            type: shippingType,
+            category: currentCategory,
+            item: selectedPackage,
+            quantity: currentQuantity,
+            totalPrice: selectedPackage.price * currentQuantity,
+            playerId: shippingType === 'id' ? playerId : null,
+            accountData: accountData,
+            paymentMethod: selectedPayment,
+            orderNote: note,
+            timestamp: Date.now()
+        };
+        
+        sessionStorage.setItem('currentOrder', JSON.stringify(order));
+        if (typeof playClick2Sound === 'function') playClick2Sound();
+        window.location.href = 'checkout.html';
+    }
+    
+    document.getElementById('buyBtn').addEventListener('click', proceedToCheckout);
+    
+    // ==================== التبويبات ====================
+    document.querySelectorAll('.tab-btn').forEach(tab => {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            currentCategory = this.dataset.category;
+            selectedPackage = null;
+            renderPackages();
+            if (typeof playClickSound === 'function') playClickSound();
+        });
+    });
+    
+    // ==================== حفظ ID ====================
+    const saveIdCheckbox = document.getElementById('saveId');
+    async function savePlayerId() {
+        const user = getCurrentUser();
+        if (!user || !saveIdCheckbox.checked) return;
+        const playerId = playerIdInput?.value.trim();
+        if (playerId) {
+            await db.collection('users').doc(user.uid).update({ savedPlayerId: playerId, savedGameKey: gameKey });
+        }
+    }
+    async function loadSavedId() {
+        const user = getCurrentUser();
+        if (!user) return;
+        const doc = await db.collection('users').doc(user.uid).get();
+        const data = doc.data();
+        if (data && data.savedPlayerId && data.savedGameKey === gameKey && playerIdInput) {
+            playerIdInput.value = data.savedPlayerId;
+            if (saveIdCheckbox) saveIdCheckbox.checked = true;
+            validateId();
+        }
+    }
+    if (saveIdCheckbox) saveIdCheckbox.addEventListener('change', savePlayerId);
+    loadSavedId();
+    
+    // ==================== تحميل الصفحة ====================
+    renderPackages();
+    updateBuyButton();
+    
+    window.showGameInfo = () => {
+        if (typeof showInfoModal === 'function') showInfoModal('معلومات اللعبة', gameData.name);
+    };
+</script>
+</body>
+</html>

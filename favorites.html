@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>المفضلة | Falcon Store</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#D32F2F">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Falcon Store">
+    <link rel="apple-touch-icon" href="/photos/logo-192.png">
+    
+    <style>
+        .favorites-container { max-width: 1000px; margin: 2rem auto; padding: 1rem; }
+        
+        /* الهيدر */
+        .favorites-header {
+            background: linear-gradient(135deg, var(--bg-surface), var(--bg-elevated));
+            border-radius: 28px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .favorites-header h2 {
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.3rem;
+        }
+        
+        .favorites-header h2 i {
+            color: #e91e63;
+        }
+        
+        .clear-all-btn {
+            background: transparent;
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+        
+        .clear-all-btn:hover {
+            background: var(--danger);
+            color: white;
+        }
+        
+        /* شبكة المفضلة */
+        .favorites-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .favorite-card {
+            background: var(--bg-surface);
+            border-radius: 24px;
+            padding: 1.25rem;
+            text-align: center;
+            border: 1px solid var(--border-light);
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .favorite-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            border-color: var(--primary);
+        }
+        
+        /* زر الحذف */
+        .remove-favorite {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: var(--bg-body);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--danger);
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 5;
+        }
+        
+        .remove-favorite:hover {
+            background: var(--danger);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        /* الصورة */
+        .favorite-card img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: contain;
+            margin-bottom: 0.75rem;
+            border-radius: 16px;
+        }
+        
+        .favorite-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .game-name {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+        
+        .price {
+            font-size: 1rem;
+            color: var(--primary);
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+        }
+        
+        /* الأزرار */
+        .favorite-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .favorite-actions .btn {
+            flex: 1;
+            padding: 0.5rem;
+            font-size: 0.8rem;
+        }
+        
+        /* الحالة الفارغة */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+            background: var(--bg-surface);
+            border-radius: 28px;
+            border: 1px solid var(--border-light);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--border-light);
+        }
+        
+        @media (max-width: 600px) {
+            .favorites-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            .favorites-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        
+        @media (max-width: 450px) {
+            .favorites-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="light">
+
+<div id="falconLoader">
+    <div class="loader-content">
+        <div class="loader-dots-premium">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="loader-text-premium">جارِ التحميل...</div>
+    </div>
+</div>
+
+<header class="main-header">
+    <div class="header-container">
+        <div class="logo-wrapper">
+            <img src="photos/logo.png" alt="شعار المتجر" style="width:45px;height:45px;border-radius:16px;object-fit:cover;" onerror="this.src='https://placehold.co/45x45/D32F2F/white?text=F'">
+            <span class="logo-text">Falcon Store</span>
+        </div>
+        <a href="index.html" style="color: white; text-decoration: none;"><i class="fas fa-home"></i> الرئيسية</a>
+    </div>
+</header>
+
+<div class="favorites-container">
+    <div class="favorites-header">
+        <h2><i class="fas fa-heart"></i> المفضلة <span id="favoritesCount" style="font-size:0.9rem; color:var(--text-muted);">(0)</span></h2>
+        <button class="clear-all-btn" id="clearAllBtn" onclick="clearAllFavorites()" style="display:none;"><i class="fas fa-trash-alt"></i> حذف الكل</button>
+    </div>
+    <div id="favoritesList"></div>
+</div>
+
+<!-- ==================== قسم التعليقات والآراء ==================== -->
+<div class="comments-wrapper">
+    <div class="comments-card">
+        <h3><i class="fas fa-comments"></i> آراء واستفسارات العملاء</h3>
+        <div class="comments-subtitle">شاركنا رأيك أو مشكلتك، سيقوم فريق الدعم بالرد عليك خلال 24 ساعة</div>
+        <div id="commentsSection"></div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/comments.js"></script>
+
+<script>
+    window.addEventListener('load', ()=>{
+        const l=document.getElementById('falconLoader');
+        if(l){ l.classList.add('fade-out'); setTimeout(()=>l.style.display='none',1000); }
+    });
+    setTimeout(()=>{
+        const l=document.getElementById('falconLoader');
+        if(l&&l.style.display!=='none'){ l.classList.add('fade-out'); setTimeout(()=>l.style.display='none',1000); }
+    },5000);
+
+    let favorites = [], currentUser = null;
+    
+    async function loadFavorites() {
+        const user = getCurrentUser();
+        if (!user) { window.location.href = 'login.html'; return; }
+        currentUser = user;
+        const local = JSON.parse(localStorage.getItem(`favorites_${user.uid}`)) || [];
+        favorites = local;
+        renderFavorites();
+        syncFavoritesWithFirestore();
+    }
+
+    async function syncFavoritesWithFirestore() {
+        try {
+            const snap = await db.collection('users').doc(currentUser.uid).collection('favorites').get();
+            const fireFav = [];
+            snap.forEach(doc => fireFav.push({ id: doc.id, ...doc.data() }));
+            if (fireFav.length) {
+                favorites = fireFav;
+                localStorage.setItem(`favorites_${currentUser.uid}`, JSON.stringify(favorites));
+                renderFavorites();
+            }
+        } catch (e) {}
+    }
+
+    function renderFavorites() {
+        const container = document.getElementById('favoritesList');
+        const countSpan = document.getElementById('favoritesCount');
+        const clearBtn = document.getElementById('clearAllBtn');
+        countSpan.textContent = `(${favorites.length})`;
+        if (!favorites.length) {
+            container.innerHTML = `<div class="empty-state"><i class="fas fa-heart-broken"></i><h3>لا توجد منتجات في المفضلة</h3><p>أضف منتجاتك المفضلة لتجدها بسهولة</p><a href="index.html" class="btn btn-primary" style="margin-top:1rem;">تصفح المنتجات</a></div>`;
+            clearBtn.style.display = 'none';
+            return;
+        }
+        clearBtn.style.display = 'block';
+        container.innerHTML = `<div class="favorites-grid">${favorites.map(item => `
+            <div class="favorite-card">
+                <button class="remove-favorite" onclick="removeFromFavorites('${item.id}')"><i class="fas fa-times"></i></button>
+                <img src="${item.image || 'photos/placeholder.jpg'}" alt="${item.name}" onerror="this.src='https://placehold.co/200/D32F2F/white?text=${item.name}'">
+                <h3>${item.name}</h3>
+                <div class="game-name">${item.game || ''}</div>
+                <div class="price">${item.price} ج.م</div>
+                <div class="favorite-actions">
+                    <button class="btn btn-primary" onclick="goToProduct('${item.gameKey}')"><i class="fas fa-shopping-cart"></i> شراء</button>
+                    <button class="btn btn-outline" onclick="addToCartFromFavorite('${item.id}')"><i class="fas fa-cart-plus"></i></button>
+                </div>
+            </div>
+        `).join('')}</div>`;
+    }
+
+    async function addToFavorites(product) {
+        if (!currentUser) { showLoginRequired(); return; }
+        if (favorites.find(f => f.id === product.id)) { 
+            if (typeof showSuccessModal === 'function') showSuccessModal('المنتج موجود بالفعل في المفضلة');
+            else alert('المنتج موجود بالفعل في المفضلة');
+            return; 
+        }
+        product.id = product.id || `${product.gameKey}_${product.name}_${Date.now()}`;
+        favorites.push(product);
+        localStorage.setItem(`favorites_${currentUser.uid}`, JSON.stringify(favorites));
+        try {
+            await db.collection('users').doc(currentUser.uid).collection('favorites').doc(product.id).set(product);
+            if (typeof showSuccessModal === 'function') showSuccessModal('تمت الإضافة إلى المفضلة');
+            else alert('تمت الإضافة إلى المفضلة');
+        } catch (e) { 
+            if (typeof showErrorModal === 'function') showErrorModal('حدث خطأ');
+            else alert('حدث خطأ');
+        }
+    }
+
+    async function removeFromFavorites(productId) {
+        if (!currentUser) return;
+        favorites = favorites.filter(f => f.id !== productId);
+        localStorage.setItem(`favorites_${currentUser.uid}`, JSON.stringify(favorites));
+        try { await db.collection('users').doc(currentUser.uid).collection('favorites').doc(productId).delete(); } catch (e) {}
+        renderFavorites();
+        if (typeof playClickSound === 'function') playClickSound();
+        else new Audio('sounds/click.mp3').play().catch(()=>{});
+        if (typeof showSuccessModal === 'function') showSuccessModal('تم الحذف من المفضلة');
+        else alert('تم الحذف من المفضلة');
+    }
+
+    async function clearAllFavorites() {
+        if (!favorites.length) return;
+        if (typeof showConfirmModal === 'function') {
+            showConfirmModal('حذف جميع المنتجات من المفضلة؟', async ()=>{
+                favorites = [];
+                localStorage.setItem(`favorites_${currentUser.uid}`, JSON.stringify([]));
+                try {
+                    const snap = await db.collection('users').doc(currentUser.uid).collection('favorites').get();
+                    const batch = db.batch();
+                    snap.forEach(doc => batch.delete(doc.ref));
+                    await batch.commit();
+                } catch (e) {}
+                renderFavorites();
+                if (typeof playClickSound === 'function') playClickSound();
+                else new Audio('sounds/click.mp3').play().catch(()=>{});
+                if (typeof showSuccessModal === 'function') showSuccessModal('تم حذف الكل');
+                else alert('تم حذف الكل');
+            });
+        } else {
+            if (confirm('حذف جميع المنتجات من المفضلة؟')) {
+                favorites = [];
+                localStorage.setItem(`favorites_${currentUser.uid}`, JSON.stringify([]));
+                try {
+                    const snap = await db.collection('users').doc(currentUser.uid).collection('favorites').get();
+                    const batch = db.batch();
+                    snap.forEach(doc => batch.delete(doc.ref));
+                    await batch.commit();
+                } catch (e) {}
+                renderFavorites();
+                new Audio('sounds/click.mp3').play().catch(()=>{});
+                alert('تم حذف الكل');
+            }
+        }
+    }
+
+    function goToProduct(gameKey) {
+        if (!gameKey) return;
+        if (typeof playClickSound === 'function') playClickSound();
+        else new Audio('sounds/click.mp3').play().catch(()=>{});
+        window.location.href = `product.html?game=${gameKey}`;
+    }
+
+    function addToCartFromFavorite(productId) {
+        const p = favorites.find(f => f.id === productId);
+        if (!p) return;
+        if (typeof addToCart === 'function') {
+            addToCart({ name: p.name, price: p.price, game: p.game, gameKey: p.gameKey });
+        } else { 
+            if (typeof showSuccessModal === 'function') showSuccessModal('تمت الإضافة إلى السلة');
+            else alert('تمت الإضافة إلى السلة');
+        }
+        if (typeof playClick2Sound === 'function') playClick2Sound();
+        else new Audio('sounds/click2.mp3').play().catch(()=>{});
+    }
+
+    function showLoginRequired() { 
+        if (typeof showWarningModal === 'function') showWarningModal('يرجى تسجيل الدخول أولاً', 'تسجيل الدخول مطلوب');
+        else alert('يرجى تسجيل الدخول أولاً');
+    }
+
+    window.addToFavorites = addToFavorites;
+    
+    if (typeof initComments === 'function') { initComments('favorites'); }
+
+    onAuthStateChanged(user => { 
+        if (!user) window.location.href = 'login.html'; 
+        else loadFavorites(); 
+    });
+</script>
+</body>
+</html>
