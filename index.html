@@ -13,7 +13,7 @@
     <meta name="apple-mobile-web-app-title" content="Falcon Store">
     <link rel="apple-touch-icon" href="/photos/logo-192.png">
     <style>
-        /* ===== الأساسيات والمتغيرات ===== */
+        /* ===== الأساسيات والمتغيرات (موحدة وبسيطة) ===== */
         :root {
             --primary: #D32F2F;
             --primary-dark: #B71C1C;
@@ -50,7 +50,7 @@
             min-height: 100vh; 
             overflow-x: hidden; 
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="27" viewBox="0 0 24 27"><polygon points="2,2 22,13 12,16 2,25" fill="%23D32F2F" stroke="%23FFD966" stroke-width="1.5"/><circle cx="12" cy="13" r="3" fill="%23FFFFFF"/></svg>') 12 5, auto;
-            padding-bottom: 70px; /* مساحة للشريط السفلي */
+            padding-bottom: 70px;
         }
         
         /* ===== شاشة تحميل (تعمل) ===== */
@@ -81,57 +81,15 @@
         .loader-dots span:nth-child(3) { animation-delay: 0.4s; }
         @keyframes dotPulse { 0%, 60%, 100% { transform: scale(1); opacity: 0.4; } 30% { transform: scale(1.5); opacity: 1; } }
         
-        /* ===== تخطيط الصفحة (سلايدر + إعلانات) ===== */
-        .page-layout {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 16px;
-        }
-        .slider-with-ads {
-            display: flex;
-            gap: 16px;
-            align-items: flex-start;
-            margin-top: 16px;
-        }
-        .slider-main {
-            flex: 1;
-            min-width: 0;
-        }
-        .ad-side {
-            width: 120px;
-            flex-shrink: 0;
-            background: var(--bg-surface);
-            border-radius: 12px;
-            border: 1px dashed var(--border-light);
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        .ad-box {
-            background: linear-gradient(135deg, var(--bg-elevated), var(--bg-surface));
-            border-radius: 12px;
-            aspect-ratio: 1 / 1.5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            text-align: center;
-            border: 1px solid var(--border-light);
-        }
-        .ad-box i { font-size: 2rem; margin-bottom: 8px; display: block; }
-        
-        /* ===== شريط LED (معدل) ===== */
+        /* ===== شريط LED (محسّن) ===== */
         .led-marquee {
             background: #0a0a0a;
             border-radius: 12px;
-            margin: 8px 0;
-            padding: 10px 0;
+            margin: 12px 0;
+            padding: 8px 0;
             border: 1px solid #2a0000;
             box-shadow: inset 0 0 10px rgba(255,0,0,0.1), 0 0 5px rgba(255,0,0,0.2);
             overflow: hidden;
-            position: relative;
-            cursor: pointer;
         }
         .led-content {
             display: inline-block;
@@ -140,14 +98,14 @@
             font-weight: bold;
             letter-spacing: 2px;
             padding-left: 100%;
-            animation: ledScroll 20s linear infinite;
+            animation: ledScroll 25s linear infinite;
         }
         .led-content span {
             display: inline-block;
-            margin-left: 60px;
-            font-size: 0.9rem;
+            margin-left: 50px;
+            font-size: 0.85rem;
             color: #ff3333;
-            text-shadow: 0 0 3px #ff0000, 0 0 5px #ff0000;
+            text-shadow: 0 0 3px #ff0000;
         }
         @keyframes ledScroll {
             0% { transform: translateX(0); }
@@ -159,188 +117,157 @@
         .store-pulse { position: fixed; top: 0; left: 0; width: 100%; height: 3px; z-index: 10000; transition: background-color 0.3s ease; }
         .store-pulse.green { background-color: #4CAF50; box-shadow: 0 0 10px #4CAF50; }
         
-        /* ===== الهيدر ===== */
-        .main-header { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); padding: 12px 16px; position: sticky; top: 0; z-index: 100; width: 100%; }
-        .header-container { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-        .logo-wrapper { display: flex; align-items: center; gap: 8px; }
-        .logo-img { width: 40px; height: 40px; border-radius: 12px; object-fit: cover; }
-        .logo-text { font-size: 1.2rem; font-weight: 800; color: white; }
+        /* ===== الهيدر (أبسط وأوضح) ===== */
+        .main-header { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); padding: 10px 16px; position: sticky; top: 0; z-index: 100; width: 100%; }
+        .header-container { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+        .logo-wrapper { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+        .logo-img { width: 36px; height: 36px; border-radius: 10px; object-fit: cover; }
+        .logo-text { font-size: 1.1rem; font-weight: 800; color: white; }
         .header-actions { display: flex; align-items: center; gap: 8px; position: relative; }
         
-        /* ===== البحث الذكي ===== */
+        /* ===== البحث الذكي (أوضح) ===== */
         .search-wrapper { position: relative; }
-        .search-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.6); font-size: 0.8rem; pointer-events: none; }
-        .search-input { padding: 8px 32px 8px 12px; border-radius: 30px; border: none; background: rgba(255,255,255,0.15); color: white; font-size: 0.85rem; width: 160px; transition: 0.3s; }
-        .search-input:focus { outline: none; background: rgba(255,255,255,0.25); width: 220px; }
-        .search-input::placeholder { color: rgba(255,255,255,0.6); }
+        .search-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.6); font-size: 0.75rem; pointer-events: none; }
+        .search-input { padding: 6px 32px 6px 12px; border-radius: 60px; border: none; background: rgba(255,255,255,0.15); color: white; font-size: 0.8rem; width: 150px; transition: 0.3s; }
+        .search-input:focus { outline: none; background: rgba(255,255,255,0.25); width: 200px; }
+        .search-input::placeholder { color: rgba(255,255,255,0.7); font-size: 0.75rem; }
         .search-results {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            width: 280px;
-            background: var(--bg-surface);
-            border-radius: 16px;
-            margin-top: 8px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            border: 1px solid var(--border-light);
-            z-index: 1000;
-            display: none;
-            max-height: 300px;
-            overflow-y: auto;
+            position: absolute; top: 100%; right: 0; width: 260px; background: var(--bg-surface);
+            border-radius: 16px; margin-top: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border: 1px solid var(--border-light); z-index: 1000; display: none;
+            max-height: 300px; overflow-y: auto;
         }
         .search-results.show { display: block; }
-        .search-result-item {
-            padding: 10px 16px;
-            cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-bottom: 1px solid var(--border-light);
-        }
-        .search-result-item:last-child { border-bottom: none; }
+        .search-result-item { padding: 8px 12px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-light); }
         .search-result-item:hover { background: var(--bg-elevated); }
-        .search-result-img { width: 35px; height: 35px; border-radius: 8px; object-fit: contain; }
+        .search-result-img { width: 30px; height: 30px; border-radius: 8px; object-fit: contain; }
         .search-result-info { flex: 1; }
-        .search-result-title { font-weight: 600; font-size: 0.85rem; }
+        .search-result-title { font-weight: 600; font-size: 0.8rem; }
         .search-result-type { font-size: 0.65rem; color: var(--text-muted); }
         
-        .icon-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.15); border: none; color: white; cursor: pointer; transition: all 0.2s; }
+        .icon-btn { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.15); border: none; color: white; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; }
         .icon-btn:hover { background: rgba(255,255,255,0.25); transform: scale(1.05); }
+        .savings-counter { cursor: pointer; display: inline-flex; align-items: center; gap: 4px; background: rgba(76,175,80,0.15); padding: 4px 10px; border-radius: 60px; font-size: 0.7rem; border: 1px solid rgba(76,175,80,0.3); }
+        .savings-counter i { color: #4CAF50; }
         
-        /* ===== شريط المستخدم ===== */
-        .unified-user-bar { background: var(--bg-surface); padding: 8px 16px; margin: 8px 0; border-radius: 60px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; border: 1px solid var(--border-light); }
-        .user-info-compact { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-        .compact-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--bg-elevated); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: var(--primary); cursor: pointer; overflow: hidden; }
-        .compact-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .compact-name { font-weight: 600; font-size: 0.9rem; cursor: pointer; }
-        .compact-stars { background: linear-gradient(135deg, var(--secondary), #FFA000); padding: 4px 10px; border-radius: 30px; display: flex; align-items: center; gap: 5px; font-weight: bold; cursor: pointer; color: #8B0000; font-size: 0.8rem; }
-        .compact-level { padding: 4px 10px; border-radius: 30px; font-size: 0.75rem; cursor: pointer; font-weight: bold; transition: all 0.3s; background: var(--bg-body); }
-        .compact-daily { display: flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 30px; background: linear-gradient(135deg, #FF6B6B, #FFE66D); cursor: pointer; font-weight: 600; font-size: 0.8rem; transition: all 0.3s; }
-        .compact-daily.pulse { animation: dailyPulse 1s infinite; box-shadow: 0 0 15px rgba(255,107,107,0.8); }
-        @keyframes dailyPulse { 0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(255,107,107,0.8); } 50% { transform: scale(1.05); box-shadow: 0 0 25px rgba(255,107,107,1); } }
+        /* ===== شريط المستخدم (أبسط) ===== */
+        .unified-user-bar { background: var(--bg-surface); padding: 6px 16px; margin: 8px 0; border-radius: 60px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; border: 1px solid var(--border-light); }
+        .user-info-compact { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .compact-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--bg-elevated); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--primary); cursor: pointer; overflow: hidden; }
+        .compact-name { font-weight: 600; font-size: 0.85rem; cursor: pointer; }
+        .compact-stars { background: linear-gradient(135deg, var(--secondary), #FFA000); padding: 3px 8px; border-radius: 60px; display: flex; align-items: center; gap: 4px; font-weight: bold; cursor: pointer; color: #8B0000; font-size: 0.75rem; }
+        .compact-level { padding: 3px 8px; border-radius: 60px; font-size: 0.7rem; cursor: pointer; font-weight: bold; background: var(--bg-body); }
+        .compact-daily { display: flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 60px; background: linear-gradient(135deg, #FF6B6B, #FFE66D); cursor: pointer; font-weight: 600; font-size: 0.75rem; transition: all 0.3s; }
+        .compact-daily.pulse { animation: dailyPulse 1s infinite; }
+        @keyframes dailyPulse { 0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,107,107,0.7); } 50% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(255,107,107,0); } }
         
-        .auth-buttons-compact { display: flex; gap: 8px; }
-        .btn { padding: 8px 16px; border-radius: var(--radius-full); border: none; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'Cairo', sans-serif; }
-        .btn-sm { padding: 5px 12px; font-size: 0.8rem; }
+        .auth-buttons-compact { display: flex; gap: 6px; }
+        .btn { padding: 6px 14px; border-radius: 60px; border: none; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'Cairo', sans-serif; font-size: 0.75rem; }
+        .btn-sm { padding: 4px 10px; font-size: 0.7rem; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-outline { background: transparent; border: 1px solid var(--border-light); color: var(--text-primary); }
         .btn-danger { background: var(--danger); color: white; }
         
-        /* ===== السلايدر ===== */
+        /* ===== السلايدر والإعلانات (مرتب) ===== */
+        .page-layout { max-width: 1400px; margin: 0 auto; padding: 0 16px; }
+        .slider-with-ads { display: flex; gap: 16px; align-items: flex-start; margin-top: 16px; }
+        .slider-main { flex: 1; min-width: 0; }
+        .ad-side { width: 120px; flex-shrink: 0; display: flex; flex-direction: column; gap: 12px; }
+        .ad-box { background: var(--bg-surface); border-radius: 12px; aspect-ratio: 1 / 1.4; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 0.7rem; text-align: center; border: 1px solid var(--border-light); background: linear-gradient(135deg, var(--bg-elevated), var(--bg-surface)); }
+        .ad-box i { font-size: 1.5rem; margin-bottom: 6px; display: block; }
+        
         .slider-container-new { position: relative; width: 100%; overflow: hidden; border-radius: 18px; aspect-ratio: 16 / 9; background: #000; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         .slider-slide { position: absolute; width: 100%; height: 100%; opacity: 0; transition: opacity 0.8s ease; }
         .slider-slide.active { opacity: 1; position: relative; z-index: 1; }
         .slider-slide img { width: 100%; height: 100%; object-fit: cover; border-radius: 18px; }
-        .slider-caption { position: absolute; bottom: 0; width: 100%; padding: 16px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); color: #fff; font-size: 14px; font-weight: 600; border-radius: 0 0 18px 18px; }
-        .slider-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); backdrop-filter: blur(6px); border: none; color: #fff; padding: 8px 12px; border-radius: 50%; cursor: pointer; z-index: 20; transition: 0.3s; }
+        .slider-caption { position: absolute; bottom: 0; width: 100%; padding: 12px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); color: #fff; font-size: 12px; font-weight: 600; border-radius: 0 0 18px 18px; }
+        .slider-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); border: none; color: #fff; padding: 6px 10px; border-radius: 50%; cursor: pointer; z-index: 20; transition: 0.3s; }
         .slider-btn:hover { background: rgba(0,0,0,0.8); }
         .prev { left: 12px; }
         .next { right: 12px; }
-        .slider-dots-new { text-align: center; margin-top: 12px; margin-bottom: 16px; }
-        .slider-dot { display: inline-block; width: 10px; height: 10px; background: #666; border-radius: 50%; margin: 4px; cursor: pointer; transition: 0.3s; }
+        .slider-dots-new { text-align: center; margin-top: 10px; margin-bottom: 16px; }
+        .slider-dot { display: inline-block; width: 8px; height: 8px; background: #666; border-radius: 50%; margin: 4px; cursor: pointer; transition: 0.3s; }
         .slider-dot.active { background: #D32F2F; transform: scale(1.2); }
         
-        /* ===== الإعلانات تحت السلايدر (للهاتف) ===== */
-        .mobile-ad-section {
-            display: none;
-            gap: 12px;
-            margin: 16px 0;
-        }
-        .mobile-ad-box {
-            flex: 1;
-            background: var(--bg-surface);
-            border-radius: 12px;
-            border: 1px dashed var(--border-light);
-            padding: 12px;
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.7rem;
-        }
+        .mobile-ad-section { display: none; gap: 12px; margin: 16px 0; }
+        .mobile-ad-box { flex: 1; background: var(--bg-surface); border-radius: 12px; border: 1px dashed var(--border-light); padding: 10px; text-align: center; color: var(--text-muted); font-size: 0.7rem; }
         
-        /* ===== صندوق الشفافية (للحذف من الهاتف) ===== */
-        .transparency-box { background: linear-gradient(135deg, rgba(33,150,243,0.1), rgba(33,150,243,0.05)); border-radius: 16px; padding: 12px 16px; margin: 16px 0; border: 1px solid rgba(33,150,243,0.3); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-        .transparency-item { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; }
-        .transparency-item i { font-size: 1rem; }
+        /* ===== صندوق الشفافية (يظهر فقط للكمبيوتر) ===== */
+        .transparency-box { background: linear-gradient(135deg, rgba(33,150,243,0.1), rgba(33,150,243,0.05)); border-radius: 16px; padding: 10px 16px; margin: 16px 0; border: 1px solid rgba(33,150,243,0.3); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+        .transparency-item { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; }
         
-        /* ===== المنتجات (ID / Account جنباً لجنب) ===== */
+        /* ===== قسم الألعاب (مرتب: ID / Account جنباً لجنب) ===== */
         .products-section { margin: 24px 0; }
         .section-header { margin-bottom: 16px; }
-        .section-header h2 { font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
-        .game-group { margin-bottom: 32px; border-bottom: 1px solid var(--border-light); padding-bottom: 16px; }
-        .game-group-title { font-size: 1.1rem; margin-bottom: 12px; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+        .section-header h2 { font-size: 1.1rem; display: flex; align-items: center; gap: 6px; }
+        .game-group { margin-bottom: 28px; border-bottom: 1px solid var(--border-light); padding-bottom: 16px; }
+        .game-group-title { font-size: 1rem; margin-bottom: 12px; color: var(--primary); display: flex; align-items: center; gap: 8px; }
         .game-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .product-card { background: var(--bg-surface); border-radius: var(--radius); padding: 12px; text-align: center; border: 1px solid var(--border-light); cursor: pointer; transition: all 0.3s; transform-style: preserve-3d; }
+        .product-card { background: var(--bg-surface); border-radius: var(--radius); padding: 10px; text-align: center; border: 1px solid var(--border-light); cursor: pointer; transition: all 0.3s; transform-style: preserve-3d; }
         .product-card:hover { transform: translateY(-3px); border-color: var(--primary); }
-        .product-card img { width: 100%; aspect-ratio: 1; object-fit: contain; margin-bottom: 8px; border-radius: 12px; transition: transform 0.3s; }
+        .product-card img { width: 100%; aspect-ratio: 1; object-fit: contain; margin-bottom: 6px; border-radius: 10px; transition: transform 0.3s; }
         .product-card:hover img { transform: scale(1.02); }
-        .product-card h3 { font-size: 0.85rem; margin-bottom: 4px; }
-        .product-card .price { color: var(--primary); font-weight: bold; font-size: 0.75rem; margin-bottom: 8px; }
-        .shop-btn { width: 100%; padding: 6px; background: var(--primary); color: white; border: none; border-radius: 30px; font-weight: 600; cursor: pointer; font-size: 0.7rem; transition: all 0.2s; }
+        .product-card h3 { font-size: 0.8rem; margin-bottom: 3px; }
+        .product-card .price { color: var(--primary); font-weight: bold; font-size: 0.7rem; margin-bottom: 6px; }
+        .shop-btn { width: 100%; padding: 5px; background: var(--primary); color: white; border: none; border-radius: 60px; font-weight: 600; cursor: pointer; font-size: 0.7rem; transition: all 0.2s; }
         .shop-btn:hover { background: var(--primary-dark); transform: scale(0.98); }
+        .shop-btn:disabled { background: var(--text-muted); cursor: not-allowed; }
         
-        /* ===== الشريط السفلي (Bottom Navigation) ===== */
+        /* ===== الشريط السفلي (Bottom Navigation) محسّن ===== */
         .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--bg-surface);
-            border-top: 1px solid var(--border-light);
-            display: flex;
-            justify-content: space-around;
-            padding: 8px 16px 12px;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: var(--bg-surface); border-top: 1px solid var(--border-light);
+            display: flex; justify-content: space-around; padding: 6px 12px 10px;
+            z-index: 1000; backdrop-filter: blur(10px);
         }
         .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.7rem;
-            transition: 0.2s;
+            display: flex; flex-direction: column; align-items: center; gap: 3px;
+            color: var(--text-muted); text-decoration: none; font-size: 0.65rem;
+            transition: 0.2s; padding: 4px 12px; border-radius: 60px;
         }
-        .nav-item i { font-size: 1.3rem; }
-        .nav-item.active, .nav-item:hover { color: var(--primary); }
+        .nav-item i { font-size: 1.2rem; }
+        .nav-item.active, .nav-item:hover { color: var(--primary); background: rgba(211,47,47,0.1); }
         
         /* ===== القائمة الجانبية ===== */
         .menu-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 1000; display: none; opacity: 0; transition: opacity 0.3s ease; }
         .menu-overlay.show { display: block; opacity: 1; }
         body.menu-open { overflow: hidden; }
-        .side-menu { position: fixed; top: 0; right: -300px; width: 280px; height: 100%; background: var(--bg-surface); z-index: 1001; padding: 20px; transition: right 0.3s ease; border-left: 1px solid var(--border-light); overflow-y: auto; box-shadow: -5px 0 25px rgba(0,0,0,0.2); }
+        .side-menu { position: fixed; top: 0; right: -280px; width: 260px; height: 100%; background: var(--bg-surface); z-index: 1001; padding: 20px; transition: right 0.3s ease; border-left: 1px solid var(--border-light); overflow-y: auto; box-shadow: -5px 0 25px rgba(0,0,0,0.2); }
         .side-menu.open { right: 0; }
-        .close-menu { background: none; border: none; font-size: 1.2rem; color: var(--text-muted); cursor: pointer; margin-bottom: 20px; }
+        .close-menu { background: none; border: none; font-size: 1.1rem; color: var(--text-muted); cursor: pointer; margin-bottom: 20px; }
         .menu-header { text-align: center; margin-bottom: 20px; }
-        .menu-avatar { width: 70px; height: 70px; border-radius: 50%; margin: 0 auto 10px; background: var(--bg-elevated); display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--primary); overflow: hidden; }
-        .menu-nav { display: flex; flex-direction: column; gap: 8px; }
-        .menu-nav a { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: var(--radius); color: var(--text-secondary); text-decoration: none; transition: all 0.2s; }
-        .menu-nav a i { width: 24px; color: var(--primary); }
+        .menu-avatar { width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 10px; background: var(--bg-elevated); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--primary); overflow: hidden; }
+        .menu-nav { display: flex; flex-direction: column; gap: 6px; }
+        .menu-nav a { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: var(--radius); color: var(--text-secondary); text-decoration: none; transition: all 0.2s; font-size: 0.85rem; }
+        .menu-nav a i { width: 22px; color: var(--primary); }
         .menu-nav a:hover { background: var(--bg-elevated); color: var(--text-primary); }
         
         /* ===== الأزرار العائمة ===== */
-        .cart-float, .chat-float, .prayer-btn { position: fixed; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 999; transition: all 0.2s; }
+        .cart-float, .chat-float, .prayer-btn { position: fixed; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 999; transition: all 0.2s; }
         .cart-float { bottom: 80px; right: 16px; background: var(--primary); color: white; }
         .chat-float { bottom: 80px; left: 16px; background: var(--primary); color: white; }
         .prayer-btn { bottom: 150px; right: 16px; background: linear-gradient(135deg, #1B5E20, #0D2E1A); color: white; border: 1px solid var(--success); }
-        .cart-badge, .chat-badge { position: absolute; top: -5px; right: -5px; background: var(--warning); color: white; border-radius: 50%; min-width: 20px; height: 20px; font-size: 0.6rem; display: flex; align-items: center; justify-content: center; padding: 0 5px; }
+        .cart-badge, .chat-badge { position: absolute; top: -4px; right: -4px; background: var(--warning); color: white; border-radius: 50%; min-width: 18px; height: 18px; font-size: 0.55rem; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
         
-        /* ===== نوافذ منبثقة ===== */
-        .greeting-toast { position: fixed; top: 70px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, var(--primary), #000); color: white; padding: 12px 24px; border-radius: 60px; z-index: 10000; font-weight: 500; animation: slideDown 0.3s ease; white-space: nowrap; }
+        /* ===== النوافذ المنبثقة ===== */
+        .greeting-toast { position: fixed; top: 70px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, var(--primary), #000); color: white; padding: 10px 20px; border-radius: 60px; z-index: 10000; font-weight: 500; animation: slideDown 0.3s ease; white-space: nowrap; font-size: 0.8rem; }
         @keyframes slideDown { from { opacity: 0; transform: translateX(-50%) translateY(-20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
-        .scroll-to-top-center { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); width: 45px; height: 45px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer; z-index: 999; opacity: 0; visibility: hidden; transition: all 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .scroll-to-top-center { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); width: 40px; height: 40px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer; z-index: 999; opacity: 0; visibility: hidden; transition: all 0.3s; }
         .scroll-to-top-center.show { opacity: 1; visibility: visible; }
         .falcon-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 100000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
         .falcon-modal.show { opacity: 1; visibility: visible; }
-        .falcon-modal-content { background: var(--bg-surface); max-width: 380px; width: 85%; border-radius: 28px; padding: 24px; text-align: center; border: 1px solid var(--border-light); transform: scale(0.9); transition: transform 0.3s ease; }
+        .falcon-modal-content { background: var(--bg-surface); max-width: 340px; width: 85%; border-radius: 24px; padding: 20px; text-align: center; border: 1px solid var(--border-light); transform: scale(0.9); transition: transform 0.3s ease; }
         .falcon-modal.show .falcon-modal-content { transform: scale(1); }
-        .falcon-modal-icon { font-size: 3rem; margin-bottom: 12px; }
-        .falcon-modal-title { font-size: 1.3rem; font-weight: 800; margin-bottom: 8px; color: var(--text-primary); }
-        .falcon-modal-message { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; }
-        .falcon-modal-btn { padding: 10px 20px; border-radius: 60px; border: none; font-weight: 600; cursor: pointer; background: var(--primary); color: white; font-size: 0.9rem; transition: all 0.2s; }
-        .falcon-modal-btn:hover { transform: scale(1.02); background: var(--primary-dark); }
+        .falcon-modal-icon { font-size: 2.5rem; margin-bottom: 10px; }
+        .falcon-modal-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 6px; }
+        .falcon-modal-message { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.4; }
+        .falcon-modal-btn { padding: 8px 20px; border-radius: 60px; border: none; font-weight: 600; cursor: pointer; background: var(--primary); color: white; font-size: 0.85rem; transition: all 0.2s; }
+        
+        .main-footer { background: var(--bg-surface); padding: 12px; margin-top: 20px; border-top: 1px solid var(--border-light); text-align: center; }
+        .footer-container { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+        .copyright { font-size: 0.65rem; color: var(--text-muted); }
+        .footer-links { display: flex; gap: 12px; }
+        .footer-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.65rem; }
         
         /* ===== تجاوب ===== */
         @media (max-width: 768px) {
@@ -348,17 +275,17 @@
             .mobile-ad-section { display: flex; }
             .transparency-box { display: none; }
             .slider-container-new { aspect-ratio: 16 / 9; }
-            .search-input { width: 120px; }
-            .search-input:focus { width: 160px; }
+            .search-input { width: 120px; font-size: 0.7rem; }
+            .search-input:focus { width: 150px; }
             .game-row { grid-template-columns: 1fr; gap: 10px; }
-            .game-group-title { font-size: 1rem; }
-            .led-content span { font-size: 0.7rem; margin-left: 30px; }
-            .bottom-nav { padding: 6px 12px 10px; }
-            .nav-item i { font-size: 1.1rem; }
-            .nav-item span { font-size: 0.6rem; }
+            .led-content span { font-size: 0.7rem; margin-left: 25px; }
+            .bottom-nav { padding: 4px 8px 8px; }
+            .nav-item { padding: 2px 8px; }
+            .nav-item i { font-size: 1rem; }
+            .nav-item span { font-size: 0.55rem; }
         }
         @media (min-width: 1200px) {
-            .search-input { width: 220px; }
+            .search-input { width: 200px; }
             .game-row { gap: 20px; }
         }
     </style>
@@ -386,7 +313,7 @@
     <header class="main-header">
         <div class="header-container">
             <div class="logo-wrapper" onclick="window.location.href='index.html'">
-                <img src="photos/logo.png" alt="شعار المتجر" class="logo-img" onerror="this.src='https://placehold.co/45x45/D32F2F/white?text=F'">
+                <img src="photos/logo.png" alt="شعار المتجر" class="logo-img" onerror="this.src='https://placehold.co/36x36/D32F2F/white?text=F'">
                 <span class="logo-text">Falcon Store</span>
             </div>
             <div class="header-actions">
@@ -425,7 +352,7 @@
         <div class="led-content" id="ledContent"><span>🦅 جاري تحميل الشحنات...</span></div>
     </div>
     
-    <!-- تخطيط السلايدر والإعلانات -->
+    <!-- السلايدر والإعلانات -->
     <div class="page-layout">
         <div class="slider-with-ads">
             <div class="ad-side">
@@ -448,13 +375,13 @@
             </div>
         </div>
         
-        <!-- إعلانات الموبايل (تظهر تحت السلايدر) -->
+        <!-- إعلانات الموبايل -->
         <div class="mobile-ad-section" id="mobileAds">
             <div class="mobile-ad-box"><i class="fas fa-ad"></i> إعلان 1</div>
             <div class="mobile-ad-box"><i class="fas fa-ad"></i> إعلان 2</div>
         </div>
         
-        <!-- صندوق الشفافية (يظهر فقط على الكمبيوتر) -->
+        <!-- صندوق الشفافية (كمبيوتر فقط) -->
         <div class="transparency-box" id="transparencyBox">
             <div class="transparency-item"><i class="fas fa-tachometer-alt"></i><span>🟢 الشحن فوري (متوسط <span id="avgShippingTime">0</span> دقائق)</span></div>
             <div class="transparency-item"><i class="fas fa-box"></i><span>📦 طلبات اليوم: <strong id="todayOrdersCount">0</strong></span></div>
@@ -468,7 +395,7 @@
         <div id="gamesContainer"></div>
     </section>
     
-    <!-- فوتر بسيط -->
+    <!-- فوتر -->
     <footer class="main-footer">
         <div class="footer-container">
             <p class="copyright">© 2025 Falcon Store - جميع الحقوق محفوظة</p>
@@ -649,7 +576,7 @@ function initTiltEffect() {
     });
 }
 
-// ========== عرض الألعاب (ID + Account جنباً لجنب) ==========
+// ========== عرض الألعاب ==========
 function renderGames() {
     const container = document.getElementById('gamesContainer');
     if (!container) return;
@@ -657,12 +584,12 @@ function renderGames() {
     for (const game of gamesData) {
         html += `<div class="game-group"><div class="game-group-title"><i class="fas fa-gamepad"></i> ${game.name}</div><div class="game-row">`;
         if (game.hasId) {
-            html += `<div class="product-card" data-game="${game.gameKey}" data-type="id"><img src="${game.idImage}" onerror="this.src='https://placehold.co/200/D32F2F/white?text=${game.name}+ID'"><h3>${game.name} - شحن ID</h3><div class="price">من ${game.priceId} ج.م</div><button class="shop-btn">🛒 شحن الآن</button></div>`;
+            html += `<div class="product-card" data-game="${game.gameKey}" data-type="id"><img src="${game.idImage}" onerror="this.src='https://placehold.co/150/D32F2F/white?text=${game.name}+ID'"><h3>${game.name} - شحن ID</h3><div class="price">من ${game.priceId} ج.م</div><button class="shop-btn">🛒 شحن الآن</button></div>`;
         }
         if (game.hasAccount) {
-            html += `<div class="product-card" data-game="${game.gameKey}" data-type="account"><img src="${game.accImage}" onerror="this.src='https://placehold.co/200/D32F2F/white?text=${game.name}+Account'"><h3>${game.name} - شحن أكونت</h3><div class="price">من ${game.priceAcc} ج.م</div><button class="shop-btn">🛒 شحن الآن</button></div>`;
+            html += `<div class="product-card" data-game="${game.gameKey}" data-type="account"><img src="${game.accImage}" onerror="this.src='https://placehold.co/150/D32F2F/white?text=${game.name}+Account'"><h3>${game.name} - شحن أكونت</h3><div class="price">من ${game.priceAcc} ج.م</div><button class="shop-btn">🛒 شحن الآن</button></div>`;
         } else if (game.accountSoon) {
-            html += `<div class="product-card coming-soon" style="opacity:0.6;"><span class="coming-soon-badge" style="position:absolute;top:5px;left:5px;background:var(--warning);color:white;padding:2px 8px;border-radius:30px;font-size:0.6rem;">⏳ قريباً</span><img src="${game.accImage}" onerror="this.src='https://placehold.co/200/D32F2F/white?text=${game.name}+Account'"><h3>${game.name} - شحن أكونت</h3><div class="price">قريباً</div><button class="shop-btn" disabled>⏳ غير متاح</button></div>`;
+            html += `<div class="product-card coming-soon" style="opacity:0.6; position:relative;"><span style="position:absolute;top:5px;left:5px;background:var(--warning);color:white;padding:2px 8px;border-radius:30px;font-size:0.6rem;">⏳ قريباً</span><img src="${game.accImage}" onerror="this.src='https://placehold.co/150/D32F2F/white?text=${game.name}+Account'"><h3>${game.name} - شحن أكونت</h3><div class="price">قريباً</div><button class="shop-btn" disabled>⏳ غير متاح</button></div>`;
         }
         html += `</div></div>`;
     }
@@ -706,7 +633,7 @@ function performSearch(query) {
     }
     if (results.length === 0) { searchResults.innerHTML = '<div class="search-result-item" style="justify-content:center;">لا توجد نتائج</div>'; }
     else {
-        searchResults.innerHTML = results.map(r => `<div class="search-result-item" data-game="${r.game.gameKey}" data-type="${r.type}" ${r.disabled ? 'data-disabled="true"' : ''}><img src="${r.img}" class="search-result-img" onerror="this.src='https://placehold.co/35/D32F2F/white?text=${r.game.name}'"><div class="search-result-info"><div class="search-result-title">${r.name}</div><div class="search-result-type">${r.price != 'قريباً' ? `من ${r.price} ج.م` : r.price}</div></div></div>`).join('');
+        searchResults.innerHTML = results.map(r => `<div class="search-result-item" data-game="${r.game.gameKey}" data-type="${r.type}" ${r.disabled ? 'data-disabled="true"' : ''}><img src="${r.img}" class="search-result-img" onerror="this.src='https://placehold.co/30/D32F2F/white?text=${r.game.name}'"><div class="search-result-info"><div class="search-result-title">${r.name}</div><div class="search-result-type">${r.price != 'قريباً' ? `من ${r.price} ج.م` : r.price}</div></div></div>`).join('');
         document.querySelectorAll('.search-result-item').forEach(item => {
             item.addEventListener('click', () => {
                 const gameKey = item.dataset.game, type = item.dataset.type, disabled = item.dataset.disabled;
@@ -783,4 +710,4 @@ function initSideMenu() {
 const scrollBtn = document.getElementById('scrollToTopCenter');
 window.addEventListener('scroll', () => { if (window.scrollY > 400) scrollBtn?.classList.add('show'); else scrollBtn?.classList.remove('show'); });
 scrollBtn?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-document.getElementById('prayerBtn')?.addE
+document.getElementById('prayerBtn')?.addEventListener('click', () => { if (typeof playPrayerSound === 'function') playPrayerSound(); else new Audio('sounds/prayer.mp3').play().catch(()=>{}); const toast = document.createElement('div'); toast.className = 'greeting-toast'; toast.style.background = 'linear-gradient(135deg, #1B5E20, #0D2E1A)'; toast.innerHTML = '🕌 اللهم صل على سيدنا محمد ❤'; document.body.appendChild(toast); setTimeout(() => toast.remove
